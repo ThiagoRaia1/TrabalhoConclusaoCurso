@@ -7,7 +7,8 @@ import {
   StyleProp,
   ViewStyle,
 } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import { Text, TextInput } from "react-native-paper"
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
 
 export default function Login() {
   const login = () => {
@@ -18,6 +19,7 @@ export default function Login() {
     <View style={styles.container}>
       <View style={[styles.loginArea, getStrongShadow()]}>
         <View style={styles.loginContent}>
+        <FontAwesome5 name="user-graduate" size={150} color="black" />
           <Text style={styles.titleText}>AI Teacher</Text>
 
           <View style={[styles.inputContainer, getSoftShadow()]}>
@@ -26,7 +28,7 @@ export default function Login() {
               placeholder="Email"
               placeholderTextColor="#ccc"
               returnKeyType="done"
-              onSubmitEditing={login} // Agora ENTER aqui também envia o login
+              onSubmitEditing={login} // Agora ENTER envia o login
             />
           </View>
 
@@ -37,7 +39,7 @@ export default function Login() {
               placeholderTextColor="#ccc"
               secureTextEntry
               returnKeyType="done"
-              onSubmitEditing={login} // Agora ENTER aqui também envia o login
+              onSubmitEditing={login} // Agora ENTER envia o login
             />
           </View>
 
@@ -124,13 +126,13 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 40,
     color: "black",
-    marginBottom: 20,
   },
   loginContent: {
     justifyContent: "center",
     alignItems: "center",
     gap: 20,
     width: "100%",
+    marginBottom: 60
   },
   inputContainer: {
     flexDirection: "row",
