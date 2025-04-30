@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -6,20 +6,23 @@ import {
   Platform,
   StyleProp,
   ViewStyle,
+  TextInput,
+  Text
 } from "react-native";
-import { Text, TextInput } from "react-native-paper"
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { useAuth } from "../context/auth";
 
 export default function Login() {
-  const login = () => {
-    console.log("Login pressionado");
-    // Aqui você pode validar os campos e navegar, etc.
-  };
+  const { usuario, handleLogin, setUsuario } = useAuth();
+  const [senha, setSenha] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+
   return (
     <View style={styles.container}>
+      
       <View style={[styles.loginArea, getStrongShadow()]}>
         <View style={styles.loginContent}>
-        <FontAwesome5 name="user-graduate" size={150} color="black" />
+          <FontAwesome5 name="user-graduate" size={150} color="black" />
           <Text style={styles.titleText}>AI Teacher</Text>
 
           <View style={[styles.inputContainer, getSoftShadow()]}>
@@ -27,8 +30,10 @@ export default function Login() {
               style={styles.input}
               placeholder="Email"
               placeholderTextColor="#ccc"
+              value={usuario.login}
+              onChangeText={(text) => setUsuario({ ...usuario, login: text })}
               returnKeyType="done"
-              onSubmitEditing={login} // Agora ENTER envia o login
+              onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
             />
           </View>
 
@@ -37,18 +42,34 @@ export default function Login() {
               style={styles.input}
               placeholder="Senha"
               placeholderTextColor="#ccc"
-              secureTextEntry
+              secureTextEntry={!mostrarSenha}
+              value={senha}
+              onChangeText={(text) => setSenha(text)}
               returnKeyType="done"
-              onSubmitEditing={login} // Agora ENTER envia o login
+              onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
             />
+            <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
+              <FontAwesome5
+                name={mostrarSenha ? "eye-slash" : "eye"}
+                size={30}
+                color="black"
+              />
+            </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={[styles.button, getSoftShadow()]}>
+          <TouchableOpacity
+            style={[styles.button, getSoftShadow()]}
+            onPress={() => handleLogin(senha)}
+          >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.imageArea}></View>
+
+      <View style={styles.imageArea}>
+        <Text style={{ fontSize: 40, color: 'white' }}>Image Placeholder</Text>
+      </View>
+
     </View>
   );
 }
@@ -122,6 +143,8 @@ const styles = StyleSheet.create({
   imageArea: {
     flex: 7,
     backgroundColor: "#2596be",
+    justifyContent: "center",
+    alignItems: "center",
   },
   titleText: {
     fontSize: 40,
@@ -131,15 +154,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 20,
-    width: "100%",
-    marginBottom: 60
+    width: "90%",
+    marginBottom: 60,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
     paddingHorizontal: 15,
-    paddingVertical: 5,
     width: "100%",
     borderWidth: 1,
     borderColor: "#319594",
@@ -148,9 +170,9 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 20,
-    backgroundColor: "transparent",
-    color: "black",
+    fontSize: 26,
+    maxWidth: '95%',
+    height: 70,
   },
   button: {
     backgroundColor: "#2596be",
@@ -163,7 +185,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "700",
   },
 });
