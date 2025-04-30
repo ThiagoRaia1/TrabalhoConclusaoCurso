@@ -7,10 +7,12 @@ import {
   StyleProp,
   ViewStyle,
   TextInput,
-  Text
+  Text,
+  Image,
 } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useAuth } from "../context/auth";
+import { BlurView } from "expo-blur";
 
 export default function Login() {
   const { usuario, handleLogin, setUsuario } = useAuth();
@@ -19,7 +21,6 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      
       <View style={[styles.loginArea, getStrongShadow()]}>
         <View style={styles.loginContent}>
           <FontAwesome5 name="user-graduate" size={150} color="black" />
@@ -27,7 +28,8 @@ export default function Login() {
 
           <View style={[styles.inputContainer, getSoftShadow()]}>
             <TextInput
-              style={styles.input}
+              /* O "as any" ignora o erro*/
+              style={[styles.input, { outlineStyle: "none" } as any]}
               placeholder="Email"
               placeholderTextColor="#ccc"
               value={usuario.login}
@@ -39,7 +41,7 @@ export default function Login() {
 
           <View style={[styles.inputContainer, getSoftShadow()]}>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { outlineStyle: "none" } as any]}
               placeholder="Senha"
               placeholderTextColor="#ccc"
               secureTextEntry={!mostrarSenha}
@@ -67,9 +69,17 @@ export default function Login() {
       </View>
 
       <View style={styles.imageArea}>
-        <Text style={{ fontSize: 40, color: 'white' }}>Image Placeholder</Text>
+        <Image
+          source={require("../assets/menuInicialTemporario.png")}
+          style={styles.backgroundImage}
+          resizeMode="contain"
+        />
+        <Text style={styles.propagandaText}>
+          Ensino otimizado e{"\n"}personalizado para você
+        </Text>
+        {/* Borra a imagem */}
+        {/* <BlurView intensity={10} tint="light" style={StyleSheet.absoluteFill} /> */}
       </View>
-
     </View>
   );
 }
@@ -140,12 +150,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     margin: 20,
   },
-  imageArea: {
-    flex: 7,
-    backgroundColor: "#2596be",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   titleText: {
     fontSize: 40,
     color: "black",
@@ -157,6 +161,12 @@ const styles = StyleSheet.create({
     width: "90%",
     marginBottom: 60,
   },
+  input: {
+    flex: 1,
+    fontSize: 26,
+    maxWidth: "95%",
+    height: 70,
+  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -167,12 +177,6 @@ const styles = StyleSheet.create({
     borderColor: "#319594",
     borderRadius: 8,
     justifyContent: "space-between",
-  },
-  input: {
-    flex: 1,
-    fontSize: 26,
-    maxWidth: '95%',
-    height: 70,
   },
   button: {
     backgroundColor: "#2596be",
@@ -187,5 +191,21 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 24,
     fontWeight: "700",
+  },
+  imageArea: {
+    flex: 7,
+    flexDirection: "row",
+    backgroundColor: "#2596be",
+    justifyContent: "space-around",
+    paddingHorizontal: 20,
+    alignItems: "center",
+  },
+  backgroundImage: {
+    maxWidth: "60%",
+  },
+  propagandaText: {
+    fontSize: 30,
+    color: "white",
+    textAlign: "center",
   },
 });
