@@ -68,7 +68,15 @@ export default function MenuPrincipal() {
               // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
             />
           </View>
-          <TouchableOpacity style={styles.button} onPress={gerarResposta}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() =>
+              router.push({
+                pathname: "./roadmapSelecionado",
+                params: { tema: "Inteligência Artificial" },
+              })
+            }
+          >
             <Text style={styles.buttonText}>Gerar Roadmap</Text>
           </TouchableOpacity>
           {/* Adicione mais itens para ver o scroll funcionando */}
