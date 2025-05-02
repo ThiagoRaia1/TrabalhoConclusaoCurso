@@ -166,6 +166,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     maxWidth: "95%",
     height: 70,
+    backgroundColor: "white",
   },
   inputContainer: {
     flexDirection: "row",
