@@ -5,19 +5,36 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Dimensions,
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useState } from "react";
 import { router } from "expo-router";
+import { enviarPrompt } from "../../services/openai";
+
+const { height: windowHeight } = Dimensions.get("window"); // Altura da tela
 
 export default function MenuPrincipal() {
   const [menuVisivel, setMenuVisivel] = useState(false);
+  const [prompt, setPrompt] = useState("");
+  const [resposta, setResposta] = useState("");
 
   const alternarMenu = () => {
     setMenuVisivel(!menuVisivel);
   };
+
+  const [carregando, setCarregando] = useState(false);
+
+  const gerarResposta = async () => {
+    if (carregando) return;
+    setCarregando(true);
+    const resultado = await enviarPrompt(prompt);
+    setResposta(resultado);
+    setCarregando(false);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
@@ -51,10 +68,15 @@ export default function MenuPrincipal() {
               // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
             />
           </View>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={gerarResposta}>
             <Text style={styles.buttonText}>Gerar Roadmap</Text>
           </TouchableOpacity>
           {/* Adicione mais itens para ver o scroll funcionando */}
+          {resposta && (
+            <View style={{ marginTop: 20, padding: 20 }}>
+              <Text style={{ fontSize: 18 }}>{resposta}</Text>
+            </View>
+          )}
         </ScrollView>
 
         {menuVisivel && (
