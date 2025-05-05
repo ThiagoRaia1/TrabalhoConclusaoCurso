@@ -5,6 +5,7 @@ import {
   Pressable,
   ScrollView,
   TouchableOpacity,
+  StyleSheet,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
@@ -22,10 +23,16 @@ type Secao = {
   itens: Item[];
 };
 
+const cores = {
+  iniciante: "#d1fae5",
+  intermediario: "#fef3c7",
+  avancado: "#dbeafe",
+};
+
 const secoes: Secao[] = [
   {
     titulo: "🟢 Iniciante – Fundamentos do Xadrez",
-    cor: "#d1fae5",
+    cor: cores.iniciante,
     itens: [
       {
         titulo: "Regras Básicas",
@@ -62,7 +69,7 @@ const secoes: Secao[] = [
   },
   {
     titulo: "🟡 Intermediário – Tática e Estratégia",
-    cor: "#fef3c7",
+    cor: cores.intermediario,
     itens: [
       {
         titulo: "Táticas Básicas",
@@ -103,7 +110,7 @@ const secoes: Secao[] = [
   },
   {
     titulo: "🔵 Avançado – Estratégia Profunda e Estudo Contínuo",
-    cor: "#dbeafe",
+    cor: cores.avancado,
     itens: [
       {
         titulo: "Estratégias de Meio-Jogo",
@@ -196,16 +203,16 @@ export default function Roadmap() {
 
   const [menuVisivel, setMenuVisivel] = useState(false);
 
+  const [expandidos, setExpandidos] = useState<Record<string, boolean>>({});
+
+  const alternarExpandido = (id: string) => {
+    setExpandidos((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "center",
-          backgroundColor: "white",
-        }}
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <TouchableOpacity
           style={{
             alignItems: "center",
@@ -219,39 +226,87 @@ export default function Roadmap() {
             Voltar
           </Text>
         </TouchableOpacity>
+
         {secoes.map((secao, idx) => (
-          <View key={idx} style={{ marginBottom: 24 }}>
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                backgroundColor: secao.cor,
-                padding: 8,
-              }}
-            >
-              {secao.titulo}
-            </Text>
+          <View key={idx} style={{ gap: 24, marginTop: 24 }}>
+            <View style={[styles.topicView, { backgroundColor: secao.cor }]}>
+              <Text style={styles.topicText}>{secao.titulo}</Text>
+            </View>
+
             {secao.itens.map((item, i) => (
-              <View key={i} style={{ marginVertical: 8 }}>
-                <Text style={{ fontSize: 16, fontWeight: "600" }}>
+              <View
+                key={i}
+                style={[styles.subtopicText, { backgroundColor: secao.cor }]}
+              >
+                <Text
+                  style={{
+                    fontSize: 26,
+                    fontWeight: "600",
+                    textAlign: "left",
+                  }}
+                >
                   {item.titulo}
                 </Text>
                 {item.subitens.map((sub, j) => {
                   const id = `${idx}-${i}-${j}`;
                   const feito = progresso[id];
+                  const expandido = expandidos[id];
+
                   return (
-                    <Pressable key={j} onPress={() => alternarProgresso(id)}>
-                      <Text
+                    <View key={j}>
+                      <View
                         style={{
-                          fontSize: 14,
-                          paddingLeft: 12,
-                          color: feito ? "#10b981" : "#000",
-                          textDecorationLine: feito ? "line-through" : "none",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginVertical: 5,
                         }}
                       >
-                        {feito ? "✅ " : "◻️ "} {sub}
-                      </Text>
-                    </Pressable>
+                        <Pressable
+                          onPress={() => alternarProgresso(id)}
+                          style={{ flex: 1 }}
+                        >
+                          <Text
+                            style={{
+                              textAlign: "left",
+                              fontSize: 26,
+                              paddingHorizontal: 12,
+                              paddingVertical: 10,
+                              color: feito ? "#10b981" : "#000",
+                              textDecorationLine: feito
+                                ? "line-through"
+                                : "none",
+                            }}
+                          >
+                            {feito ? "✅ " : "◻️ "} {sub}
+                          </Text>
+                        </Pressable>
+
+                        <TouchableOpacity
+                          onPress={() => alternarExpandido(id)}
+                          style={{ paddingHorizontal: 10 }}
+                        >
+                          <Text style={{ fontSize: 35, fontWeight: "900" }}>
+                            {expandido ? "−" : "+"}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+
+                      {expandido && (
+                        <Text
+                          style={{
+                            fontSize: 26,
+                            paddingHorizontal: 20,
+                            paddingBottom: 10,
+                            color: "#555",
+                            fontStyle: "italic",
+                          }}
+                        >
+                          {/* Você pode substituir isso por dados reais futuramente */}
+                          Mais detalhes sobre: {sub}
+                        </Text>
+                      )}
+                    </View>
                   );
                 })}
               </View>
@@ -263,3 +318,35 @@ export default function Roadmap() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    backgroundColor: "white",
+  },
+  topicView: {
+    alignSelf: "center",
+    paddingHorizontal: 15,
+    paddingVertical: 70,
+    borderRadius: 40,
+    borderColor: "#242E3F",
+    borderWidth: 3,
+    minWidth: "60%",
+    maxWidth: "90%",
+  },
+  topicText: {
+    fontSize: 40,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  subtopicText: {
+    marginVertical: 8,
+    gap: 10,
+    padding: 20,
+    marginHorizontal: 40,
+    borderRadius: 40,
+    borderColor: "#242E3F",
+    borderWidth: 3,
+  },
+});

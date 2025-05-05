@@ -9,21 +9,19 @@ import {
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useState } from "react";
 import { router } from "expo-router";
 import { enviarPrompt } from "../../services/openai";
+import { MenuSuspenso, TopBarMenu } from "../components/topBar";
 
 const { height: windowHeight } = Dimensions.get("window"); // Altura da tela
 
 export default function MenuPrincipal() {
-  const [menuVisivel, setMenuVisivel] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [resposta, setResposta] = useState("");
 
-  const alternarMenu = () => {
-    setMenuVisivel(!menuVisivel);
-  };
+  // Dentro de MenuPrincipal
+  const [menuVisivel, setMenuVisivel] = useState(false);
 
   const [carregando, setCarregando] = useState(false);
 
@@ -36,102 +34,61 @@ export default function MenuPrincipal() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.topBar}>
-        <View style={{ flexDirection: "row", gap: 40 }}>
-          <Text style={[styles.topBarText]}>AI TEACHER</Text>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Text
+          style={[styles.topBarText, { color: "black", alignSelf: "center" }]}
+        >
+          Crie seu primeiro Roadmap!
+        </Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={[styles.input, { outlineStyle: "none" } as any]}
+            placeholder="Digite o prompt para criação do roadmap"
+            placeholderTextColor="#ccc"
+            // onChangeText={(text) => setSenha(text)}
+            returnKeyType="done"
+            // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+          />
         </View>
-        <View style={{ flexDirection: "row", gap: 40 }}>
-          <Text style={styles.topBarText}>Topo</Text>
-          <Text style={styles.topBarText}>Topo</Text>
-          <Text style={styles.topBarText}>Topo</Text>
-          <TouchableOpacity onPress={alternarMenu}>
-            <FontAwesome name="user-circle" size={70} color="white" />
-          </TouchableOpacity>
-        </View>
-      </View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            router.push({
+              pathname: "./roadmapSelecionado",
+              params: { tema: "Inteligência Artificial" },
+            })
+          }
+        >
+          <Text style={styles.buttonText}>Roadmap - Texto</Text>
+        </TouchableOpacity>
 
-      <View style={styles.content}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <Text
-            style={[styles.topBarText, { color: "black", alignSelf: "center" }]}
-          >
-            Crie seu primeiro Roadmap!
-          </Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={[styles.input, { outlineStyle: "none" } as any]}
-              placeholder="Digite o prompt para criação do roadmap"
-              placeholderTextColor="#ccc"
-              // onChangeText={(text) => setSenha(text)}
-              returnKeyType="done"
-              // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
-            />
-          </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() =>
-              router.push({
-                pathname: "./roadmapSelecionado",
-                params: { tema: "Inteligência Artificial" },
-              })
-            }
-          >
-            <Text style={styles.buttonText}>Gerar Roadmap</Text>
-          </TouchableOpacity>
-          {/* Adicione mais itens para ver o scroll funcionando */}
-          {resposta && (
-            <View style={{ marginTop: 20, padding: 20 }}>
-              <Text style={{ fontSize: 18 }}>{resposta}</Text>
-            </View>
-          )}
-        </ScrollView>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            router.push({
+              pathname: "./roadmap",
+              params: { tema: "Inteligência Artificial" },
+            })
+          }
+        >
+          <Text style={styles.buttonText}>Roadmap</Text>
+        </TouchableOpacity>
 
-        {menuVisivel && (
-          <View style={styles.menuSuspenso}>
-            <TouchableOpacity
-              onPress={() => {
-                router.push("./meuPerfil");
-              }}
-            >
-              <Text style={styles.menuItem}>Meu Perfil</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                router.push("./");
-              }}
-            >
-              <Text style={styles.menuItem}>Logout</Text>
-            </TouchableOpacity>
+        {/* Adicione mais itens para ver o scroll funcionando */}
+        {resposta && (
+          <View style={{ marginTop: 20, padding: 20 }}>
+            <Text style={{ fontSize: 18 }}>{resposta}</Text>
           </View>
         )}
-      </View>
+      </ScrollView>
+      {menuVisivel && <MenuSuspenso />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  topBar: {
-    height: 100,
-    flexDirection: "row",
-    backgroundColor: "#242E3F",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 50,
-  },
-  topBarText: {
-    color: "white",
-    fontSize: 30,
-    alignSelf: "center",
-  },
-  content: {
-    flex: 1,
-    backgroundColor: "white",
-  },
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
@@ -173,26 +130,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "700",
   },
-  menuSuspenso: {
-    position: "absolute",
-    right: 30,
-    backgroundColor: "white",
-    borderRadius: 8,
-    elevation: 5, // sombra Android
-    shadowColor: "#000", // sombra iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    padding: 10,
-    zIndex: 1000,
-    width: 300,
-  },
-  menuItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    fontSize: 18,
-    color: "#333",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+  topBarText: {
+    color: "white",
+    fontSize: 30,
+    alignSelf: "center",
   },
 });
