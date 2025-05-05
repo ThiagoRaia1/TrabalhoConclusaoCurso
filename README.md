@@ -6,7 +6,7 @@
 
 <h2> Descrição </h2>
 Trabalho de Conclusão de Curso para a faculdade de Análise e Desenvolvimentos da Fatec Indaiatuba<br>
-Front-end da aplicação AI Teacher, plataforma para criação de _Roadmaps_ integrado a inteligência artificial para auxílio aos estudos.<br>
+Front-end da aplicação AI Teacher, plataforma para criação de Roadmaps integrado a inteligência artificial para auxílio aos estudos.<br>
 Back-end da aplicação: https://github.com/ThiagoRaia1/backend-tg
 
 ## Baixando o projeto
