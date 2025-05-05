@@ -14,7 +14,7 @@ import { MenuSuspenso, TopBarMenu } from "../components/topBar";
 
 type Item = {
   titulo: string;
-  subitens: string[];
+  descricao: string;
 };
 
 type Secao = {
@@ -31,137 +31,122 @@ const cores = {
 
 const secoes: Secao[] = [
   {
-    titulo: "🟢 Iniciante – Fundamentos do Xadrez",
-    cor: cores.iniciante,
+    titulo: "🟢 Fundamentos da Programação (Iniciante)",
+    cor: "#d1fae5",
     itens: [
       {
-        titulo: "Regras Básicas",
-        subitens: [
-          "Objetivo do jogo",
-          "Como cada peça se movimenta",
-          "Regras especiais: roque, promoção, en passant",
-        ],
+        titulo: "O que é programação?",
+        descricao: 
+`\tProgramar é dar instruções para o computador executar tarefas. 
+\tEssas instruções são escritas em linguagens de programação.` 
       },
       {
-        titulo: "Configuração Inicial do Tabuleiro",
-        subitens: [
-          "Organização das peças",
-          "Nomenclatura das casas (notação algébrica)",
-        ],
+        titulo: "Variáveis e tipos de dados",
+        descricao: 
+`\tVariáveis armazenam valores usados pelo programa.\n
+\tExemplos de tipos:\n
+\t• Inteiros (int): números sem casas decimais\n
+\t• Reais (float): números com casas decimais\n
+\t• Texto (string): sequência de caracteres\n
+\t• Booleano (bool): verdadeiro ou falso` 
       },
       {
-        titulo: "Como Vencer uma Partida",
-        subitens: [
-          "Xeque e xeque-mate",
-          "Afogamento (empate)",
-          "Outras formas de empate (repetição, 50 lances, material insuficiente)",
-        ],
+        titulo: "Operadores",
+        descricao:
+`\tUsados para realizar cálculos e comparações.\n
+\t• Aritméticos: +, -, *, /, %\n
+\t• Relacionais: ==, !=, >, <\n
+\t• Lógicos: &&, ||, !`
       },
       {
-        titulo: "Princípios Abertos",
-        subitens: [
-          "Desenvolver peças rapidamente",
-          "Controlar o centro",
-          "Segurança do rei (roque cedo)",
-        ],
-      },
-    ],
+        titulo: "Entrada e saída de dados",
+        descricao:
+`\tEntrada: receber informações do usuário (ex: prompt, input).\n
+\tSaída: mostrar informações (ex: print, console.log).`
+      }
+    ]
   },
   {
-    titulo: "🟡 Intermediário – Tática e Estratégia",
-    cor: cores.intermediario,
+    titulo: "🟡 Estruturas e Lógica (Intermediário)",
+    cor: "#fef3c7",
     itens: [
       {
-        titulo: "Táticas Básicas",
-        subitens: [
-          "Cravada",
-          "Garfo",
-          "Ataque duplo",
-          "Descoberta e raio-x",
-          "Sacrifícios",
-        ],
+        titulo: "Condicionais",
+        descricao:
+`\tPermitem executar diferentes blocos de código com base em condições.\n
+\tExemplo:\n
+\tif (idade >= 18) {\n
+\t\tconsole.log("Maior de idade");\n
+\t} else {\n
+\t\tconsole.log("Menor de idade");\n
+\t}`
       },
       {
-        titulo: "Finalizações Simples (Finais)",
-        subitens: [
-          "Mate com torre e rei contra rei",
-          "Mate com dama e rei contra rei",
-          "Final com rei e peão vs rei",
-        ],
+        titulo: "Laços de repetição",
+        descricao:
+`\tPermitem repetir um bloco de código várias vezes.\n
+\tExemplos:\n
+\t• for: laço com contador\n
+\t• while: laço com condição\n
+\t• do...while: executa pelo menos uma vez`
       },
       {
-        titulo: "Aberturas Populares",
-        subitens: [
-          "Ruy Lopez",
-          "Defesa Siciliana",
-          "Defesa Francesa",
-          "Gambito da Dama",
-        ],
+        titulo: "Funções",
+        descricao:
+`\tFunções agrupam instruções reutilizáveis.\n
+\tExemplo:\n
+\tfunction somar(a, b) {\n
+\t\treturn a + b;\n
+\t}`
       },
       {
-        titulo: "Erros Comuns a Evitar",
-        subitens: [
-          "Mover a mesma peça várias vezes na abertura",
-          "Desenvolver rainha cedo demais",
-          "Não rocar",
-        ],
-      },
-    ],
+        titulo: "Listas e vetores",
+        descricao:
+`\tEstruturas que armazenam múltiplos valores.\n
+\tExemplo em JavaScript:\n
+\tlet numeros = [1, 2, 3, 4];`
+      }
+    ]
   },
   {
-    titulo: "🔵 Avançado – Estratégia Profunda e Estudo Contínuo",
-    cor: cores.avancado,
+    titulo: "🔵 Conceitos Avançados (Avançado)",
+    cor: "#dbeafe",
     itens: [
       {
-        titulo: "Estratégias de Meio-Jogo",
-        subitens: [
-          "Estrutura de peões",
-          "Colunas abertas",
-          "Casas fracas",
-          "Plano de jogo",
-        ],
+        titulo: "Programação orientada a objetos (POO)",
+        descricao:
+`\tModelo baseado em objetos e classes.\n
+\tConceitos:\n
+\t• Classe: molde para criar objetos\n
+\t• Objeto: instância com atributos e métodos\n
+\t• Herança, encapsulamento e polimorfismo`
       },
       {
-        titulo: "Estudo de Finais",
-        subitens: [
-          "Final de torre",
-          "Final de bispo vs cavalo",
-          "Final com peões passados",
-        ],
+        titulo: "Recursão",
+        descricao:
+`\tFunção que chama a si mesma para resolver um problema.\n
+\tÚtil para algoritmos como fatorial, Fibonacci, etc.`
       },
       {
-        titulo: "Cálculo e Visualização",
-        subitens: [
-          "Análise de variantes",
-          "Pensamento em profundidade (2-3 jogadas à frente)",
-        ],
+        titulo: "Algoritmos e complexidade",
+        descricao:
+`\tEstudo de eficiência de algoritmos.\n
+\t• Complexidade de tempo (ex: O(n))\n
+\t• Complexidade de espaço\n
+\tAjuda a escrever código mais rápido e eficiente.`
       },
       {
-        titulo: "Estudo de Partidas Clássicas",
-        subitens: [
-          "Análise de partidas famosas",
-          "Estilo de jogadores históricos (Kasparov, Fischer, Carlsen etc.)",
-        ],
-      },
-      {
-        titulo: "Preparação e Treinamento",
-        subitens: [
-          "Uso de softwares e engines (ex: Chess.com, Lichess, Stockfish)",
-          "Solução diária de táticas",
-          "Revisão de partidas próprias",
-        ],
-      },
-      {
-        titulo: "Competição",
-        subitens: [
-          "Participar de torneios online ou presenciais",
-          "Controle de tempo (blitz, bullet, clássico)",
-          "Psicologia no jogo",
-        ],
-      },
-    ],
-  },
+        titulo: "Estruturas de dados",
+        descricao:
+`\tTécnicas de organização de dados:\n
+\t• Pilha (stack), fila (queue)\n
+\t• Árvores, grafos\n
+\t• Mapas, conjuntos (sets)`
+      }
+    ]
+  }
 ];
+
 
 const STORAGE_KEY = "progresso_xadrez";
 
@@ -238,22 +223,13 @@ export default function Roadmap() {
                 key={i}
                 style={[styles.subtopicText, { backgroundColor: secao.cor }]}
               >
-                <Text
-                  style={{
-                    fontSize: 26,
-                    fontWeight: "600",
-                    textAlign: "left",
-                  }}
-                >
-                  {item.titulo}
-                </Text>
-                {item.subitens.map((sub, j) => {
-                  const id = `${idx}-${i}-${j}`;
+                {(() => {
+                  const id = `${idx}-${i}`;
                   const feito = progresso[id];
                   const expandido = expandidos[id];
 
                   return (
-                    <View key={j}>
+                    <View>
                       <View
                         style={{
                           flexDirection: "row",
@@ -269,22 +245,22 @@ export default function Roadmap() {
                           <Text
                             style={{
                               textAlign: "left",
-                              fontSize: 26,
-                              paddingHorizontal: 12,
-                              paddingVertical: 10,
+                              fontWeight: '700',
+                              fontSize: 30,
+                              padding: 12,
                               color: feito ? "#10b981" : "#000",
                               textDecorationLine: feito
                                 ? "line-through"
                                 : "none",
                             }}
                           >
-                            {feito ? "✅ " : "◻️ "} {sub}
+                            {feito ? "✅ " : "◻️ "} {item.titulo}
                           </Text>
                         </Pressable>
 
                         <TouchableOpacity
                           onPress={() => alternarExpandido(id)}
-                          style={{ paddingHorizontal: 10 }}
+                          style={{ paddingHorizontal: 40 }}
                         >
                           <Text style={{ fontSize: 35, fontWeight: "900" }}>
                             {expandido ? "−" : "+"}
@@ -295,20 +271,19 @@ export default function Roadmap() {
                       {expandido && (
                         <Text
                           style={{
-                            fontSize: 26,
+                            fontSize: 25,
                             paddingHorizontal: 20,
                             paddingBottom: 10,
                             color: "#555",
-                            fontStyle: "italic",
+                            fontWeight: '700'
                           }}
                         >
-                          {/* Você pode substituir isso por dados reais futuramente */}
-                          Mais detalhes sobre: {sub}
+                          {item.descricao}
                         </Text>
                       )}
                     </View>
                   );
-                })}
+                })()}
               </View>
             ))}
           </View>
@@ -332,8 +307,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     borderColor: "#242E3F",
     borderWidth: 3,
-    minWidth: "60%",
-    maxWidth: "90%",
+    width: "70%",
   },
   topicText: {
     fontSize: 40,

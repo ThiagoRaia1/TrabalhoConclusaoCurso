@@ -56,24 +56,24 @@ export default function MenuPrincipal() {
           style={styles.button}
           onPress={() =>
             router.push({
-              pathname: "./roadmapSelecionado",
+              pathname: "./roadmapProgramacao",
               params: { tema: "Inteligência Artificial" },
             })
           }
         >
-          <Text style={styles.buttonText}>Roadmap - Texto</Text>
+          <Text style={styles.buttonText}>Roadmap - Fundamentos de programação</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
             router.push({
-              pathname: "./roadmap",
+              pathname: "./roadmapXadrez",
               params: { tema: "Inteligência Artificial" },
             })
           }
         >
-          <Text style={styles.buttonText}>Roadmap</Text>
+          <Text style={styles.buttonText}>Roadmap - Xadrez</Text>
         </TouchableOpacity>
 
         {/* Adicione mais itens para ver o scroll funcionando */}
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 100,
-    width: "20%",
+    minWidth: "40%",
     minHeight: "5%",
     alignSelf: "center",
     alignItems: "center",

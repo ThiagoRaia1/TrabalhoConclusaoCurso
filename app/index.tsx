@@ -13,6 +13,7 @@ import {
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useAuth } from "../context/auth";
 import { BlurView } from "expo-blur";
+import { router } from "expo-router";
 
 export default function Login() {
   const { usuario, handleLogin, setUsuario } = useAuth();
@@ -58,13 +59,28 @@ export default function Login() {
               />
             </TouchableOpacity>
           </View>
-
-          <TouchableOpacity
-            style={[styles.button, getSoftShadow()]}
-            onPress={() => handleLogin(senha)}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: '100%',
+              alignItems: 'center'
+            }}
           >
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, getSoftShadow()]}
+              onPress={() => router.push('./cadastro')}
+            >
+              <Text style={[styles.buttonText, {fontSize: 18}]}>Cadastre-se</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.button, getSoftShadow()]}
+              onPress={() => handleLogin(senha)}
+            >
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -185,8 +201,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 100,
     width: "40%",
-    alignSelf: "flex-end",
+    height: '100%',
     alignItems: "center",
+    justifyContent: 'center'
   },
   buttonText: {
     color: "white",
