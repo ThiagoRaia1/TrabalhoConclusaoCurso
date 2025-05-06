@@ -13,8 +13,8 @@ import {
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
-import { cadastrarUsuario } from "./api";
 import { Dimensions, PixelRatio } from 'react-native';
+import cadastrarUsuario from "../../services/apiCadastro";
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const scale = SCREEN_WIDTH / 320;
@@ -33,7 +33,7 @@ export default function Login() {
   const [mostrarErro, setMostrarErro] = useState(false);
 
   return (
-    <ScrollView style={{ backgroundColor: '#ccc' }}>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ backgroundColor: '#ccc' }}>
       <View style={[styles.elevation, getStrongShadow()]}>
         <TouchableOpacity style={{ position: "absolute", top: 10, right: 10 }} onPress={() => router.push('./')}>
           <MaterialIcons name="logout" size={50} color="black"/>
@@ -48,20 +48,17 @@ export default function Login() {
             width: "80%",
             gap: 20,
             alignItems: "center",
-            backgroundColor: "white",
             borderRadius: 20,
           }}
         >
+          {/* junta isso numa view pra centralizar e manter o "Nome:" 
+          do lado esquerdo do input */}
           <View
-            style={{
-              width: "100%",
-              padding: 20,
-            }}
+            style={styles.labelInputBlock}
           >
             <Text
               style={{
-                alignSelf: "flex-start",
-                fontSize: normalize(20),
+                fontSize: normalize(5),
                 fontWeight: "600",
                 color: "black",
               }}
@@ -83,15 +80,12 @@ export default function Login() {
           </View>
 
           <View
-            style={{
-              width: "100%",
-              padding: 20,
-            }}
+            style={styles.labelInputBlock}
           >
             <Text
               style={{
                 alignSelf: "flex-start",
-                fontSize: normalize(20),
+                fontSize: normalize(5),
                 fontWeight: "600",
                 color: "black",
               }}
@@ -112,15 +106,12 @@ export default function Login() {
             </View>
           </View>
           <View
-            style={{
-              width: "100%",
-              padding: 20,
-            }}
+            style={styles.labelInputBlock}
           >
             <Text
               style={{
                 alignSelf: "flex-start",
-                fontSize: normalize(20),
+                fontSize: normalize(5),
                 fontWeight: "600",
                 color: "black",
               }}
@@ -151,7 +142,7 @@ export default function Login() {
             style={[styles.button, getSoftShadow()]}
             onPress={async () => {
               try {
-                await cadastrarUsuario(email, senha, nome);
+                await cadastrarUsuario(nome, email, senha);
                 router.push("./cadastro");
               } catch (error: any) {
                 setErro(error.message); // Captura o erro da API
@@ -161,7 +152,7 @@ export default function Login() {
           >
             <Text style={[styles.buttonText]}>Realizar cadastro</Text>
           </TouchableOpacity>
-          {mostrarErro && <Text style={{ fontSize: normalize(20) }}>{erro}</Text>}
+          {mostrarErro && <Text style={{ fontSize: normalize(5) }}>{erro}</Text>}
         </View>
       </View>
     </ScrollView>
@@ -240,6 +231,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: "black",
   },
+  labelInputBlock: {
+    padding: 20,
+    alignItems: "flex-start",
+    minWidth: '70%'
+  },
   input: {
     flex: 1,
     fontSize: 35,
@@ -256,7 +252,7 @@ const styles = StyleSheet.create({
     borderColor: "#319594",
     borderRadius: 8,
     justifyContent: "space-between",
-    width: "100%",
+    width: '100%'
   },
   button: {
     backgroundColor: "#2596be",
@@ -271,21 +267,5 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 35,
     fontWeight: "700",
-  },
-  imageArea: {
-    flex: 7,
-    flexDirection: "row",
-    backgroundColor: "#2596be",
-    justifyContent: "space-around",
-    paddingHorizontal: 20,
-    alignItems: "center",
-  },
-  backgroundImage: {
-    maxWidth: "60%",
-  },
-  propagandaText: {
-    fontSize: 30,
-    color: "white",
-    textAlign: "center",
   },
 });

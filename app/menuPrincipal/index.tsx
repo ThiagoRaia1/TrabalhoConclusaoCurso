@@ -12,7 +12,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useState } from "react";
 import { router } from "expo-router";
 import { enviarPrompt } from "../../services/openai";
-import { MenuSuspenso, TopBarMenu } from "../components/topBar";
+import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 
 const { height: windowHeight } = Dimensions.get("window"); // Altura da tela
 

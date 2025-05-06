@@ -10,7 +10,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import { router } from "expo-router";
-import { MenuSuspenso, TopBarMenu } from "../components/topBar";
+import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 
 type Item = {
   titulo: string;

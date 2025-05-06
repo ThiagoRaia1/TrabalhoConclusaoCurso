@@ -9,7 +9,7 @@ type Props = {
   setMenuVisivel: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
+export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
   console.log("TopBarMenu renderizado");
   const alternarMenu = () => {
     setMenuVisivel(!menuVisivel);

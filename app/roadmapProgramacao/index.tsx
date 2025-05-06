@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { router } from "expo-router";
-import { MenuSuspenso, TopBarMenu } from "../components/topBar";
+import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 
 const { width, height } = Dimensions.get("window");
 
