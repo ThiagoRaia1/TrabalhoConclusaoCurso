@@ -8,10 +8,21 @@ import {
   ViewStyle,
   TextInput,
   Text,
+  ScrollView,
 } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { cadastrarUsuario } from "./api";
+import { Dimensions, PixelRatio } from 'react-native';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const scale = SCREEN_WIDTH / 320;
+
+function normalize(size: number) {
+  const newSize = size * scale;
+  return Math.round(PixelRatio.roundToNearestPixel(newSize));
+}
 
 export default function Login() {
   const [nome, setNome] = useState("");
@@ -22,8 +33,11 @@ export default function Login() {
   const [mostrarErro, setMostrarErro] = useState(false);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={{ backgroundColor: '#ccc' }}>
       <View style={[styles.elevation, getStrongShadow()]}>
+        <TouchableOpacity style={{ position: "absolute", top: 10, right: 10 }} onPress={() => router.push('./')}>
+          <MaterialIcons name="logout" size={50} color="black"/>
+        </TouchableOpacity>
         <View style={{ alignItems: "center", marginTop: 80 }}>
           <FontAwesome5 name="user-graduate" size={250} color="black" />
           <Text style={styles.titleText}>AI Teacher</Text>
@@ -47,7 +61,7 @@ export default function Login() {
             <Text
               style={{
                 alignSelf: "flex-start",
-                fontSize: 40,
+                fontSize: normalize(20),
                 fontWeight: "600",
                 color: "black",
               }}
@@ -63,7 +77,7 @@ export default function Login() {
                 value={nome}
                 onChangeText={(nome) => setNome(nome)}
                 returnKeyType="done"
-                // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+              // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
               />
             </View>
           </View>
@@ -77,7 +91,7 @@ export default function Login() {
             <Text
               style={{
                 alignSelf: "flex-start",
-                fontSize: 40,
+                fontSize: normalize(20),
                 fontWeight: "600",
                 color: "black",
               }}
@@ -93,7 +107,7 @@ export default function Login() {
                 value={email}
                 onChangeText={(email) => setEmail(email)}
                 returnKeyType="done"
-                // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+              // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
               />
             </View>
           </View>
@@ -106,7 +120,7 @@ export default function Login() {
             <Text
               style={{
                 alignSelf: "flex-start",
-                fontSize: 40,
+                fontSize: normalize(20),
                 fontWeight: "600",
                 color: "black",
               }}
@@ -122,7 +136,7 @@ export default function Login() {
                 value={senha}
                 onChangeText={(senha) => setSenha(senha)}
                 returnKeyType="done"
-                // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+              // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
               />
               <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
                 <FontAwesome5
@@ -147,10 +161,10 @@ export default function Login() {
           >
             <Text style={[styles.buttonText]}>Realizar cadastro</Text>
           </TouchableOpacity>
-          {mostrarErro && <Text style={{ fontSize: 30 }}>{erro}</Text>}
+          {mostrarErro && <Text style={{ fontSize: normalize(20) }}>{erro}</Text>}
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -217,11 +231,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white", // necessário para sombra
     padding: 30,
+    paddingBottom: 100,
     borderRadius: 20,
     margin: 20,
   },
   titleText: {
-    fontSize: 40,
+    fontSize: 50,
+    fontWeight: '600',
     color: "black",
   },
   input: {
