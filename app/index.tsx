@@ -63,15 +63,17 @@ export default function Login() {
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              width: '100%',
-              alignItems: 'center'
+              width: "100%",
+              alignItems: "center",
             }}
           >
             <TouchableOpacity
               style={[styles.button, getSoftShadow()]}
-              onPress={() => router.push('./cadastro')}
+              onPress={() => router.push("./cadastro")}
             >
-              <Text style={[styles.buttonText, {fontSize: 18}]}>Cadastre-se</Text>
+              <Text style={[styles.buttonText, { fontSize: 18 }]}>
+                Cadastre-se
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -201,9 +203,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 100,
     width: "40%",
-    height: '100%',
+    height: "100%",
     alignItems: "center",
-    justifyContent: 'center'
+    justifyContent: "center",
   },
   buttonText: {
     color: "white",

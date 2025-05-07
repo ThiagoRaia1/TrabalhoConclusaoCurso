@@ -16,7 +16,10 @@ export const enviarPrompt = async (prompt: string) => {
     const resposta = await api.post("/chat/completions", {
       model: "gpt-3.5-turbo",
       messages: [
-        { role: "system", content: "Você é um assistente útil para gerar roadmaps de estudo." },
+        {
+          role: "system",
+          content: "Você é um assistente útil para gerar roadmaps de estudo.",
+        },
         { role: "user", content: prompt },
       ],
       temperature: 0.7,
@@ -25,9 +28,9 @@ export const enviarPrompt = async (prompt: string) => {
     return resposta.data.choices[0].message.content;
   } catch (erro: any) {
     if (erro.response?.status === 429) {
-        return "Você fez muitas requisições em pouco tempo. Tente novamente em instantes.";
-      }
+      return "Você fez muitas requisições em pouco tempo. Tente novamente em instantes.";
+    }
     console.error("Erro na API:", erro);
-    return `Erro ao gerar resposta. ${erro}`
+    return `Erro ao gerar resposta. ${erro}`;
   }
 };

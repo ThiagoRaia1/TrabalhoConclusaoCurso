@@ -5,7 +5,7 @@ const API_URL = `http://localhost:3000/usuario`;
 export default async function cadastrarUsuario(
   nome: string,
   login: string,
-  senha: string,
+  senha: string
 ) {
   try {
     const response = await axios.post(`${API_URL}`, {

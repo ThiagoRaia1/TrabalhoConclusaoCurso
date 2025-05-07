@@ -36,65 +36,85 @@ export default function MenuPrincipal() {
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text
-          style={[styles.topBarText, { color: "black", alignSelf: "center" }]}
-        >
-          Crie seu primeiro Roadmap!
-        </Text>
+
+      <View style={styles.topContent}>
+        <Text style={styles.topBarText}>Crie seu primeiro Roadmap!</Text>
+
         <View style={styles.inputContainer}>
           <TextInput
             style={[styles.input, { outlineStyle: "none" } as any]}
             placeholder="Digite o prompt para criação do roadmap"
             placeholderTextColor="#ccc"
-            // onChangeText={(text) => setSenha(text)}
+            value={prompt}
+            onChangeText={setPrompt}
             returnKeyType="done"
-            // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+            onSubmitEditing={gerarResposta}
           />
         </View>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            router.push({
-              pathname: "./roadmapProgramacao",
-              params: { tema: "Inteligência Artificial" },
-            })
-          }
-        >
-          <Text style={styles.buttonText}>Roadmap - Fundamentos de programação</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            router.push({
-              pathname: "./roadmapXadrez",
-              params: { tema: "Inteligência Artificial" },
-            })
-          }
-        >
-          <Text style={styles.buttonText}>Roadmap - Xadrez</Text>
-        </TouchableOpacity>
-
-        {/* Adicione mais itens para ver o scroll funcionando */}
-        {resposta && (
+        {resposta !== "" && (
           <View style={{ marginTop: 20, padding: 20 }}>
             <Text style={{ fontSize: 18 }}>{resposta}</Text>
           </View>
         )}
-      </ScrollView>
+      </View>
+
+      {/* Parte inferior centralizada */}
+      <View style={styles.bottomContent}>
+        <Text>Conheça um de nossos Roadmaps!</Text>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            router.push({
+              pathname: "./roadmap",
+              params: { tema: "Programação" },
+            })
+          }
+        >
+          <Text style={styles.buttonText}>
+            Roadmap - Fundamentos de programação
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            router.push({ pathname: "./roadmap", params: { tema: "Xadrez" } })
+          }
+        >
+          <Text style={styles.buttonText}>Roadmap - Xadrez</Text>
+        </TouchableOpacity>
+      </View>
+
       {menuVisivel && <MenuSuspenso />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContent: {
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+    justifyContent: "space-between", // separa parte de cima e de baixo
+  },
+  topContent: {
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "white",
     gap: 20,
+  },
+  bottomContent: {
+    alignSelf: "center",
+    alignItems: "center",
+    gap: 20,
+    marginBottom: 40,
+    minWidth: "40%",
+  },
+  topBarText: {
+    fontSize: 30,
+    color: "black",
+    textAlign: "center",
   },
   inputContainer: {
     flexDirection: "row",
@@ -109,9 +129,8 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 26,
-    maxWidth: "95%",
-    height: 70,
+    fontSize: 20,
+    height: 60,
     backgroundColor: "white",
   },
   button: {
@@ -119,20 +138,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 100,
-    minWidth: "40%",
-    minHeight: "5%",
-    alignSelf: "center",
+    minWidth: "70%",
     alignItems: "center",
-    justifyContent: "center",
   },
   buttonText: {
     color: "white",
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "700",
-  },
-  topBarText: {
-    color: "white",
-    fontSize: 30,
-    alignSelf: "center",
   },
 });

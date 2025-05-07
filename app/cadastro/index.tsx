@@ -13,10 +13,10 @@ import {
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
-import { Dimensions, PixelRatio } from 'react-native';
+import { Dimensions, PixelRatio } from "react-native";
 import cadastrarUsuario from "../../services/apiCadastro";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const scale = SCREEN_WIDTH / 320;
 
 function normalize(size: number) {
@@ -33,10 +33,16 @@ export default function Login() {
   const [mostrarErro, setMostrarErro] = useState(false);
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ backgroundColor: '#ccc' }}>
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      style={{ backgroundColor: "#ccc" }}
+    >
       <View style={[styles.elevation, getStrongShadow()]}>
-        <TouchableOpacity style={{ position: "absolute", top: 10, right: 10 }} onPress={() => router.push('./')}>
-          <MaterialIcons name="logout" size={50} color="black"/>
+        <TouchableOpacity
+          style={{ position: "absolute", top: 10, right: 10 }}
+          onPress={() => router.push("./")}
+        >
+          <MaterialIcons name="logout" size={50} color="black" />
         </TouchableOpacity>
         <View style={{ alignItems: "center", marginTop: 80 }}>
           <FontAwesome5 name="user-graduate" size={250} color="black" />
@@ -53,9 +59,7 @@ export default function Login() {
         >
           {/* junta isso numa view pra centralizar e manter o "Nome:" 
           do lado esquerdo do input */}
-          <View
-            style={styles.labelInputBlock}
-          >
+          <View style={styles.labelInputBlock}>
             <Text
               style={{
                 fontSize: normalize(5),
@@ -74,14 +78,12 @@ export default function Login() {
                 value={nome}
                 onChangeText={(nome) => setNome(nome)}
                 returnKeyType="done"
-              // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+                // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
               />
             </View>
           </View>
 
-          <View
-            style={styles.labelInputBlock}
-          >
+          <View style={styles.labelInputBlock}>
             <Text
               style={{
                 alignSelf: "flex-start",
@@ -101,13 +103,11 @@ export default function Login() {
                 value={email}
                 onChangeText={(email) => setEmail(email)}
                 returnKeyType="done"
-              // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+                // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
               />
             </View>
           </View>
-          <View
-            style={styles.labelInputBlock}
-          >
+          <View style={styles.labelInputBlock}>
             <Text
               style={{
                 alignSelf: "flex-start",
@@ -127,7 +127,7 @@ export default function Login() {
                 value={senha}
                 onChangeText={(senha) => setSenha(senha)}
                 returnKeyType="done"
-              // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+                // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
               />
               <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
                 <FontAwesome5
@@ -152,7 +152,9 @@ export default function Login() {
           >
             <Text style={[styles.buttonText]}>Realizar cadastro</Text>
           </TouchableOpacity>
-          {mostrarErro && <Text style={{ fontSize: normalize(5) }}>{erro}</Text>}
+          {mostrarErro && (
+            <Text style={{ fontSize: normalize(5) }}>{erro}</Text>
+          )}
         </View>
       </View>
     </ScrollView>
@@ -228,13 +230,13 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 50,
-    fontWeight: '600',
+    fontWeight: "600",
     color: "black",
   },
   labelInputBlock: {
     padding: 20,
     alignItems: "flex-start",
-    minWidth: '70%'
+    minWidth: "70%",
   },
   input: {
     flex: 1,
@@ -252,7 +254,7 @@ const styles = StyleSheet.create({
     borderColor: "#319594",
     borderRadius: 8,
     justifyContent: "space-between",
-    width: '100%'
+    width: "100%",
   },
   button: {
     backgroundColor: "#2596be",
