@@ -21,15 +21,19 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
       </View>
       <View style={{ flexDirection: "row", gap: 30 }}>
         <TouchableOpacity
-          style={{
-            alignSelf: "center",
-            paddingVertical: 10,
-            paddingHorizontal: 20,
-          }}
-          onPress={() => router.push('./menuPrincipal')}
+          style={styles.topBarButton}
+          onPress={() => router.push("./meusRoadmaps")}
+        >
+          <Text style={styles.topBarText}>MEUS ROADMAPS</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.topBarButton}
+          onPress={() => router.push("./menuPrincipal")}
         >
           <Text style={styles.topBarText}>INÍCIO</Text>
         </TouchableOpacity>
+
         {/* <Text style={styles.topBarText}>Topo</Text>
         <Text style={styles.topBarText}>Topo</Text> */}
         <TouchableOpacity onPress={exibeMenu}>
@@ -71,6 +75,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 50,
     zIndex: 10,
+  },
+  topBarButton: {
+    alignSelf: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "#697385",
   },
   topBarText: {
     color: "white",
