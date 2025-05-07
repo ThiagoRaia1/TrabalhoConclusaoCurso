@@ -8,12 +8,12 @@ import {
   ViewStyle,
   TextInput,
   Text,
-  ScrollView,
+  Dimensions,
+  PixelRatio,
 } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
-import { Dimensions, PixelRatio } from "react-native";
 import cadastrarUsuario from "../../services/apiCadastro";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -33,91 +33,51 @@ export default function Login() {
   const [mostrarErro, setMostrarErro] = useState(false);
 
   return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      style={{ backgroundColor: "#ccc" }}
-    >
+    <View style={[styles.container, { backgroundColor: "#ccc" }]}>
       <View style={[styles.elevation, getStrongShadow()]}>
         <TouchableOpacity
-          style={{ position: "absolute", top: 10, right: 10 }}
+          style={styles.arrowBack}
           onPress={() => router.push("./")}
         >
-          <MaterialIcons name="logout" size={50} color="black" />
+          <MaterialIcons name="arrow-back" size={30} color="black" />
         </TouchableOpacity>
-        <View style={{ alignItems: "center", marginTop: 80 }}>
-          <FontAwesome5 name="user-graduate" size={250} color="black" />
+
+        <View style={styles.logoContainer}>
+          <FontAwesome5 name="user-graduate" size={100} color="black" />
           <Text style={styles.titleText}>AI Teacher</Text>
         </View>
 
-        <View
-          style={{
-            width: "80%",
-            gap: 20,
-            alignItems: "center",
-            borderRadius: 20,
-          }}
-        >
-          {/* junta isso numa view pra centralizar e manter o "Nome:" 
-          do lado esquerdo do input */}
+        <View style={styles.formContainer}>
           <View style={styles.labelInputBlock}>
-            <Text
-              style={{
-                fontSize: normalize(5),
-                fontWeight: "600",
-                color: "black",
-              }}
-            >
-              Nome:
-            </Text>
+            <Text style={styles.label}>Nome:</Text>
             <View style={[styles.inputContainer, getSoftShadow()]}>
               <TextInput
-                /* O "as any" ignora o erro*/
                 style={[styles.input, { outlineStyle: "none" } as any]}
                 placeholder="Nome"
                 placeholderTextColor="#ccc"
                 value={nome}
-                onChangeText={(nome) => setNome(nome)}
+                onChangeText={setNome}
                 returnKeyType="done"
-                // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
               />
             </View>
           </View>
 
           <View style={styles.labelInputBlock}>
-            <Text
-              style={{
-                alignSelf: "flex-start",
-                fontSize: normalize(5),
-                fontWeight: "600",
-                color: "black",
-              }}
-            >
-              Email:
-            </Text>
+            <Text style={styles.label}>Email:</Text>
             <View style={[styles.inputContainer, getSoftShadow()]}>
               <TextInput
-                /* O "as any" ignora o erro*/
                 style={[styles.input, { outlineStyle: "none" } as any]}
                 placeholder="Email"
                 placeholderTextColor="#ccc"
                 value={email}
-                onChangeText={(email) => setEmail(email)}
+                onChangeText={setEmail}
                 returnKeyType="done"
-                // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
               />
             </View>
           </View>
+
           <View style={styles.labelInputBlock}>
-            <Text
-              style={{
-                alignSelf: "flex-start",
-                fontSize: normalize(5),
-                fontWeight: "600",
-                color: "black",
-              }}
-            >
-              Senha:
-            </Text>
+            <Text style={styles.label}>Senha:</Text>
             <View style={[styles.inputContainer, getSoftShadow()]}>
               <TextInput
                 style={[styles.input, { outlineStyle: "none" } as any]}
@@ -125,19 +85,19 @@ export default function Login() {
                 placeholderTextColor="#ccc"
                 secureTextEntry={!mostrarSenha}
                 value={senha}
-                onChangeText={(senha) => setSenha(senha)}
+                onChangeText={setSenha}
                 returnKeyType="done"
-                // onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
               />
               <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
                 <FontAwesome5
                   name={mostrarSenha ? "eye-slash" : "eye"}
-                  size={30}
+                  size={20}
                   color="black"
                 />
               </TouchableOpacity>
             </View>
           </View>
+
           <TouchableOpacity
             style={[styles.button, getSoftShadow()]}
             onPress={async () => {
@@ -145,23 +105,22 @@ export default function Login() {
                 await cadastrarUsuario(nome, email, senha);
                 router.push("./cadastro");
               } catch (error: any) {
-                setErro(error.message); // Captura o erro da API
-                setMostrarErro(true); // Exibe a mensagem de erro
+                setErro(error.message);
+                setMostrarErro(true);
               }
             }}
           >
-            <Text style={[styles.buttonText]}>Realizar cadastro</Text>
+            <Text style={styles.buttonText}>Cadastrar</Text>
           </TouchableOpacity>
-          {mostrarErro && (
-            <Text style={{ fontSize: normalize(5) }}>{erro}</Text>
-          )}
+
+          {mostrarErro && <Text style={styles.erroText}>{erro}</Text>}
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
-// Sombra forte (para elevation)
+// Sombras
 const getStrongShadow = (): StyleProp<ViewStyle> => {
   if (Platform.OS === "ios") {
     return {
@@ -171,23 +130,12 @@ const getStrongShadow = (): StyleProp<ViewStyle> => {
       shadowRadius: 8,
     };
   }
-
-  if (Platform.OS === "android") {
-    return {
-      elevation: 20,
-    };
-  }
-
-  if (Platform.OS === "web") {
-    return {
-      boxShadow: "0px 10px 30px rgba(0,0,0,0.4)",
-    };
-  }
-
+  if (Platform.OS === "android") return { elevation: 20 };
+  if (Platform.OS === "web")
+    return { boxShadow: "0px 10px 30px rgba(0,0,0,0.4)" };
   return {};
 };
 
-// Sombra suave (para inputs e botão)
 const getSoftShadow = (): StyleProp<ViewStyle> => {
   if (Platform.OS === "ios") {
     return {
@@ -197,77 +145,88 @@ const getSoftShadow = (): StyleProp<ViewStyle> => {
       shadowRadius: 3,
     };
   }
-
-  if (Platform.OS === "android") {
-    return {
-      elevation: 6,
-    };
-  }
-
-  if (Platform.OS === "web") {
-    return {
-      boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
-    };
-  }
-
+  if (Platform.OS === "android") return { elevation: 6 };
+  if (Platform.OS === "web")
+    return { boxShadow: "0px 4px 10px rgba(0,0,0,0.2)" };
   return {};
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "row",
+    justifyContent: "center",
   },
   elevation: {
     flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    backgroundColor: "white", // necessário para sombra
-    padding: 30,
-    paddingBottom: 100,
-    borderRadius: 20,
+    justifyContent: "center",
     margin: 20,
+    padding: 20,
+    borderRadius: 15,
+    backgroundColor: "white",
+    alignItems: "center",
+  },
+  arrowBack: {
+    position: "absolute",
+    top: 10,
+    left: 10,
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 10,
   },
   titleText: {
-    fontSize: 50,
+    fontSize: 28,
     fontWeight: "600",
     color: "black",
   },
-  labelInputBlock: {
-    padding: 20,
-    alignItems: "flex-start",
-    minWidth: "70%",
+  formContainer: {
+    width: "100%",
+    alignItems: "center",
+    gap: 10,
+    paddingTop: 10,
   },
-  input: {
-    flex: 1,
-    fontSize: 35,
-    maxWidth: "95%",
-    height: 70,
-    backgroundColor: "white",
+  labelInputBlock: {
+    width: "60%",
+  },
+  label: {
+    fontSize: normalize(6),
+    fontWeight: "600",
+    color: "black",
+    marginBottom: 5,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
-    padding: 15,
+    paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: "#319594",
     borderRadius: 8,
     justifyContent: "space-between",
-    width: "100%",
+  },
+  input: {
+    flex: 1,
+    fontSize: 18,
+    height: 40,
+    backgroundColor: "white",
   },
   button: {
+    marginTop: 10,
     backgroundColor: "#2596be",
+    paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 100,
-    width: "40%",
-    height: "12%",
     alignItems: "center",
     justifyContent: "center",
   },
   buttonText: {
     color: "white",
-    fontSize: 35,
+    fontSize: 20,
     fontWeight: "700",
+  },
+  erroText: {
+    fontSize: normalize(5),
+    color: "red",
+    marginTop: 10,
   },
 });

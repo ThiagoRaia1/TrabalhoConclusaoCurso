@@ -9,8 +9,8 @@ type Props = {
 };
 
 export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
-  console.log("TopBarMenu renderizado");
-  const alternarMenu = () => {
+  // console.log("TopBarMenu renderizado");
+  const exibeMenu = () => {
     setMenuVisivel(!menuVisivel);
   };
 
@@ -32,7 +32,7 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
         </TouchableOpacity>
         {/* <Text style={styles.topBarText}>Topo</Text>
         <Text style={styles.topBarText}>Topo</Text> */}
-        <TouchableOpacity onPress={alternarMenu}>
+        <TouchableOpacity onPress={exibeMenu}>
           <FontAwesome name="user-circle" size={70} color="white" />
         </TouchableOpacity>
       </View>
