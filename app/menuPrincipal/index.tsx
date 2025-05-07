@@ -38,7 +38,7 @@ export default function MenuPrincipal() {
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
 
       <View style={styles.topContent}>
-        <Text style={styles.topBarText}>Crie seu primeiro Roadmap!</Text>
+        <Text style={styles.message}>Crie seu primeiro Roadmap!</Text>
 
         <View style={styles.inputContainer}>
           <TextInput
@@ -61,7 +61,7 @@ export default function MenuPrincipal() {
 
       {/* Parte inferior centralizada */}
       <View style={styles.bottomContent}>
-        <Text>Conheça um de nossos Roadmaps!</Text>
+        <Text style={styles.message}>Conheça um de nossos Roadmaps!</Text>
 
         <TouchableOpacity
           style={styles.button}
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     minWidth: "40%",
   },
-  topBarText: {
+  message: {
     fontSize: 30,
     color: "black",
     textAlign: "center",
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 100,
-    minWidth: "70%",
+    width: "100%",
     alignItems: "center",
   },
   buttonText: {

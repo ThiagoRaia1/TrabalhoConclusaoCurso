@@ -1,4 +1,3 @@
-// TopBarMenu.tsx
 import React from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -21,9 +20,9 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
         <Text style={styles.topBarText}>AI TEACHER</Text>
       </View>
       <View style={{ flexDirection: "row", gap: 40 }}>
+        {/* <Text style={styles.topBarText}>Topo</Text>
         <Text style={styles.topBarText}>Topo</Text>
-        <Text style={styles.topBarText}>Topo</Text>
-        <Text style={styles.topBarText}>Topo</Text>
+        <Text style={styles.topBarText}>Topo</Text> */}
         <TouchableOpacity onPress={alternarMenu}>
           <FontAwesome name="user-circle" size={70} color="white" />
         </TouchableOpacity>
