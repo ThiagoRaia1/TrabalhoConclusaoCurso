@@ -16,12 +16,21 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
 
   return (
     <View style={styles.topBar}>
-      <View style={{ flexDirection: "row", gap: 40 }}>
+      <View style={{ flexDirection: "row", gap: 30 }}>
         <Text style={styles.topBarText}>AI TEACHER</Text>
       </View>
-      <View style={{ flexDirection: "row", gap: 40 }}>
+      <View style={{ flexDirection: "row", gap: 30 }}>
+        <TouchableOpacity
+          style={{
+            alignSelf: "center",
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+          }}
+          onPress={() => router.push('./menuPrincipal')}
+        >
+          <Text style={styles.topBarText}>INÍCIO</Text>
+        </TouchableOpacity>
         {/* <Text style={styles.topBarText}>Topo</Text>
-        <Text style={styles.topBarText}>Topo</Text>
         <Text style={styles.topBarText}>Topo</Text> */}
         <TouchableOpacity onPress={alternarMenu}>
           <FontAwesome name="user-circle" size={70} color="white" />
