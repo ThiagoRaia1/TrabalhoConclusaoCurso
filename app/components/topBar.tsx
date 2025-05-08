@@ -68,11 +68,12 @@ export function MenuSuspenso() {
 
 const styles = StyleSheet.create({
   topBar: {
-    height: 100,
     flexDirection: "row",
     backgroundColor: "#242E3F",
     justifyContent: "space-between",
     alignItems: "center",
+    width: '100%',
+    height: 100,
     paddingHorizontal: 50,
     zIndex: 10,
   },

@@ -25,6 +25,11 @@ export default function Login() {
     useNormalize();
 
   const dynamicStyles = {
+    text: {
+      fontSize: normalize({ base: 8 }),
+      fontWeight: normalizeFontWeight({ max: 400 }),
+      marginBottom: 5,
+    },
     titleText: {
       fontSize: normalize({ base: 28 }),
       fontWeight: normalizeFontWeight({ max: 600 }),
@@ -39,7 +44,7 @@ export default function Login() {
     },
     buttonText: {
       color: "white",
-      fontSize: normalize({ base: 4 }),
+      fontSize: normalize({ base: 6 }),
       fontWeight: normalizeFontWeight({ max: 600 }),
       margin: -20,
     },
@@ -56,51 +61,64 @@ export default function Login() {
           />
           <Text style={dynamicStyles.titleText}>AI Teacher</Text>
 
-          <View style={[styles.inputContainer, getSoftShadow()]}>
-            <TextInput
-              /* O "as any" ignora o erro*/
-              style={[
-                dynamicStyles.inputText,
-                { outlineStyle: "none" } as any,
-                { height: normalizeHeight({ base: 15 }) },
-              ]}
-              placeholder="Email"
-              placeholderTextColor="#ccc"
-              value={usuario.login}
-              onChangeText={(text) => setUsuario({ ...usuario, login: text })}
-              returnKeyType="done"
-              onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
-            />
+          <View style={{ width: "60%", gap: 40 }}>
+            <View>
+              <Text style={dynamicStyles.text}>Email:</Text>
+              <View style={[styles.inputContainer, getSoftShadow()]}>
+                <TextInput
+                  /* O "as any" ignora o erro*/
+                  style={[
+                    dynamicStyles.inputText,
+                    { outlineStyle: "none" } as any,
+                    { height: normalizeHeight({ base: 15 }) },
+                  ]}
+                  placeholder="Email"
+                  placeholderTextColor="#ccc"
+                  value={usuario.login}
+                  onChangeText={(text) =>
+                    setUsuario({ ...usuario, login: text })
+                  }
+                  returnKeyType="done"
+                  onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+                />
+              </View>
+            </View>
+
+            <View>
+              <Text style={dynamicStyles.text}>Senha:</Text>
+              <View style={[styles.inputContainer, getSoftShadow()]}>
+                <TextInput
+                  style={[
+                    dynamicStyles.inputText,
+                    { outlineStyle: "none" } as any,
+                    { height: normalizeHeight({ base: 15 }) },
+                  ]}
+                  placeholder="Senha"
+                  placeholderTextColor="#ccc"
+                  secureTextEntry={!mostrarSenha}
+                  value={senha}
+                  onChangeText={(text) => setSenha(text)}
+                  returnKeyType="done"
+                  onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+                />
+                <TouchableOpacity
+                  onPress={() => setMostrarSenha(!mostrarSenha)}
+                >
+                  <FontAwesome5
+                    name={mostrarSenha ? "eye-slash" : "eye"}
+                    size={normalizeIconSize(5)}
+                    color="black"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
 
-          <View style={[styles.inputContainer, getSoftShadow()]}>
-            <TextInput
-              style={[
-                dynamicStyles.inputText,
-                { outlineStyle: "none" } as any,
-                { height: normalizeHeight({ base: 15 }) },
-              ]}
-              placeholder="Senha"
-              placeholderTextColor="#ccc"
-              secureTextEntry={!mostrarSenha}
-              value={senha}
-              onChangeText={(text) => setSenha(text)}
-              returnKeyType="done"
-              onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
-            />
-            <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
-              <FontAwesome5
-                name={mostrarSenha ? "eye-slash" : "eye"}
-                size={normalizeIconSize(5)}
-                color="black"
-              />
-            </TouchableOpacity>
-          </View>
           <View
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              width: "100%",
+              width: "60%",
               alignItems: "center",
             }}
           >
@@ -123,19 +141,6 @@ export default function Login() {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
-
-      <View style={styles.imageArea}>
-        <Image
-          source={require("../assets/menuInicialTemporario.png")}
-          style={styles.backgroundImage}
-          resizeMode="contain"
-        />
-        <Text style={styles.propagandaText}>
-          Ensino otimizado e{"\n"}personalizado para você
-        </Text>
-        {/* Borra a imagem */}
-        {/* <BlurView intensity={10} tint="light" style={StyleSheet.absoluteFill} /> */}
       </View>
     </View>
   );
