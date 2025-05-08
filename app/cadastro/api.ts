@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_URL = `http://localhost:3000/usuario`;
 
-export default async function cadastrarUsuario(
+export async function cadastrarUsuario(
   nome: string,
   login: string,
   senha: string

@@ -17,8 +17,6 @@ import secoesProgramacao from "../../data/roadmapProgramacao";
 import secoesXadrez from "../../data/roadmapXadrez";
 import { useLocalSearchParams } from "expo-router";
 
-const { width, height } = Dimensions.get("window");
-
 const temas = [
   ...secoesProgramacao.map((secao) => ({ ...secao, categoria: "Programação" })),
   ...secoesXadrez.map((secao) => ({ ...secao, categoria: "Xadrez" })),

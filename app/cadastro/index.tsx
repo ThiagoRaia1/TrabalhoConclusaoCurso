@@ -12,8 +12,8 @@ import {
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
-import cadastrarUsuario from "../../services/apiCadastro";
 import { useNormalize } from "../../utils/normalize";
+import { cadastrarUsuario } from "./api";
 
 export default function Cadastro() {
   const [nome, setNome] = useState("");
@@ -129,7 +129,7 @@ export default function Cadastro() {
             onPress={async () => {
               try {
                 await cadastrarUsuario(nome, email, senha);
-                alert("Usuário cadastrado.")
+                alert("Usuário cadastrado.");
                 router.push("./");
               } catch (error: any) {
                 setErro(error.message);

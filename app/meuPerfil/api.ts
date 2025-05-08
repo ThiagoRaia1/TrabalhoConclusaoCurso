@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/usuario"
+const API_URL = "http://localhost:3000/usuario";
 
 export async function atualizarUsuario(
   loginAtual: string,

@@ -70,17 +70,19 @@ export default function MeuPerfil() {
           nome: usuarioAtualizado.nome,
         });
 
-        setSenha(senha)
+        setSenha(senha);
 
         setBackupUsuario({ nome, login: usuario.login, senha });
         alert("Dados atualizados com sucesso!");
+        setSenha("");
+        setEditando(!editando);
       } catch (erro: any) {
         alert("Erro ao atualizar os dados: " + erro.message);
       }
     } else {
       setBackupUsuario({ nome, login: usuario.login, senha });
+      setEditando(!editando);
     }
-    setEditando(!editando);
   };
 
   const cancelarEdicao = () => {
@@ -170,7 +172,7 @@ export default function MeuPerfil() {
                   { height: normalizeHeight({ base: 15 }) },
                 ]} // Usando a função normalizeHeight
                 placeholder="Insira sua senha atual para mantê-la."
-                placeholderTextColor={'#a1a1a1'}
+                placeholderTextColor={"#a1a1a1"}
                 value={senha}
                 secureTextEntry
                 onChangeText={setSenha}
@@ -180,7 +182,7 @@ export default function MeuPerfil() {
             </View>
           </View>
 
-          <View style={{ minWidth: "40%" }}>
+          <View style={{ minWidth: 300 }}>
             <TouchableOpacity
               style={[
                 styles.Button,
