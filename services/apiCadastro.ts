@@ -17,8 +17,12 @@ export default async function cadastrarUsuario(
   } catch (error: any) {
     const mensagens = error?.response?.data?.message;
     if (Array.isArray(mensagens)) {
-      throw new Error(mensagens[0]); // Exibe a primeira mensagem
+      throw new Error(mensagens[0]);
     }
+    if (typeof mensagens === "string") {
+      throw new Error(mensagens);
+    }
+    console.log(error.message);
     throw new Error("Erro ao cadastrar usuário");
   }
 }

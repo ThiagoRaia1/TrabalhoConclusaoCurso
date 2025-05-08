@@ -8,29 +8,40 @@ import {
   ViewStyle,
   TextInput,
   Text,
-  Dimensions,
-  PixelRatio,
 } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import cadastrarUsuario from "../../services/apiCadastro";
+import { useNormalize } from "../../utils/normalize";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const scale = SCREEN_WIDTH / 320;
-
-function normalize(size: number) {
-  const newSize = size * scale;
-  return Math.round(PixelRatio.roundToNearestPixel(newSize));
-}
-
-export default function Login() {
+export default function Cadastro() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [erro, setErro] = useState("");
   const [mostrarErro, setMostrarErro] = useState(false);
+
+  const { normalize, normalizeHeight, normalizeFontWeight } = useNormalize();
+
+  const dynamicStyles = {
+    text: {
+      fontSize: normalize({ base: 8 }),
+      fontWeight: normalizeFontWeight({ max: 400 }),
+      marginBottom: 5,
+    },
+    erroText: {
+      fontSize: normalize({ base: 5 }),
+      color: "red",
+      marginTop: 10,
+    },
+    titleText: {
+      fontSize: normalize({ base: 28 }),
+      fontWeight: normalizeFontWeight({ max: 700 }),
+      color: "black",
+    },
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: "#ccc" }]}>
@@ -44,15 +55,20 @@ export default function Login() {
 
         <View style={styles.logoContainer}>
           <FontAwesome5 name="user-graduate" size={100} color="black" />
-          <Text style={styles.titleText}>AI Teacher</Text>
+          <Text style={dynamicStyles.titleText}>AI Teacher</Text>
         </View>
 
         <View style={styles.formContainer}>
           <View style={styles.labelInputBlock}>
-            <Text style={styles.label}>Nome:</Text>
+            <Text style={dynamicStyles.text}>Nome:</Text>
             <View style={[styles.inputContainer, getSoftShadow()]}>
               <TextInput
-                style={[styles.input, { outlineStyle: "none" } as any]}
+                style={[
+                  dynamicStyles.text,
+                  styles.input,
+                  { outlineStyle: "none" } as any,
+                  { height: normalizeHeight({ base: 15 }) },
+                ]} // Usando a função normalizeHeight
                 placeholder="Nome"
                 placeholderTextColor="#ccc"
                 value={nome}
@@ -63,10 +79,15 @@ export default function Login() {
           </View>
 
           <View style={styles.labelInputBlock}>
-            <Text style={styles.label}>Email:</Text>
+            <Text style={dynamicStyles.text}>Email:</Text>
             <View style={[styles.inputContainer, getSoftShadow()]}>
               <TextInput
-                style={[styles.input, { outlineStyle: "none" } as any]}
+                style={[
+                  dynamicStyles.text,
+                  styles.input,
+                  { outlineStyle: "none" } as any,
+                  { height: normalizeHeight({ base: 15 }) },
+                ]} // Usando a função normalizeHeight
                 placeholder="Email"
                 placeholderTextColor="#ccc"
                 value={email}
@@ -77,10 +98,15 @@ export default function Login() {
           </View>
 
           <View style={styles.labelInputBlock}>
-            <Text style={styles.label}>Senha:</Text>
+            <Text style={dynamicStyles.text}>Senha:</Text>
             <View style={[styles.inputContainer, getSoftShadow()]}>
               <TextInput
-                style={[styles.input, { outlineStyle: "none" } as any]}
+                style={[
+                  dynamicStyles.text,
+                  styles.input,
+                  { outlineStyle: "none" } as any,
+                  { height: normalizeHeight({ base: 15 }) },
+                ]} // Usando a função normalizeHeight
                 placeholder="Senha"
                 placeholderTextColor="#ccc"
                 secureTextEntry={!mostrarSenha}
@@ -103,7 +129,8 @@ export default function Login() {
             onPress={async () => {
               try {
                 await cadastrarUsuario(nome, email, senha);
-                router.push("./cadastro");
+                alert("Usuário cadastrado.")
+                router.push("./");
               } catch (error: any) {
                 setErro(error.message);
                 setMostrarErro(true);
@@ -113,7 +140,7 @@ export default function Login() {
             <Text style={styles.buttonText}>Cadastrar</Text>
           </TouchableOpacity>
 
-          {mostrarErro && <Text style={styles.erroText}>{erro}</Text>}
+          {mostrarErro && <Text style={dynamicStyles.erroText}>{erro}</Text>}
         </View>
       </View>
     </View>
@@ -174,25 +201,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
-  titleText: {
-    fontSize: 28,
-    fontWeight: "600",
-    color: "black",
-  },
   formContainer: {
     width: "100%",
     alignItems: "center",
-    gap: 10,
+    gap: 30,
     paddingTop: 10,
   },
   labelInputBlock: {
     width: "60%",
-  },
-  label: {
-    fontSize: normalize(6),
-    fontWeight: "600",
-    color: "black",
-    marginBottom: 5,
+    maxWidth: 700,
   },
   inputContainer: {
     flexDirection: "row",
@@ -206,9 +223,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 18,
-    height: 40,
-    backgroundColor: "white",
   },
   button: {
     marginTop: 10,
@@ -223,10 +237,5 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 20,
     fontWeight: "700",
-  },
-  erroText: {
-    fontSize: normalize(5),
-    color: "red",
-    marginTop: 10,
   },
 });
