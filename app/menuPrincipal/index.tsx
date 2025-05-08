@@ -38,7 +38,7 @@ export default function MenuPrincipal() {
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
 
       <View style={styles.topContent}>
-        <Text style={styles.message}>Crie seu primeiro Roadmap!</Text>
+        <Text style={styles.message}>Crie seu Roadmap!</Text>
 
         <View style={styles.inputContainer}>
           <TextInput

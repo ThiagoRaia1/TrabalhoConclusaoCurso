@@ -75,7 +75,7 @@ export default function Roadmap() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <TouchableOpacity
           style={styles.voltarButton}
-          onPress={() => router.push("./menuPrincipal")}
+          onPress={() => router.back()}
         >
           <Text style={styles.voltarText}>Voltar</Text>
         </TouchableOpacity>

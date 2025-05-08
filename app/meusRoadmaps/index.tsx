@@ -1,64 +1,81 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useState } from "react";
-import { router } from "expo-router";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
 
-function RenderRoadmapSelector() {
+function RenderRoadmapSelector({ tema }: { tema: string }) {
+  const [pressed, setPressed] = useState(false);
+
   return (
-    <TouchableOpacity
+    <Pressable
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
+      onPress={() => router.push({ pathname: "/roadmap", params: { tema } })}
       style={{
         backgroundColor: "#2496BE",
-        width: "20%",
-        height: "20%",
+        width: 200,
+        height: 130,
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 20,
+        borderBottomWidth: pressed ? 0 : 5,
+        borderColor: "#196f8c",
       }}
     >
-      <Text style={{ color: "white", fontSize: 25 }}>Programação</Text>
-    </TouchableOpacity>
+      <Text style={{ color: "white", fontSize: 25 }} selectable={false}>
+        {tema}
+      </Text>
+    </Pressable>
+  );
+}
+
+function RenderCreateRoadmap() {
+  const [pressed, setPressed] = useState(false);
+
+  return (
+    <Pressable
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
+      onPress={() => router.push({ pathname: "/menuPrincipal" })}
+      style={{
+        backgroundColor: "#2496BE",
+        width: 200,
+        height: 130,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 20,
+        borderBottomWidth: pressed ? 0 : 5,
+        borderColor: "#196f8c",
+      }}
+    >
+      <Ionicons name="add-circle-outline" size={60} color="white" />
+      <Text
+        style={{
+          color: "white",
+          fontSize: 18,
+          justifyContent: "flex-end",
+          fontWeight: "500",
+        }}
+        selectable={false}
+      >
+        Criar Roadmap
+      </Text>
+    </Pressable>
   );
 }
 
 export default function MeusRoadmaps() {
-  // Dentro de MenuPrincipal
   const [menuVisivel, setMenuVisivel] = useState(false);
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
       <View style={styles.topContent}>
-        {RenderRoadmapSelector()}
-        {RenderRoadmapSelector()}
+        <RenderRoadmapSelector tema="Programação" />
+        <RenderRoadmapSelector tema="Xadrez" />
+        <RenderCreateRoadmap />
       </View>
-      {/* Parte inferior centralizada */}
-      <View style={styles.bottomContent}>
-        <Text style={styles.message}>Conheça um de nossos Roadmaps!</Text>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            router.push({
-              pathname: "./roadmap",
-              params: { tema: "Programação" },
-            })
-          }
-        >
-          <Text style={styles.buttonText}>
-            Roadmap - Fundamentos de programação
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            router.push({ pathname: "./roadmap", params: { tema: "Xadrez" } })
-          }
-        >
-          <Text style={styles.buttonText}>Roadmap - Xadrez</Text>
-        </TouchableOpacity>
-      </View>
-
       {menuVisivel && <MenuSuspenso />}
     </View>
   );
