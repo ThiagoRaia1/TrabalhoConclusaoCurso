@@ -15,12 +15,12 @@ import { router } from "expo-router";
 import { useAuth } from "../../context/auth";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import { useNormalize } from "../../utils/normalize";
+import { atualizarUsuario } from "./api"; // ajuste o caminho conforme necessário
 
 export default function MeuPerfil() {
   const { usuario, setUsuario } = useAuth();
   const [nome, setNome] = useState(usuario.nome);
-  const [email, setEmail] = useState(usuario.login);
-  const [senha, setSenha] = useState("***********");
+  const [senha, setSenha] = useState("");
   const [backupUsuario, setBackupUsuario] = useState({
     nome: usuario.nome,
     login: usuario.login,
@@ -48,19 +48,46 @@ export default function MeuPerfil() {
       fontWeight: normalizeFontWeight({ max: 700 }),
       color: "black",
     },
-    editButtonText: {
+    ButtonText: {
       fontSize: normalize({ base: 10, min: 10 }),
       color: "white",
       fontWeight: normalizeFontWeight({ min: 300, max: 600 }),
     },
   };
 
-  const toggleEditar = () => {
+  const toggleEditar = async () => {
     if (editando) {
-      // Simula o salvamento (pode ser substituído por chamada à API)
-      alert("Dados salvos");
+      try {
+        const usuarioAtualizado = await atualizarUsuario(
+          backupUsuario.login,
+          nome,
+          usuario.login,
+          senha
+        );
+
+        setUsuario({
+          ...usuario,
+          nome: usuarioAtualizado.nome,
+        });
+
+        setSenha(senha)
+
+        setBackupUsuario({ nome, login: usuario.login, senha });
+        alert("Dados atualizados com sucesso!");
+      } catch (erro: any) {
+        alert("Erro ao atualizar os dados: " + erro.message);
+      }
+    } else {
+      setBackupUsuario({ nome, login: usuario.login, senha });
     }
     setEditando(!editando);
+  };
+
+  const cancelarEdicao = () => {
+    setNome(backupUsuario.nome);
+    setSenha(backupUsuario.senha);
+    alert("Edição cancelada.");
+    setEditando(false);
   };
 
   return (
@@ -110,7 +137,7 @@ export default function MeuPerfil() {
               style={[
                 styles.inputContainer,
                 getSoftShadow(),
-                !editando && { backgroundColor: "#eee" },
+                { backgroundColor: "#eee" },
               ]}
             >
               <TextInput
@@ -120,9 +147,8 @@ export default function MeuPerfil() {
                   { outlineStyle: "none" } as any,
                   { height: normalizeHeight({ base: 15 }) },
                 ]} // Usando a função normalizeHeight
-                value={email}
-                onChangeText={setEmail}
-                editable={editando}
+                value={usuario.login}
+                editable={false}
               />
             </View>
           </View>
@@ -143,6 +169,8 @@ export default function MeuPerfil() {
                   { outlineStyle: "none" } as any,
                   { height: normalizeHeight({ base: 15 }) },
                 ]} // Usando a função normalizeHeight
+                placeholder="Insira sua senha atual para mantê-la."
+                placeholderTextColor={'#a1a1a1'}
                 value={senha}
                 secureTextEntry
                 onChangeText={setSenha}
@@ -152,20 +180,37 @@ export default function MeuPerfil() {
             </View>
           </View>
 
-          <TouchableOpacity
-            style={[
-              styles.editButton,
-              getSoftShadow(),
-              { height: normalizeHeight({ base: 15 }) },
-            ]}
-            onPress={toggleEditar}
-          >
-            <Text
-              style={dynamicStyles.editButtonText} // Usando a função normalizeHeight
+          <View style={{ minWidth: "40%" }}>
+            <TouchableOpacity
+              style={[
+                styles.Button,
+                getSoftShadow(),
+                { height: normalizeHeight({ base: 15 }) },
+              ]}
+              onPress={toggleEditar}
             >
-              {editando ? "Salvar" : "Editar"}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={dynamicStyles.ButtonText} // Usando a função normalizeHeight
+              >
+                {editando ? "Salvar" : "Editar"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.Button,
+                getSoftShadow(),
+                { height: normalizeHeight({ base: 15 }) },
+              ]}
+              onPress={() => (!editando ? router.back() : cancelarEdicao())}
+            >
+              <Text
+                style={dynamicStyles.ButtonText} // Usando a função normalizeHeight
+              >
+                Cancelar
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
       {menuVisivel && <MenuSuspenso />}
@@ -250,7 +295,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: "#333",
   },
-  editButton: {
+  Button: {
     marginTop: 20,
     backgroundColor: "#2596be",
     paddingVertical: 10,
@@ -258,6 +303,5 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
-    minWidth: "40%",
   },
 });
