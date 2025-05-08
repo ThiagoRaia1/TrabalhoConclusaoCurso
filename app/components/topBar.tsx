@@ -2,6 +2,7 @@ import React from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { router } from "expo-router";
+import { useNormalize } from "../../utils/normalize";
 
 type Props = {
   menuVisivel: boolean;
@@ -14,28 +15,54 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
     setMenuVisivel(!menuVisivel);
   };
 
+  const { normalize, normalizeHeight, normalizeFontWeight, normalizeIconSize } =
+    useNormalize();
+
+  const dynamicStyles = {
+    topBarText: {
+      color: "white",
+      fontSize: normalize({ base: 7 }),
+    },
+    topBar: {
+      height: 100,
+      paddingHorizontal: normalize({ base: 50 }),
+      zIndex: 10,
+    },
+  };
+
   return (
-    <View style={styles.topBar}>
-      <View style={{ flexDirection: "row", gap: 30 }}>
-        <Text style={styles.topBarText}>AI TEACHER</Text>
+    <View
+      style={[
+        dynamicStyles.topBar,
+        {
+          flexDirection: "row",
+          backgroundColor: "#242E3F",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+        },
+      ]}
+    >
+      <View style={{ flexDirection: "row", gap: normalize({ base: 1 }) }}>
+        <Text style={dynamicStyles.topBarText}>AI TEACHER</Text>
       </View>
-      <View style={{ flexDirection: "row", gap: 30 }}>
+      <View style={{ flexDirection: "row", gap: normalize({ base: 1 }) }}>
         <TouchableOpacity
           style={styles.topBarButton}
           onPress={() => router.push("./meusRoadmaps")}
         >
-          <Text style={styles.topBarText}>MEUS ROADMAPS</Text>
+          <Text style={dynamicStyles.topBarText}>MEUS ROADMAPS</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.topBarButton}
           onPress={() => router.push("./menuPrincipal")}
         >
-          <Text style={styles.topBarText}>INÍCIO</Text>
+          <Text style={dynamicStyles.topBarText}>INÍCIO</Text>
         </TouchableOpacity>
 
-        {/* <Text style={styles.topBarText}>Topo</Text>
-        <Text style={styles.topBarText}>Topo</Text> */}
+        {/* <Text style={dynamicStyles.topBarText}>Topo</Text>
+        <Text style={dynamicStyles.topBarText}>Topo</Text> */}
         <TouchableOpacity onPress={exibeMenu}>
           <FontAwesome name="user-circle" size={70} color="white" />
         </TouchableOpacity>
@@ -67,16 +94,6 @@ export function MenuSuspenso() {
 }
 
 const styles = StyleSheet.create({
-  topBar: {
-    flexDirection: "row",
-    backgroundColor: "#242E3F",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: '100%',
-    height: 100,
-    paddingHorizontal: 50,
-    zIndex: 10,
-  },
   topBarButton: {
     alignSelf: "center",
     paddingVertical: 10,
@@ -84,11 +101,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: "#697385",
-  },
-  topBarText: {
-    color: "white",
-    fontSize: 30,
-    alignSelf: "center",
   },
   menuSuspenso: {
     position: "absolute",

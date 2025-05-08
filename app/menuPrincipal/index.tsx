@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     paddingHorizontal: 15,
-    width: "50%",
+    width: 700,
     borderWidth: 1,
     borderColor: "#319594",
     borderRadius: 8,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
-    width: "100%",
+    width: 400,
     alignItems: "center",
   },
   buttonText: {
