@@ -14,23 +14,56 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useAuth } from "../context/auth";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
+import { useNormalize } from "../utils/normalize";
 
 export default function Login() {
   const { usuario, handleLogin, setUsuario } = useAuth();
   const [senha, setSenha] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
+  const { normalize, normalizeHeight, normalizeFontWeight, normalizeIconSize } =
+    useNormalize();
+
+  const dynamicStyles = {
+    titleText: {
+      fontSize: normalize({ base: 28 }),
+      fontWeight: normalizeFontWeight({ max: 600 }),
+      color: "black",
+    },
+    inputText: {
+      flex: 1,
+      maxWidth: "90%",
+      height: 70,
+      fontSize: normalize({ base: 7 }),
+      fontWeight: normalizeFontWeight({ max: 400 }),
+    },
+    buttonText: {
+      color: "white",
+      fontSize: normalize({ base: 4 }),
+      fontWeight: normalizeFontWeight({ max: 600 }),
+      margin: -20,
+    },
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.loginArea, getStrongShadow()]}>
         <View style={styles.loginContent}>
-          <FontAwesome5 name="user-graduate" size={150} color="black" />
-          <Text style={styles.titleText}>AI Teacher</Text>
+          <FontAwesome5
+            name="user-graduate"
+            size={normalizeIconSize(30)}
+            color="black"
+          />
+          <Text style={dynamicStyles.titleText}>AI Teacher</Text>
 
           <View style={[styles.inputContainer, getSoftShadow()]}>
             <TextInput
               /* O "as any" ignora o erro*/
-              style={[styles.input, { outlineStyle: "none" } as any]}
+              style={[
+                dynamicStyles.inputText,
+                { outlineStyle: "none" } as any,
+                { height: normalizeHeight({ base: 15 }) },
+              ]}
               placeholder="Email"
               placeholderTextColor="#ccc"
               value={usuario.login}
@@ -42,7 +75,11 @@ export default function Login() {
 
           <View style={[styles.inputContainer, getSoftShadow()]}>
             <TextInput
-              style={[styles.input, { outlineStyle: "none" } as any]}
+              style={[
+                dynamicStyles.inputText,
+                { outlineStyle: "none" } as any,
+                { height: normalizeHeight({ base: 15 }) },
+              ]}
               placeholder="Senha"
               placeholderTextColor="#ccc"
               secureTextEntry={!mostrarSenha}
@@ -54,7 +91,7 @@ export default function Login() {
             <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
               <FontAwesome5
                 name={mostrarSenha ? "eye-slash" : "eye"}
-                size={30}
+                size={normalizeIconSize(5)}
                 color="black"
               />
             </TouchableOpacity>
@@ -68,19 +105,21 @@ export default function Login() {
             }}
           >
             <TouchableOpacity
-              style={[styles.button, getSoftShadow()]}
+              style={[
+                styles.button,
+                getSoftShadow(),
+                { height: normalizeHeight({ base: 15 }) },
+              ]}
               onPress={() => router.push("./cadastro")}
             >
-              <Text style={[styles.buttonText, { fontSize: 18 }]}>
-                Cadastre-se
-              </Text>
+              <Text style={dynamicStyles.buttonText}>Cadastre-se</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, getSoftShadow()]}
               onPress={() => handleLogin(senha)}
             >
-              <Text style={styles.buttonText}>Login</Text>
+              <Text style={dynamicStyles.buttonText}>Login</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -206,11 +245,6 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     justifyContent: "center",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 24,
-    fontWeight: "700",
   },
   imageArea: {
     flex: 7,

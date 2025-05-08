@@ -66,5 +66,17 @@ export const useNormalize = () => {
     return String(closest) as any;
   };
 
-  return { normalize, normalizeHeight, normalizeFontWeight };
+  const normalizeIconSize = (
+    size: number,
+    min = 24,
+    max = 150
+  ): number => {
+    const newSize = size * scale;
+    return Math.max(
+      min,
+      Math.min(max, Math.round(PixelRatio.roundToNearestPixel(newSize)))
+    );
+  };
+
+  return { normalize, normalizeHeight, normalizeFontWeight, normalizeIconSize };
 };
