@@ -6,26 +6,23 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { router } from "expo-router";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
-import secoesProgramacao from "../../data/roadmapProgramacao";
-import secoesXadrez from "../../data/roadmapXadrez";
 import { useLocalSearchParams } from "expo-router";
-
-const temas = [
-  ...secoesProgramacao.map((secao) => ({ ...secao, categoria: "Programação" })),
-  ...secoesXadrez.map((secao) => ({ ...secao, categoria: "Xadrez" })),
-];
+import { getRoadmap, IRoadmap } from "./api";
+import { useAuth } from "../../context/auth";
 
 export default function Roadmap() {
+  const { usuario } = useAuth()
   const [progresso, setProgresso] = useState<Record<string, boolean>>({});
   const [expandidos, setExpandidos] = useState<Record<string, boolean>>({});
   const [menuVisivel, setMenuVisivel] = useState(false);
+  const [roadmap, setRoadmap] = useState<IRoadmap | null>(null);
+
   const { tema } = useLocalSearchParams();
   const temaStr = typeof tema === "string" ? tema : ""; // Garantir string
   const STORAGE_KEY = `progresso_${temaStr}`;
@@ -64,8 +61,22 @@ export default function Roadmap() {
   };
 
   useEffect(() => {
+    const fetchRoadmap = async () => {
+      try {
+        console.log(temaStr)
+        console.log(usuario.login)
+        const dados = await getRoadmap(temaStr, usuario.login);
+        setRoadmap(dados);
+        console.log(roadmap)
+      } catch (error) {
+        console.error("Erro ao buscar roadmap:", error);
+      }
+    };
+
     carregarProgresso();
+    fetchRoadmap();
   }, []);
+
 
   return (
     <View style={styles.container}>
@@ -78,55 +89,54 @@ export default function Roadmap() {
           <Text style={styles.voltarText}>Voltar</Text>
         </TouchableOpacity>
 
-        {temas
-          .filter((secao) => secao.categoria === tema)
-          .map((secao, idx) => (
-            <View key={idx} style={styles.secaoContainer}>
-              <Text
-                style={[styles.secaoTitulo, { backgroundColor: secao.cor }]}
-              >
-                {secao.titulo}
-              </Text>
+        {roadmap?.fases?.map((secao, idx) => (
 
-              {secao.itens.map((item, itemIdx) => {
-                const id = `${idx}-${itemIdx}`;
-                return (
-                  <View key={id} style={styles.itemContainer}>
-                    <View style={styles.checkboxContainer}>
-                      <Checkbox
-                        status={progresso[id] ? "checked" : "unchecked"}
-                        onPress={() => alternarProgresso(id)}
-                      />
-                      <Pressable
-                        style={styles.itemHeader}
-                        onPress={() => alternarExpandido(id)}
+          <View key={idx} style={styles.secaoContainer}>
+            <Text
+              style={[styles.secaoTitulo, { backgroundColor: secao.cor }]}
+            >
+              {secao.titulo}
+            </Text>
+
+            {secao.itens.map((item, itemIdx) => {
+              const id = `${idx}-${itemIdx}`;
+              return (
+                <View key={id} style={styles.itemContainer}>
+                  <View style={styles.checkboxContainer}>
+                    <Checkbox
+                      status={progresso[id] ? "checked" : "unchecked"}
+                      onPress={() => alternarProgresso(id)}
+                    />
+                    <Pressable
+                      style={styles.itemHeader}
+                      onPress={() => alternarExpandido(id)}
+                    >
+                      <Text
+                        style={[
+                          styles.itemTitulo,
+                          progresso[id] && {
+                            textDecorationLine: "line-through",
+                            color: "#888",
+                          },
+                        ]}
                       >
-                        <Text
-                          style={[
-                            styles.itemTitulo,
-                            progresso[id] && {
-                              textDecorationLine: "line-through",
-                              color: "#888",
-                            },
-                          ]}
-                        >
-                          {item.titulo}
-                        </Text>
+                        {item.titulo}
+                      </Text>
 
-                        <Text style={styles.itemIcon}>
-                          {expandidos[id] ? "−" : "+"}
-                        </Text>
-                      </Pressable>
-                    </View>
-
-                    {expandidos[id] && (
-                      <Text style={styles.itemDescricao}>{item.descricao}</Text>
-                    )}
+                      <Text style={styles.itemIcon}>
+                        {expandidos[id] ? "−" : "+"}
+                      </Text>
+                    </Pressable>
                   </View>
-                );
-              })}
-            </View>
-          ))}
+
+                  {expandidos[id] && (
+                    <Text style={styles.itemDescricao}>{item.descricao}</Text>
+                  )}
+                </View>
+              );
+            })}
+          </View>
+        ))}
       </ScrollView>
       {menuVisivel && <MenuSuspenso />}
     </View>
