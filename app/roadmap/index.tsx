@@ -7,13 +7,11 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Platform } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { router } from "expo-router";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import { useLocalSearchParams } from "expo-router";
-import { getRoadmap, IRoadmap } from "./api";
+import { atualizarStatusConclusao, getRoadmap, IRoadmap } from "./api";
 import { useAuth } from "../../context/auth";
 
 export default function Roadmap() {
@@ -27,33 +25,26 @@ export default function Roadmap() {
   const temaStr = typeof tema === "string" ? tema : ""; // Garantir string
   const STORAGE_KEY = `progresso_${temaStr}`;
 
-  const salvarProgresso = async (novoProgresso: Record<string, boolean>) => {
-    const json = JSON.stringify(novoProgresso);
-    if (Platform.OS === "web") {
-      localStorage.setItem(STORAGE_KEY, json);
-    } else {
-      await AsyncStorage.setItem(STORAGE_KEY, json);
-    }
-  };
+  const alternarProgresso = async (faseIndex: number, itemIndex: number) => {
+    if (!roadmap) return;
 
-  const carregarProgresso = async () => {
+    const novoValor = !roadmap.fases[faseIndex].itens[itemIndex].concluido;
+
     try {
-      let json = "";
-      if (Platform.OS === "web") {
-        json = localStorage.getItem(STORAGE_KEY) || "{}";
-      } else {
-        json = (await AsyncStorage.getItem(STORAGE_KEY)) || "{}";
-      }
-      setProgresso(JSON.parse(json));
-    } catch (e) {
-      console.warn("Erro ao carregar progresso:", e);
-    }
-  };
+      await atualizarStatusConclusao(
+        temaStr,
+        usuario.login,
+        faseIndex,
+        itemIndex,
+        novoValor
+      );
 
-  const alternarProgresso = (id: string) => {
-    const novo = { ...progresso, [id]: !progresso[id] };
-    setProgresso(novo);
-    salvarProgresso(novo);
+      const atualizado = { ...roadmap };
+      atualizado.fases[faseIndex].itens[itemIndex].concluido = novoValor;
+      setRoadmap(atualizado);
+    } catch (e) {
+      console.warn("Erro ao atualizar progresso:", e);
+    }
   };
 
   const alternarExpandido = (id: string) => {
@@ -70,7 +61,6 @@ export default function Roadmap() {
       }
     };
 
-    carregarProgresso();
     fetchRoadmap();
   }, []);
 
@@ -123,9 +113,10 @@ export default function Roadmap() {
                 <View key={id} style={styles.itemContainer}>
                   <View style={styles.checkboxContainer}>
                     <Checkbox
-                      status={progresso[id] ? "checked" : "unchecked"}
-                      onPress={() => alternarProgresso(id)}
+                      status={item.concluido ? "checked" : "unchecked"}
+                      onPress={() => alternarProgresso(idx, itemIdx)}
                     />
+
                     <Pressable
                       style={styles.itemHeader}
                       onPress={() => alternarExpandido(id)}
