@@ -19,6 +19,8 @@ export default function Roadmap() {
   const [expandidos, setExpandidos] = useState<Record<string, boolean>>({});
   const [menuVisivel, setMenuVisivel] = useState(false);
   const [roadmap, setRoadmap] = useState<IRoadmap | null>(null);
+  const [modalVisivel, setModalVisivel] = useState(false);
+  const [textoExplicacao, setTextoExplicacao] = useState("");
 
   const { tema } = useLocalSearchParams();
   const temaStr = typeof tema === "string" ? tema : ""; // Garantir string
@@ -75,32 +77,35 @@ export default function Roadmap() {
 
         {roadmap?.fases?.map((secao, idx) => (
           <View key={idx} style={styles.secaoContainer}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text
-                style={[styles.secaoTitulo, { backgroundColor: secao.cor }]}
-              >
-                {secao.titulo}
-              </Text>
+            <View style={[styles.tituloView, { backgroundColor: secao.cor }]}>
+              <Text style={styles.tituloText}>{secao.titulo}</Text>
+
+              <TouchableOpacity style={styles.botaoText}>
+                <Text style={{ color: "white" }}>Gerar quiz</Text>
+              </TouchableOpacity>
 
               <TouchableOpacity
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  paddingVertical: 10,
-                  paddingHorizontal: 30,
-                  borderRadius: 10,
-                  marginBottom: 8,
-                  backgroundColor: "#027BFF",
-                  borderWidth: 1,
-                  borderColor: "#004691",
+                style={styles.botaoText}
+                onPress={() => {
+                  const novosExpandidos = { ...expandidos };
+                  const algumFechado = secao.itens.some(
+                    (_, itemIdx) => !expandidos[`${idx}-${itemIdx}`]
+                  );
+
+                  secao.itens.forEach((_, itemIdx) => {
+                    const id = `${idx}-${itemIdx}`;
+                    novosExpandidos[id] = algumFechado; // se tem algum fechado, abrimos todos
+                  });
+
+                  setExpandidos(novosExpandidos);
                 }}
               >
-                <Text
-                  style={{
-                    color: "white",
-                  }}
-                >
-                  Gerar quiz
+                <Text style={{ color: "white" }}>
+                  {secao.itens.some(
+                    (_, itemIdx) => !expandidos[`${idx}-${itemIdx}`]
+                  )
+                    ? "Expandir todos"
+                    : "Colapsar todos"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -138,7 +143,26 @@ export default function Roadmap() {
                   </View>
 
                   {expandidos[id] && (
-                    <Text style={styles.itemDescricao}>{item.descricao}</Text>
+                    <View style={{ backgroundColor: "#f9f9f9", padding: 8 }}>
+                      <Text style={styles.itemDescricao}>{item.descricao}</Text>
+                      <TouchableOpacity
+                        style={{
+                          alignSelf: "flex-end",
+                          borderRadius: 4,
+                          marginTop: 4,
+                          borderWidth: 1,
+                          paddingHorizontal: 10,
+                        }}
+                        onPress={() => {
+                          setTextoExplicacao(
+                            item.descricao || "Sem descrição disponível."
+                          );
+                          setModalVisivel(true);
+                        }}
+                      >
+                        <Text>Explique mais</Text>
+                      </TouchableOpacity>
+                    </View>
                   )}
                 </View>
               );
@@ -147,6 +171,19 @@ export default function Roadmap() {
         ))}
       </ScrollView>
       {menuVisivel && <MenuSuspenso />}
+      {modalVisivel && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTexto}>{textoExplicacao}</Text>
+            <TouchableOpacity
+              onPress={() => setModalVisivel(false)}
+              style={styles.modalFecharBtn}
+            >
+              <Text style={styles.modalFecharTexto}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -174,13 +211,27 @@ const styles = StyleSheet.create({
   secaoContainer: {
     marginBottom: 24,
   },
-  secaoTitulo: {
+  tituloView: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+    gap: 10,
+  },
+  tituloText: {
     fontSize: 18,
     fontWeight: "bold",
     padding: 8,
     borderRadius: 4,
-    marginBottom: 8,
     width: "100%",
+  },
+  botaoText: {
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    backgroundColor: "#027BFF",
+    borderWidth: 1,
+    borderColor: "#004691",
   },
   itemContainer: {
     marginBottom: 12,
@@ -207,11 +258,41 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   itemDescricao: {
-    padding: 8,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 4,
-    marginTop: 4,
     fontSize: 14,
     lineHeight: 20,
+  },
+  modalOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    zIndex: 999,
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    width: "100%",
+    maxWidth: 400,
+    alignItems: "center",
+  },
+  modalTexto: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  modalFecharBtn: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  modalFecharTexto: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
