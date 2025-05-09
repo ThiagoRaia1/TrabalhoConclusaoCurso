@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { LOCALHOST_URL } from '../../services/urlApi';
 
 export type Roadmap = {
   titulo: string;
@@ -8,7 +9,7 @@ export type Roadmap = {
 
 export async function fetchRoadmapsByLogin(login: string): Promise<Roadmap[]> {
   try {
-    const res = await axios.get("http://localhost:3000/roadmap");
+    const res = await axios.get(`${LOCALHOST_URL}/roadmap`);
     const roadmaps: Roadmap[] = Array.isArray(res.data) ? res.data : [res.data];
     return roadmaps.filter((r) => r.usuarioLogin === login);
   } catch (err) {

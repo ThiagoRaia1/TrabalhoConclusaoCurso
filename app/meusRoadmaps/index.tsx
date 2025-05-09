@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { fetchRoadmapsByLogin, Roadmap } from "./api";
 import { useAuth } from "../../context/auth";
-import TopBarMenu from "../components/topBar";
+import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function MeusRoadmaps() {
@@ -89,6 +89,7 @@ export default function MeusRoadmaps() {
           </Pressable>
         </View>
       </ScrollView>
+      {menuVisivel && <MenuSuspenso />}
     </View>
   );
 }
