@@ -1,140 +1,100 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import { useState } from "react";
+import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { useEffect, useState } from "react";
+import { router } from "expo-router";
+import { fetchRoadmapsByLogin, Roadmap } from "./api";
+import { useAuth } from "../../context/auth";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
-
-function RenderRoadmapSelector({ tema }: { tema: string }) {
-  const [pressed, setPressed] = useState(false);
-
-  return (
-    <Pressable
-      onPressIn={() => setPressed(true)}
-      onPressOut={() => setPressed(false)}
-      onPress={() => router.push({ pathname: "/roadmap", params: { tema } })}
-      style={{
-        backgroundColor: "#2496BE",
-        width: 200,
-        height: 130,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 20,
-        borderBottomWidth: pressed ? 0 : 5,
-        borderColor: "#196f8c",
-      }}
-    >
-      <Text style={{ color: "white", fontSize: 25 }} selectable={false}>
-        {tema}
-      </Text>
-    </Pressable>
-  );
-}
-
-function RenderCreateRoadmap() {
-  const [pressed, setPressed] = useState(false);
-
-  return (
-    <Pressable
-      onPressIn={() => setPressed(true)}
-      onPressOut={() => setPressed(false)}
-      onPress={() => router.push({ pathname: "/menuPrincipal" })}
-      style={{
-        backgroundColor: "#2496BE",
-        width: 200,
-        height: 130,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 20,
-        borderBottomWidth: pressed ? 0 : 5,
-        borderColor: "#196f8c",
-      }}
-    >
-      <Ionicons name="add-circle-outline" size={60} color="white" />
-      <Text
-        style={{
-          color: "white",
-          fontSize: 18,
-          justifyContent: "flex-end",
-          fontWeight: "500",
-        }}
-        selectable={false}
-      >
-        Criar Roadmap
-      </Text>
-    </Pressable>
-  );
-}
 
 export default function MeusRoadmaps() {
+  const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
+  const { usuario } = useAuth();
   const [menuVisivel, setMenuVisivel] = useState(false);
 
+  useEffect(() => {
+    fetchRoadmapsByLogin(usuario.login).then(setRoadmaps);
+  }, []);
+
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View>
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
-      <View style={styles.topContent}>
-        <RenderRoadmapSelector tema="Programação" />
-        <RenderRoadmapSelector tema="Xadrez" />
-        <RenderCreateRoadmap />
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.title}>Meus Roadmaps</Text>
+
+        <View style={styles.roadmapList}>
+          {roadmaps.map((roadmap, index) => (
+            <Pressable
+              key={index}
+              style={({ pressed }) => [
+                styles.button,
+                pressed && { borderBottomWidth: 0 },
+              ]}
+              onPress={() =>
+                router.push({
+                  pathname: "/roadmap",
+                  params: { tema: roadmap.titulo },
+                })
+              }
+            >
+              <Text style={styles.buttonText} selectable={false}>
+                {roadmap.titulo}
+              </Text>
+            </Pressable>
+          ))}
+
+          {/* Botão "Criar Roadmap" */}
+          <Pressable
+            style={({ pressed }) => [
+              styles.button,
+              { backgroundColor: "#4CAF50", borderColor: "#1d5e2f" },
+              pressed && { borderBottomWidth: 0 },
+            ]}
+            onPress={() => router.push("/menuPrincipal")}
+          >
+            <Ionicons name="add-circle-outline" size={60} color="white" />
+            <Text style={styles.buttonText} selectable={false}>
+              Criar Roadmap
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
       {menuVisivel && <MenuSuspenso />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-    justifyContent: "space-between", // separa parte de cima e de baixo
+  scrollContainer: {
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    alignItems: "center",
   },
-  topContent: {
-    flexGrow: 1,
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  roadmapList: {
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "flex-start",
-    alignItems: "flex-start",
-    gap: 20,
-    margin: 20,
-  },
-  bottomContent: {
-    alignSelf: "center",
-    alignItems: "center",
-    gap: 20,
-    marginBottom: 40,
-    minWidth: "40%",
-  },
-  message: {
-    fontSize: 30,
-    color: "black",
-    textAlign: "center",
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    paddingHorizontal: 15,
-    width: "50%",
-    borderWidth: 1,
-    borderColor: "#319594",
-    borderRadius: 8,
-    justifyContent: "space-between",
-  },
-  input: {
-    flex: 1,
-    fontSize: 20,
-    height: 60,
-    backgroundColor: "white",
+    gap: 12,
+    rowGap: 16,
   },
   button: {
-    backgroundColor: "#2596be",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    width: "100%",
+    backgroundColor: "#2496BE",
+    width: 210,
+    height: 130,
+    justifyContent: "center",
     alignItems: "center",
+    borderRadius: 12,
+    borderBottomWidth: 4,
+    borderColor: "#196f8c",
   },
   buttonText: {
     color: "white",
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 20,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });

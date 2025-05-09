@@ -16,14 +16,12 @@ import { useAuth } from "../../context/auth";
 
 export default function Roadmap() {
   const { usuario } = useAuth();
-  const [progresso, setProgresso] = useState<Record<string, boolean>>({});
   const [expandidos, setExpandidos] = useState<Record<string, boolean>>({});
   const [menuVisivel, setMenuVisivel] = useState(false);
   const [roadmap, setRoadmap] = useState<IRoadmap | null>(null);
 
   const { tema } = useLocalSearchParams();
   const temaStr = typeof tema === "string" ? tema : ""; // Garantir string
-  const STORAGE_KEY = `progresso_${temaStr}`;
 
   const alternarProgresso = async (faseIndex: number, itemIndex: number) => {
     if (!roadmap) return;
@@ -124,7 +122,7 @@ export default function Roadmap() {
                       <Text
                         style={[
                           styles.itemTitulo,
-                          progresso[id] && {
+                          item.concluido && {
                             textDecorationLine: "line-through",
                             color: "#888",
                           },
