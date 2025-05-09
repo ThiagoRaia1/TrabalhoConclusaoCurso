@@ -1,0 +1,1 @@
+export const LOCALHOST_URL = "https://backend-tg-2dnx.onrender.com"

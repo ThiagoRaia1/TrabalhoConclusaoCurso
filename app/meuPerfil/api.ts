@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:3000/usuario";
+import { LOCALHOST_URL } from "../../services/urlApi";
+
+const API_URL = `${LOCALHOST_URL}/usuario`;
 
 export async function atualizarUsuario(
   loginAtual: string,

@@ -1,3 +1,5 @@
+import { LOCALHOST_URL } from "../../services/urlApi";
+
 interface IItem {
     titulo: string;
     descricao: string;
@@ -18,7 +20,7 @@ export interface IRoadmap {
 }
 
 
-const API_URL = `http://localhost:3000/roadmap`;
+const API_URL = `${LOCALHOST_URL}/roadmap`;
 
 export async function getRoadmap(tema: string, login: string): Promise<IRoadmap> {
     try {
