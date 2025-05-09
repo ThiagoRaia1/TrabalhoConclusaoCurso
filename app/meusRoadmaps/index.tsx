@@ -1,19 +1,51 @@
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { fetchRoadmapsByLogin, Roadmap } from "./api";
 import { useAuth } from "../../context/auth";
-import TopBarMenu, { MenuSuspenso } from "../components/topBar";
+import TopBarMenu from "../components/topBar";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function MeusRoadmaps() {
   const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
+  const [loading, setLoading] = useState(true);
   const { usuario } = useAuth();
   const [menuVisivel, setMenuVisivel] = useState(false);
 
   useEffect(() => {
-    fetchRoadmapsByLogin(usuario.login).then(setRoadmaps);
+    const carregarRoadmaps = async () => {
+      try {
+        const dados = await fetchRoadmapsByLogin(usuario.login);
+        setRoadmaps(dados);
+      } catch (error) {
+        console.error("Erro ao buscar roadmaps:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    carregarRoadmaps();
   }, []);
+
+  if (loading) {
+    return (
+      <View>
+        <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#2496BE" />
+          <Text style={{ marginTop: 10, fontSize: 16 }}>
+            Carregando seus roadmaps...
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View>
@@ -42,7 +74,6 @@ export default function MeusRoadmaps() {
             </Pressable>
           ))}
 
-          {/* Botão "Criar Roadmap" */}
           <Pressable
             style={({ pressed }) => [
               styles.button,
@@ -58,7 +89,6 @@ export default function MeusRoadmaps() {
           </Pressable>
         </View>
       </ScrollView>
-      {menuVisivel && <MenuSuspenso />}
     </View>
   );
 }
@@ -84,7 +114,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#2496BE",
     width: 210,
-    height: 130,
+    height: 110,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 12,
@@ -96,5 +126,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     textAlign: "center",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 100,
+    backgroundColor: "white",
   },
 });
