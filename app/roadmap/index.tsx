@@ -17,7 +17,7 @@ import { getRoadmap, IRoadmap } from "./api";
 import { useAuth } from "../../context/auth";
 
 export default function Roadmap() {
-  const { usuario } = useAuth()
+  const { usuario } = useAuth();
   const [progresso, setProgresso] = useState<Record<string, boolean>>({});
   const [expandidos, setExpandidos] = useState<Record<string, boolean>>({});
   const [menuVisivel, setMenuVisivel] = useState(false);
@@ -74,7 +74,6 @@ export default function Roadmap() {
     fetchRoadmap();
   }, []);
 
-
   return (
     <View style={styles.container}>
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
@@ -87,13 +86,36 @@ export default function Roadmap() {
         </TouchableOpacity>
 
         {roadmap?.fases?.map((secao, idx) => (
-
           <View key={idx} style={styles.secaoContainer}>
-            <Text
-              style={[styles.secaoTitulo, { backgroundColor: secao.cor }]}
-            >
-              {secao.titulo}
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text
+                style={[styles.secaoTitulo, { backgroundColor: secao.cor }]}
+              >
+                {secao.titulo}
+              </Text>
+
+              <TouchableOpacity
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  paddingVertical: 10,
+                  paddingHorizontal: 30,
+                  borderRadius: 10,
+                  marginBottom: 8,
+                  backgroundColor: "#027BFF",
+                  borderWidth: 1,
+                  borderColor: "#004691",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                  }}
+                >
+                  Gerar quiz
+                </Text>
+              </TouchableOpacity>
+            </View>
 
             {secao.itens.map((item, itemIdx) => {
               const id = `${idx}-${itemIdx}`;
@@ -169,6 +191,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 4,
     marginBottom: 8,
+    width: "100%",
   },
   itemContainer: {
     marginBottom: 12,

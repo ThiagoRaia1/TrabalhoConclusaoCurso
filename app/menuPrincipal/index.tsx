@@ -48,9 +48,27 @@ export default function MenuPrincipal() {
             value={prompt}
             onChangeText={setPrompt}
             returnKeyType="done"
-            onSubmitEditing={gerarResposta}
+            // onSubmitEditing={gerarResposta}
+            onSubmitEditing={() =>
+              router.push({
+                pathname: "./roadmap",
+                params: { tema: prompt },
+              })
+            }
           />
         </View>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            router.push({
+              pathname: "./roadmap",
+              params: { tema: prompt },
+            })
+          }
+        >
+          <Text style={styles.buttonText}>Gerar</Text>
+        </TouchableOpacity>
 
         {resposta !== "" && (
           <View style={{ marginTop: 20, padding: 20 }}>
@@ -73,17 +91,20 @@ export default function MenuPrincipal() {
           }
         >
           <Text style={styles.buttonText}>
-            Roadmap - Fundamentos de programação
+            Fundamentos de programação
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
-            router.push({ pathname: "./roadmap", params: { tema: "Xadrez" } })
+            router.push({
+              pathname: "./roadmap",
+              params: { tema: "Xadrez" },
+            })
           }
         >
-          <Text style={styles.buttonText}>Roadmap - Xadrez</Text>
+          <Text style={styles.buttonText}>Xadrez</Text>
         </TouchableOpacity>
       </View>
 
@@ -102,7 +123,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 20,
+    gap: 30,
   },
   bottomContent: {
     alignSelf: "center",
