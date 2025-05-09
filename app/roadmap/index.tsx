@@ -63,11 +63,8 @@ export default function Roadmap() {
   useEffect(() => {
     const fetchRoadmap = async () => {
       try {
-        console.log(temaStr)
-        console.log(usuario.login)
         const dados = await getRoadmap(temaStr, usuario.login);
         setRoadmap(dados);
-        console.log(roadmap)
       } catch (error) {
         console.error("Erro ao buscar roadmap:", error);
       }
