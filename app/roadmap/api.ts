@@ -13,25 +13,49 @@ interface IFase {
 }
 
 export interface IRoadmap {
-  _id: string;
   titulo: string;
   usuarioLogin: string;
   fases: IFase[];
 }
 
-const API_URL = `${LOCALHOST_URL}/roadmap`;
+export async function createRoadmap(roadmap: Object) {
+  try {
+    // Agora, você envia o conteúdo para o backend
+    const resposta = await fetch(`${LOCALHOST_URL}/roadmap`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(roadmap), // Envia o roadmap obtido
+    });
+
+    if (!resposta.ok) {
+      const erro = await resposta.json();
+      throw new Error(erro.message || "Erro ao criar o roadmap");
+    }
+
+    const result = await resposta.json();
+    console.log("Roadmap salvo no banco:", result);
+    return result;
+  } catch (error) {
+    console.error("Erro ao criar roadmap no backend:", error);
+    throw error;
+  }
+}
 
 export async function getRoadmap(
   tema: string,
   login: string
 ): Promise<IRoadmap> {
   try {
-    const resposta = await fetch(`${API_URL}/${tema}/${login}`, {
+    const resposta = await fetch(`${LOCALHOST_URL}/roadmap/${tema}/${login}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     });
+
+    if (resposta.status === 404) throw new Error("Roadmap não encontrado");
 
     if (!resposta.ok) {
       const erro = await resposta.json();
@@ -57,7 +81,7 @@ export async function atualizarStatusConclusao(
 ) {
   try {
     await fetch(
-      `${API_URL}/roadmap/${temaStr}/${faseIndex}/${itemIndex}`,
+      `${LOCALHOST_URL}/roadmap/${temaStr}/${faseIndex}/${itemIndex}`,
       {
         method: "PATCH",
         headers: {

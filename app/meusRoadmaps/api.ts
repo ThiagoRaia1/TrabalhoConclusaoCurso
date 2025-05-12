@@ -17,3 +17,14 @@ export async function fetchRoadmapsByLogin(login: string): Promise<Roadmap[]> {
     return [];
   }
 }
+
+export async function deleteRoadmapByTitulo(titulo: string, login: string) {
+  const res = await fetch(`${LOCALHOST_URL}/roadmap/${login}/${encodeURIComponent(titulo)}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error("Falha ao excluir roadmap");
+  }
+}
+

@@ -5,10 +5,12 @@ import {
   Pressable,
   ScrollView,
   ActivityIndicator,
+  Modal,
+  Animated,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
-import { fetchRoadmapsByLogin, Roadmap } from "./api";
+import { deleteRoadmapByTitulo, fetchRoadmapsByLogin, Roadmap } from "./api";
 import { useAuth } from "../../context/auth";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -18,6 +20,9 @@ export default function MeusRoadmaps() {
   const [loading, setLoading] = useState(true);
   const { usuario } = useAuth();
   const [menuVisivel, setMenuVisivel] = useState(false);
+  const [modalVisivel, setModalVisivel] = useState(false);
+  const [roadmapSelecionado, setRoadmapSelecionado] = useState<Roadmap | null>(null);
+  const [animating, setAnimating] = useState(new Animated.Value(0)); // Inicializando a animação
 
   useEffect(() => {
     const carregarRoadmaps = async () => {
@@ -32,6 +37,38 @@ export default function MeusRoadmaps() {
     };
     carregarRoadmaps();
   }, []);
+
+  useEffect(() => {
+    if (modalVisivel) {
+      Animated.timing(animating, {
+        toValue: 1, // Finalizando a animação de fade (1 é totalmente visível)
+        duration: 300, // Duração de 300ms
+        useNativeDriver: true, // Usando o driver nativo para melhor desempenho
+      }).start();
+    } else {
+      Animated.timing(animating, {
+        toValue: 0, // Revertendo a animação de fade (0 é invisível)
+        duration: 300, // Duração de 300ms
+        useNativeDriver: true, // Usando o driver nativo para melhor desempenho
+      }).start();
+    }
+  }, [modalVisivel, animating]); // A animação será disparada quando o modal for alterado
+
+  const confirmarExclusao = async () => {
+    if (!roadmapSelecionado) return;
+    try {
+      await deleteRoadmapByTitulo(roadmapSelecionado.titulo, usuario.login);
+      setRoadmaps((prev) =>
+        prev.filter((r) => r.titulo !== roadmapSelecionado.titulo)
+      );
+      alert("Roadmap excluído.");
+    } catch (e) {
+      console.error("Erro ao excluir roadmap:", e);
+    } finally {
+      setModalVisivel(false);
+      setRoadmapSelecionado(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -55,23 +92,34 @@ export default function MeusRoadmaps() {
 
         <View style={styles.roadmapList}>
           {roadmaps.map((roadmap, index) => (
-            <Pressable
-              key={index}
-              style={({ pressed }) => [
-                styles.button,
-                pressed && { borderBottomWidth: 0 },
-              ]}
-              onPress={() =>
-                router.push({
-                  pathname: "/roadmap",
-                  params: { tema: roadmap.titulo },
-                })
-              }
-            >
-              <Text style={styles.buttonText} selectable={false}>
-                {roadmap.titulo}
-              </Text>
-            </Pressable>
+            <View key={index} style={{ position: "relative" }}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.button,
+                  pressed && { borderBottomWidth: 0 },
+                ]}
+                onPress={() =>
+                  router.push({
+                    pathname: "/roadmap",
+                    params: { tema: roadmap.titulo },
+                  })
+                }
+              >
+                <Text style={styles.buttonText} selectable={false}>
+                  {roadmap.titulo}
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.deleteIcon}
+                onPress={() => {
+                  setRoadmapSelecionado(roadmap);
+                  setModalVisivel(true);
+                }}
+              >
+                <Ionicons name="trash" size={24} color="red" />
+              </Pressable>
+            </View>
           ))}
 
           <Pressable
@@ -90,6 +138,44 @@ export default function MeusRoadmaps() {
         </View>
       </ScrollView>
       {menuVisivel && <MenuSuspenso />}
+
+      {/* Modal de Confirmação */}
+      <Modal
+        transparent
+        visible={modalVisivel}
+        animationType="none" // Removendo animação padrão do Modal
+        onRequestClose={() => setModalVisivel(false)}
+      >
+        <Animated.View
+          style={[
+            styles.modalOverlay,
+            { opacity: animating }, // Controlando a opacidade via animação
+          ]}
+        >
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitulo}>Confirmar exclusão</Text>
+            <Text style={styles.modalTexto}>
+              Deseja excluir o roadmap "{roadmapSelecionado?.titulo}"?
+            </Text>
+
+            <View style={styles.modalBotoes}>
+              <Pressable
+                style={[styles.modalBotao, { backgroundColor: "#e53935" }]}
+                onPress={confirmarExclusao}
+              >
+                <Text style={styles.modalBotaoTexto}>Excluir</Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.modalBotao, { backgroundColor: "#aaa" }]}
+                onPress={() => setModalVisivel(false)}
+              >
+                <Text style={styles.modalBotaoTexto}>Cancelar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Animated.View>
+      </Modal>
     </View>
   );
 }
@@ -134,5 +220,58 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 100,
     backgroundColor: "white",
+  },
+  deleteIcon: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    padding: 2,
+    zIndex: 1,
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 24,
+    borderRadius: 12,
+    width: "80%",
+    alignItems: "center",
+  },
+  modalTitulo: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalTexto: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  modalBotoes: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  modalBotao: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  modalBotaoTexto: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

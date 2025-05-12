@@ -80,34 +80,36 @@ export default function Roadmap() {
             <View style={[styles.tituloView, { backgroundColor: secao.cor }]}>
               <Text style={styles.tituloText}>{secao.titulo}</Text>
 
-              <TouchableOpacity style={styles.botaoText}>
-                <Text style={{ color: "white" }}>Gerar quiz</Text>
-              </TouchableOpacity>
+              <View style={styles.botoesContainer}>
+                <TouchableOpacity style={styles.botaoText}>
+                  <Text style={{ color: "white" }}>Gerar quiz</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.botaoText}
-                onPress={() => {
-                  const novosExpandidos = { ...expandidos };
-                  const algumFechado = secao.itens.some(
-                    (_, itemIdx) => !expandidos[`${idx}-${itemIdx}`]
-                  );
+                <TouchableOpacity
+                  style={styles.botaoText}
+                  onPress={() => {
+                    const novosExpandidos = { ...expandidos };
+                    const algumFechado = secao.itens.some(
+                      (_, itemIdx) => !expandidos[`${idx}-${itemIdx}`]
+                    );
 
-                  secao.itens.forEach((_, itemIdx) => {
-                    const id = `${idx}-${itemIdx}`;
-                    novosExpandidos[id] = algumFechado; // se tem algum fechado, abrimos todos
-                  });
+                    secao.itens.forEach((_, itemIdx) => {
+                      const id = `${idx}-${itemIdx}`;
+                      novosExpandidos[id] = algumFechado;
+                    });
 
-                  setExpandidos(novosExpandidos);
-                }}
-              >
-                <Text style={{ color: "white" }}>
-                  {secao.itens.some(
-                    (_, itemIdx) => !expandidos[`${idx}-${itemIdx}`]
-                  )
-                    ? "Expandir todos"
-                    : "Colapsar todos"}
-                </Text>
-              </TouchableOpacity>
+                    setExpandidos(novosExpandidos);
+                  }}
+                >
+                  <Text style={{ color: "white" }}>
+                    {secao.itens.some(
+                      (_, itemIdx) => !expandidos[`${idx}-${itemIdx}`]
+                    )
+                      ? "Expandir todos"
+                      : "Colapsar todos"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
             {secao.itens.map((item, itemIdx) => {
@@ -213,25 +215,36 @@ const styles = StyleSheet.create({
   },
   tituloView: {
     flexDirection: "row",
-    justifyContent: "center",
+    flexWrap: "wrap", // permite quebra de linha
     alignItems: "center",
+    justifyContent: "space-between",
+    padding: 8,
+    gap: 8,
+    borderRadius: 4,
     marginBottom: 10,
-    gap: 10,
   },
   tituloText: {
     fontSize: 18,
     fontWeight: "bold",
-    padding: 8,
-    borderRadius: 4,
-    width: "100%",
+    flexShrink: 1,
+    flexGrow: 1,
+    minWidth: "60%", // título ocupa o espaço necessário
+    color: "black",
+  },
+  botoesContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    justifyContent: "flex-end",
   },
   botaoText: {
     paddingVertical: 10,
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
     borderRadius: 10,
     backgroundColor: "#027BFF",
     borderWidth: 1,
     borderColor: "#004691",
+    marginTop: 4,
   },
   itemContainer: {
     marginBottom: 12,

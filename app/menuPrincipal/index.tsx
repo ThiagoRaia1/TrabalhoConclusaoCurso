@@ -2,23 +2,21 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   TextInput,
-  Dimensions,
 } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useState } from "react";
 import { router } from "expo-router";
 import { enviarPrompt } from "../../services/openai";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
-
-const { height: windowHeight } = Dimensions.get("window"); // Altura da tela
+import { createRoadmap, getRoadmap, IRoadmap } from "../roadmap/api";
+import { useAuth } from "../../context/auth";
+import { roadmapProgramacao, roadmapXadrez } from "../../data/roadmaps";
 
 export default function MenuPrincipal() {
   const [prompt, setPrompt] = useState("");
   const [resposta, setResposta] = useState("");
+  const { usuario } = useAuth();
 
   // Dentro de MenuPrincipal
   const [menuVisivel, setMenuVisivel] = useState(false);
@@ -32,6 +30,31 @@ export default function MenuPrincipal() {
     setResposta(resultado);
     setCarregando(false);
   };
+
+  async function generateDefaultRoadmap(tema: string) {
+    let roadmap: IRoadmap | undefined;
+
+    switch (tema) {
+      case "Programação":
+        // Atribui o login do usuário ao roadmap de Programação
+        roadmapProgramacao.usuarioLogin = usuario.login;
+        roadmap = roadmapProgramacao; // Atribui a variável roadmap
+        break;
+
+      case "Xadrez":
+        // Atribui o login do usuário ao roadmap de Xadrez
+        roadmapXadrez.usuarioLogin = usuario.login;
+        roadmap = roadmapXadrez; // Atribui a variável roadmap
+        break;
+
+      default:
+        console.log("Tema não encontrado");
+        return;
+    }
+
+    console.log(roadmap);
+    await createRoadmap(roadmap); // Passa o roadmap para a função createRoadmap
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
@@ -83,26 +106,46 @@ export default function MenuPrincipal() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            router.push({
-              pathname: "./roadmap",
-              params: { tema: "Programação" },
-            })
-          }
+          onPress={async () => {
+            try {
+              await getRoadmap("Programação", usuario.login);
+              router.push({
+                pathname: "./roadmap",
+                params: { tema: "Programação" },
+              });
+            } catch (error: any) {
+              if (error.message === "Roadmap não encontrado") {
+                await generateDefaultRoadmap("Programação");
+                router.push({
+                  pathname: "./roadmap",
+                  params: { tema: "Programação" },
+                });
+              }
+            }
+          }}
         >
-          <Text style={styles.buttonText}>
-            Fundamentos de programação
-          </Text>
+          <Text style={styles.buttonText}>Fundamentos de programação</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            router.push({
-              pathname: "./roadmap",
-              params: { tema: "Xadrez" },
-            })
-          }
+          onPress={async () => {
+            try {
+              await getRoadmap("Xadrez", usuario.login);
+              router.push({
+                pathname: "./roadmap",
+                params: { tema: "Xadrez" },
+              });
+            } catch (error: any) {
+              if (error.message === "Roadmap não encontrado") {
+                await generateDefaultRoadmap("Xadrez");
+                router.push({
+                  pathname: "./roadmap",
+                  params: { tema: "Xadrez" },
+                });
+              }
+            }
+          }}
         >
           <Text style={styles.buttonText}>Xadrez</Text>
         </TouchableOpacity>
