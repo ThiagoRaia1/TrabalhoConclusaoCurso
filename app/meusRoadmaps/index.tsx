@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
-import { deleteRoadmapByTitulo, fetchRoadmapsByLogin, Roadmap } from "./api";
+import { deleteRoadmapByTitulo, fetchRoadmapsByLogin, Roadmap } from "../../services/userRoadmaps";
 import { useAuth } from "../../context/auth";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import Ionicons from "@expo/vector-icons/Ionicons";

@@ -1,2 +1,2 @@
-export const LOCALHOST_URL = "https://backend-tg-2dnx.onrender.com" // Render
-// export const LOCALHOST_URL = "http://localhost:3000"
+// export const LOCALHOST_URL = EXPO_PUBLIC_RENDER_BACKEND_API_URL // Render
+export const LOCALHOST_URL = process.env.EXPO_PUBLIC_LOCALHOST_URL

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LOCALHOST_URL } from "../../services/urlApi";
+import { LOCALHOST_URL } from "./urlApi";
 
 const API_URL = `${LOCALHOST_URL}/usuario`;
 

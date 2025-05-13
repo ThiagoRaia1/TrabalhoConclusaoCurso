@@ -13,7 +13,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { useNormalize } from "../../utils/normalize";
-import { cadastrarUsuario } from "./api";
+import { cadastrarUsuario } from "../../services/cadastroApi";
 
 export default function Cadastro() {
   const [nome, setNome] = useState("");

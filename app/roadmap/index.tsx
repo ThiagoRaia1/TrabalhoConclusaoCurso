@@ -11,7 +11,7 @@ import { Checkbox } from "react-native-paper";
 import { router } from "expo-router";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import { useLocalSearchParams } from "expo-router";
-import { atualizarStatusConclusao, getRoadmap, IRoadmap } from "./api";
+import { atualizarStatusConclusao, getRoadmap, IRoadmap } from "../../services/roadmaps";
 import { useAuth } from "../../context/auth";
 
 export default function Roadmap() {

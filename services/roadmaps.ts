@@ -1,4 +1,4 @@
-import { LOCALHOST_URL } from "../../services/urlApi";
+import { LOCALHOST_URL } from "./urlApi";
 
 interface IItem {
   titulo: string;

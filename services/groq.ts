@@ -1,7 +1,7 @@
 // src/services/groq.ts
 import axios from "axios";
 
-const API_KEY = "chave da api"; // Substitua pela chave real
+const API_KEY = process.env.EXPO_PUBLIC_GROQ_API_KEY;
 
 const api = axios.create({
   baseURL: "https://api.groq.com/openai/v1",
@@ -28,7 +28,7 @@ export const enviarPrompt = async (prompt: string) => {
             Responda sempre em português (Brasil) e retorne um json nesse exato mesmo formato, 
             dispense outras mensagens. Se julgar o prompt inválido para criação do json, avise com a
             mensagem "Prompt inválido."
-            (Adicione itens se necessário):
+            (Adicione quantos itens julgar necessário para ter um passo a passo detalhado):
             {
               "titulo": "Xadrez",
               "usuarioLogin": "",
@@ -77,11 +77,9 @@ export const enviarPrompt = async (prompt: string) => {
       temperature: 0.7,
     });
 
-    // Verifique o que a resposta da API está retornando
-    console.log("Resposta completa da API: ", resposta.data);
-
     // A resposta correta está em 'choices[0].message.content'
     return resposta.data.choices[0].message.content;
+
   } catch (erro: any) {
     if (erro.response?.status === 429) {
       return "Você fez muitas requisições em pouco tempo. Tente novamente em instantes.";

@@ -9,7 +9,7 @@ import { useState } from "react";
 import { router } from "expo-router";
 import { enviarPrompt } from "../../services/groq";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
-import { createRoadmap, getRoadmap, IRoadmap } from "../roadmap/api";
+import { createRoadmap, getRoadmap, IRoadmap } from "../../services/roadmaps";
 import { useAuth } from "../../context/auth";
 import { roadmapProgramacao, roadmapXadrez } from "../../data/roadmaps";
 
