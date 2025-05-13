@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { router } from "expo-router";
-import { enviarPrompt } from "../../services/openai";
+import { enviarPrompt } from "../../services/groq";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import { createRoadmap, getRoadmap, IRoadmap } from "../roadmap/api";
 import { useAuth } from "../../context/auth";
@@ -83,12 +83,16 @@ export default function MenuPrincipal() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            router.push({
-              pathname: "./roadmap",
-              params: { tema: prompt },
-            })
-          }
+          onPress={async () => {
+            // router.push({
+            //   pathname: "./roadmap",
+            //   params: { tema: prompt },
+            // })
+
+            console.log("Prompt: ", prompt); // Verifique o valor do prompt
+            const resposta = await enviarPrompt(prompt);
+            console.log(resposta);
+          }}
         >
           <Text style={styles.buttonText}>Gerar</Text>
         </TouchableOpacity>
