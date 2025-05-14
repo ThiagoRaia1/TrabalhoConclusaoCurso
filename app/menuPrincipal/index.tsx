@@ -91,7 +91,7 @@ export default function MenuPrincipal() {
 
           <TextInput
             style={styles.input}
-            placeholder="Ex: Quero aprender sobre design de jogos"
+            placeholder="Ex: Design de jogos"
             placeholderTextColor="#aaa"
             value={prompt}
             onChangeText={setPrompt}
