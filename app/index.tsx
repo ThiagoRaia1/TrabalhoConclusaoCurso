@@ -16,6 +16,7 @@ import { useAuth } from "../context/auth";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { useNormalize } from "../utils/normalize";
+import Carregando from "./components/carregando";
 
 export default function Login() {
   const { usuario, handleLogin, setUsuario } = useAuth();
@@ -153,11 +154,8 @@ export default function Login() {
           </View>
         </View>
       </View>
-      {carregando && (
-        <View style={styles.overlay}>
-          <ActivityIndicator size="large" color="#000" />
-        </View>
-      )}
+
+      {carregando && <Carregando />}
     </View>
   );
 }
@@ -282,12 +280,5 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "white",
     textAlign: "center",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255,255,255,0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 999, // garante que fique por cima de tudo
   },
 });

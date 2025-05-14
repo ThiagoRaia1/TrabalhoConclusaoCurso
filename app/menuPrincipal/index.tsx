@@ -13,10 +13,11 @@ import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import { createRoadmap, getRoadmap, IRoadmap } from "../../services/roadmaps";
 import { useAuth } from "../../context/auth";
 import { roadmapProgramacao, roadmapXadrez } from "../../data/roadmaps";
+import Carregando from "../components/carregando";
 
 export default function MenuPrincipal() {
   const [prompt, setPrompt] = useState("");
-  const [resposta, setResposta] = useState("");
+  const [resposta, setResposta] = useState("aaa");
   const { usuario } = useAuth();
 
   // Dentro de MenuPrincipal
@@ -112,6 +113,7 @@ export default function MenuPrincipal() {
           style={styles.button}
           onPress={async () => {
             try {
+              setCarregando(true);
               await getRoadmap("PROGRAMACAO", usuario.login);
               router.push({
                 pathname: "./roadmap",
@@ -134,6 +136,7 @@ export default function MenuPrincipal() {
         <TouchableOpacity
           style={styles.button}
           onPress={async () => {
+            setCarregando(true);
             try {
               await getRoadmap("XADREZ", usuario.login);
               router.push({
@@ -156,11 +159,7 @@ export default function MenuPrincipal() {
       </View>
 
       {menuVisivel && <MenuSuspenso />}
-      {carregando && (
-        <View style={styles.overlay}>
-          <ActivityIndicator size="large" color="#000" />
-        </View>
-      )}
+      {carregando && <Carregando />}
     </View>
   );
 }
@@ -218,12 +217,5 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "700",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255,255,255,0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 999, // garante que fique por cima de tudo
   },
 });

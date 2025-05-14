@@ -15,6 +15,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { useNormalize } from "../../utils/normalize";
 import { cadastrarUsuario } from "../../services/cadastroApi";
+import Carregando from "../components/carregando";
 
 export default function Cadastro() {
   const [nome, setNome] = useState("");
@@ -145,11 +146,8 @@ export default function Cadastro() {
           {mostrarErro && <Text style={dynamicStyles.erroText}>{erro}</Text>}
         </View>
       </View>
-      {carregando && (
-        <View style={styles.overlay}>
-          <ActivityIndicator size="large" color="#000" />
-        </View>
-      )}
+
+      {carregando && <Carregando />}
     </View>
   );
 }
@@ -244,12 +242,5 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 20,
     fontWeight: "700",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255,255,255,0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 999, // garante que fique por cima de tudo
   },
 });
