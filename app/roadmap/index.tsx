@@ -17,6 +17,7 @@ import {
   IRoadmap,
 } from "../../services/roadmaps";
 import { useAuth } from "../../context/auth";
+import Carregando from "../components/carregando";
 
 export default function Roadmap() {
   const { usuario } = useAuth();
@@ -25,6 +26,7 @@ export default function Roadmap() {
   const [roadmap, setRoadmap] = useState<IRoadmap | null>(null);
   const [modalVisivel, setModalVisivel] = useState(false);
   const [textoExplicacao, setTextoExplicacao] = useState("");
+  const [carregando, setCarregando] = useState(false);
 
   const { tema } = useLocalSearchParams();
   const temaStr = typeof tema === "string" ? tema : "";
@@ -35,6 +37,7 @@ export default function Roadmap() {
     const novoValor = !roadmap.fases[faseIndex].itens[itemIndex].concluido;
 
     try {
+      setCarregando(true);
       await atualizarStatusConclusao(
         temaStr,
         usuario.login,
@@ -48,6 +51,8 @@ export default function Roadmap() {
       setRoadmap(atualizado);
     } catch (e) {
       console.warn("Erro ao atualizar progresso:", e);
+    } finally {
+      setCarregando(false);
     }
   };
 
@@ -58,10 +63,13 @@ export default function Roadmap() {
   useEffect(() => {
     const fetchRoadmap = async () => {
       try {
+        setCarregando(true);
         const dados = await getRoadmap(temaStr, usuario.login);
         setRoadmap(dados);
       } catch (error) {
         console.error("Erro ao buscar roadmap:", error);
+      } finally {
+        setCarregando(false);
       }
     };
 
@@ -74,7 +82,10 @@ export default function Roadmap() {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
             <Text style={styles.backText}>← Voltar</Text>
           </TouchableOpacity>
           <Text style={styles.title}>{roadmap?.titulo}</Text>
@@ -92,7 +103,9 @@ export default function Roadmap() {
                   style={styles.actionButton}
                   onPress={() => {
                     const novoEstado = { ...expandidos };
-                    const expandir = fase.itens.some((_, idx) => !expandidos[`${faseIdx}-${idx}`]);
+                    const expandir = fase.itens.some(
+                      (_, idx) => !expandidos[`${faseIdx}-${idx}`]
+                    );
                     fase.itens.forEach((_, idx) => {
                       novoEstado[`${faseIdx}-${idx}`] = expandir;
                     });
@@ -100,7 +113,9 @@ export default function Roadmap() {
                   }}
                 >
                   <Text style={styles.actionText}>
-                    {fase.itens.some((_, idx) => !expandidos[`${faseIdx}-${idx}`])
+                    {fase.itens.some(
+                      (_, idx) => !expandidos[`${faseIdx}-${idx}`]
+                    )
                       ? "Expandir todos"
                       : "Colapsar todos"}
                   </Text>
@@ -121,20 +136,31 @@ export default function Roadmap() {
                       style={styles.itemTitleBox}
                       onPress={() => alternarExpandido(id)}
                     >
-                      <Text style={[styles.itemTitle, item.concluido && styles.concluded]}>
+                      <Text
+                        style={[
+                          styles.itemTitle,
+                          item.concluido && styles.concluded,
+                        ]}
+                      >
                         {item.titulo}
                       </Text>
-                      <Text style={styles.toggleIcon}>{expandidos[id] ? "−" : "+"}</Text>
+                      <Text style={styles.toggleIcon}>
+                        {expandidos[id] ? "−" : "+"}
+                      </Text>
                     </Pressable>
                   </View>
 
                   {expandidos[id] && (
                     <View style={styles.itemDescriptionBox}>
-                      <Text style={styles.itemDescription}>{item.descricao}</Text>
+                      <Text style={styles.itemDescription}>
+                        {item.descricao}
+                      </Text>
                       <TouchableOpacity
                         style={styles.explainButton}
                         onPress={() => {
-                          setTextoExplicacao(item.descricao || "Sem descrição disponível.");
+                          setTextoExplicacao(
+                            item.descricao || "Sem descrição disponível."
+                          );
                           setModalVisivel(true);
                         }}
                       >
@@ -150,17 +176,20 @@ export default function Roadmap() {
       </ScrollView>
 
       {menuVisivel && <MenuSuspenso />}
-
       {modalVisivel && (
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
             <Text style={styles.modalText}>{textoExplicacao}</Text>
-            <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisivel(false)}>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setModalVisivel(false)}
+            >
               <Text style={styles.modalCloseText}>Fechar</Text>
             </TouchableOpacity>
           </View>
         </View>
       )}
+      {carregando && <Carregando />}
     </View>
   );
 }

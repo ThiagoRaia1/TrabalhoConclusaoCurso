@@ -14,6 +14,7 @@ import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import { useAuth } from "../../context/auth";
 import { useNormalize } from "../../utils/normalize";
 import { atualizarUsuario } from "../../services/atualizarUsuarioApi";
+import Carregando from "../components/carregando";
 
 export default function MeuPerfil() {
   const { usuario, setUsuario } = useAuth();
@@ -26,8 +27,9 @@ export default function MeuPerfil() {
     login: usuario.login,
     senha: senha,
   });
+  const [carregando, setCarregando] = useState(false);
 
-  const { normalize, normalizeHeight, normalizeFontWeight } = useNormalize();
+  const { normalize, normalizeFontWeight } = useNormalize();
 
   const dynamicStyles = {
     title: {
@@ -55,6 +57,7 @@ export default function MeuPerfil() {
   const toggleEditar = async () => {
     if (editando) {
       try {
+        setCarregando(true)
         const usuarioAtualizado = await atualizarUsuario(
           backupUsuario.login,
           nome,
@@ -62,11 +65,13 @@ export default function MeuPerfil() {
           senha
         );
         setUsuario({ ...usuario, nome: usuarioAtualizado.nome });
-        alert("Dados atualizados com sucesso!");
-        setSenha("");
-        setEditando(false);
       } catch (erro: any) {
         alert("Erro ao atualizar os dados: " + erro.message);
+      } finally {
+        setCarregando(false)
+        setSenha("");
+        setEditando(false);
+        alert("Dados atualizados com sucesso!");
       }
     } else {
       setBackupUsuario({ nome, login: usuario.login, senha });
@@ -107,7 +112,7 @@ export default function MeuPerfil() {
               ]}
             >
               <TextInput
-                style={[dynamicStyles.input, styles.inputField]}
+                style={[dynamicStyles.input, styles.inputField, {outlineStyle: 'none'} as any]}
                 value={nome}
                 onChangeText={setNome}
                 editable={editando}
@@ -121,7 +126,7 @@ export default function MeuPerfil() {
             <Text style={dynamicStyles.label}>Email</Text>
             <View style={[styles.inputContainer, styles.inputDisabled]}>
               <TextInput
-                style={[dynamicStyles.input, styles.inputField]}
+                style={[dynamicStyles.input, styles.inputField, {outlineStyle: 'none'} as any]}
                 value={usuario.login}
                 editable={false}
               />
@@ -137,7 +142,7 @@ export default function MeuPerfil() {
               ]}
             >
               <TextInput
-                style={[dynamicStyles.input, styles.inputField]}
+                style={[dynamicStyles.input, styles.inputField, {outlineStyle: 'none'} as any]}
                 placeholder="Digite atual sua senha para mantê-la."
                 placeholderTextColor="#aaa"
                 value={senha}
@@ -166,6 +171,7 @@ export default function MeuPerfil() {
       </View>
 
       {menuVisivel && <MenuSuspenso />}
+      {carregando && <Carregando />}
     </View>
   );
 }
