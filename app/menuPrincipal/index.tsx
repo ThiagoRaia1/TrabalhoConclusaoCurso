@@ -9,7 +9,12 @@ import { useState } from "react";
 import { router } from "expo-router";
 import { enviarPrompt } from "../../services/groq";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
-import { createRoadmap, getRoadmap, IRoadmap } from "../../services/roadmaps";
+import {
+  createRoadmap,
+  getRoadmap,
+  IRoadmap,
+  normalizeTituloRoadmap,
+} from "../../services/roadmaps";
 import { useAuth } from "../../context/auth";
 import { roadmapProgramacao, roadmapXadrez } from "../../data/roadmaps";
 import Carregando from "../components/carregando";
@@ -27,14 +32,28 @@ export default function MenuPrincipal() {
   const gerarResposta = async () => {
     if (carregando) return;
     setCarregando(true);
-    const resultado = await enviarPrompt(prompt, usuario.login);
-    setCarregando(false);
-    return resultado;
+    const tituloNormalized = await normalizeTituloRoadmap(prompt);
+    try {
+      await getRoadmap(tituloNormalized, usuario.login);
+      alert("Roadmap ja existe.");
+      router.push({
+        pathname: "./roadmap",
+        params: { tema: tituloNormalized },
+      });
+      return null;
+    } catch (error: any) {
+      if (error.message === "Roadmap não encontrado") {
+        console.log(error.message);
+        const resultado = await enviarPrompt(prompt, usuario.login);
+        setCarregando(false);
+        return resultado;
+      }
+    }
   };
 
   async function generateDefaultRoadmap(tema: string) {
     let roadmap: IRoadmap | undefined;
-
+    console.log("Entrou");
     switch (tema) {
       case "PROGRAMACAO":
         // Atribui o login do usuário ao roadmap de Programação
@@ -53,7 +72,6 @@ export default function MenuPrincipal() {
         return;
     }
 
-    console.log(roadmap);
     await createRoadmap(roadmap); // Passa o roadmap para a função createRoadmap
   }
 
@@ -87,6 +105,7 @@ export default function MenuPrincipal() {
             } else {
               const respostaGerada = await gerarResposta();
 
+              if (!respostaGerada) return; // <-- evita .trim() em null
               console.log(respostaGerada);
 
               // 1. Parse o JSON para um objeto JavaScript

@@ -43,7 +43,7 @@ export default function MeusRoadmaps() {
       Animated.timing(animating, {
         toValue: 1, // Finalizando a animação de fade (1 é totalmente visível)
         duration: 300, // Duração de 300ms
-        useNativeDriver: true, // Usando o driver nativo para melhor desempenho
+        useNativeDriver: false, // Usando o driver nativo para melhor desempenho
       }).start();
     } else {
       Animated.timing(animating, {

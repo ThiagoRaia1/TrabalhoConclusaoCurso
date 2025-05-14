@@ -18,13 +18,19 @@ export interface IRoadmap {
   fases: IFase[];
 }
 
+export async function normalizeTituloRoadmap(titulo: string) {
+  titulo = titulo
+    .normalize("NFD") // separa caracteres de acentos
+    .replace(/[\u0300-\u036f]/g, "") // remove os acentos
+    .toUpperCase(); // coloca em maiúsculo
+
+  return titulo;
+}
+
 export async function createRoadmap(roadmap: IRoadmap) {
   try {
     // Remove acentos e coloca em maiúsculo
-    roadmap.titulo = roadmap.titulo
-      .normalize("NFD") // separa caracteres de acentos
-      .replace(/[\u0300-\u036f]/g, "") // remove os acentos
-      .toUpperCase(); // coloca em maiúsculo
+    roadmap.titulo = await normalizeTituloRoadmap(roadmap.titulo);
 
     // Agora, você envia o conteúdo para o backend
     const resposta = await fetch(`${LOCALHOST_URL}/roadmap`, {
