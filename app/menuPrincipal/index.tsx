@@ -4,6 +4,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  useWindowDimensions,
 } from "react-native";
 import { useState } from "react";
 import { router } from "expo-router";
@@ -18,24 +22,25 @@ import {
 import { useAuth } from "../../context/auth";
 import { roadmapProgramacao, roadmapXadrez } from "../../data/roadmaps";
 import Carregando from "../components/carregando";
+import Icon from "react-native-vector-icons/Ionicons";
 
 export default function MenuPrincipal() {
   const [prompt, setPrompt] = useState("");
   const [resposta, setResposta] = useState("");
   const { usuario } = useAuth();
-
-  // Dentro de MenuPrincipal
   const [menuVisivel, setMenuVisivel] = useState(false);
-
   const [carregando, setCarregando] = useState(false);
+  const { width } = useWindowDimensions();
+  const isWeb = width >= 900;
 
   const gerarResposta = async () => {
     if (carregando) return;
     setCarregando(true);
     const tituloNormalized = await normalizeTituloRoadmap(prompt);
+
     try {
       await getRoadmap(tituloNormalized, usuario.login);
-      alert("Roadmap ja existe.");
+      alert("Roadmap já existe.");
       router.push({
         pathname: "./roadmap",
         params: { tema: tituloNormalized },
@@ -43,7 +48,6 @@ export default function MenuPrincipal() {
       return null;
     } catch (error: any) {
       if (error.message === "Roadmap não encontrado") {
-        console.log(error.message);
         const resultado = await enviarPrompt(prompt, usuario.login);
         setCarregando(false);
         return resultado;
@@ -53,137 +57,142 @@ export default function MenuPrincipal() {
 
   async function generateDefaultRoadmap(tema: string) {
     let roadmap: IRoadmap | undefined;
-    console.log("Entrou");
     switch (tema) {
       case "PROGRAMACAO":
-        // Atribui o login do usuário ao roadmap de Programação
         roadmapProgramacao.usuarioLogin = usuario.login;
-        roadmap = roadmapProgramacao; // Atribui a variável roadmap
+        roadmap = roadmapProgramacao;
         break;
-
       case "XADREZ":
-        // Atribui o login do usuário ao roadmap de Xadrez
         roadmapXadrez.usuarioLogin = usuario.login;
-        roadmap = roadmapXadrez; // Atribui a variável roadmap
+        roadmap = roadmapXadrez;
         break;
-
       default:
-        console.log("Tema não encontrado");
         return;
     }
-
-    await createRoadmap(roadmap); // Passa o roadmap para a função createRoadmap
+    await createRoadmap(roadmap);
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View style={styles.container}>
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
 
-      <View style={styles.topContent}>
-        <Text style={styles.message}>Crie seu Roadmap!</Text>
+      <KeyboardAvoidingView
+        style={styles.flexGrow}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingHorizontal: width < 600 ? 20 : 50 },
+          ]}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Text style={styles.title}>🚀 Crie seu Roadmap personalizado!</Text>
 
-        <View style={styles.inputContainer}>
           <TextInput
-            style={[styles.input, { outlineStyle: "none" } as any]}
-            placeholder="Digite o prompt para criação do roadmap"
-            placeholderTextColor="#ccc"
+            style={styles.input}
+            placeholder="Ex: Quero aprender sobre design de jogos"
+            placeholderTextColor="#aaa"
             value={prompt}
             onChangeText={setPrompt}
             returnKeyType="done"
             onSubmitEditing={gerarResposta}
           />
-        </View>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={async () => {
-            // console.log("Prompt: ", prompt); // Verifique o valor do prompt
-            setCarregando(true);
-            if (prompt === "") {
-              setResposta("Digite o prompt");
-              setCarregando(false);
-            } else {
-              const respostaGerada = await gerarResposta();
-
-              if (!respostaGerada) return; // <-- evita .trim() em null
-              console.log(respostaGerada);
-
-              // 1. Parse o JSON para um objeto JavaScript
-              const parsedData = await JSON.parse(respostaGerada.trim());
-              console.log(parsedData); // Se o parsing for bem-sucedido, o objeto será mostrado aqui
-
-              // 2. Aserte o tipo para garantir que seja do tipo IRoadmap
-              const roadmap: IRoadmap = parsedData;
-              // console.log(typeof roadmap)
-              await createRoadmap(roadmap);
-
-              router.push({
-                pathname: "./roadmap",
-                params: { tema: prompt.toUpperCase() },
-              });
-            }
-          }}
-        >
-          <Text style={styles.buttonText}>Gerar</Text>
-        </TouchableOpacity>
-
-        {resposta !== "" && (
-          <Text style={{ marginBottom: -54, fontSize: 18 }}>{resposta}</Text>
-        )}
-      </View>
-
-      {/* Parte inferior centralizada */}
-      <View style={styles.bottomContent}>
-        <Text style={styles.message}>Conheça um de nossos Roadmaps!</Text>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={async () => {
-            try {
+          <TouchableOpacity
+            style={styles.button}
+            onPress={async () => {
               setCarregando(true);
-              await getRoadmap("PROGRAMACAO", usuario.login);
-              router.push({
-                pathname: "./roadmap",
-                params: { tema: "PROGRAMACAO" },
-              });
-            } catch (error: any) {
-              if (error.message === "Roadmap não encontrado") {
-                await generateDefaultRoadmap("PROGRAMACAO");
-                router.push({
-                  pathname: "./roadmap",
-                  params: { tema: "PROGRAMACAO" },
-                });
-              }
-            }
-          }}
-        >
-          <Text style={styles.buttonText}>Fundamentos de programação</Text>
-        </TouchableOpacity>
+              if (prompt === "") {
+                setResposta("Digite o prompt");
+                setCarregando(false);
+              } else {
+                const respostaGerada = await gerarResposta();
+                if (!respostaGerada) return;
+                const parsedData = await JSON.parse(respostaGerada.trim());
+                const roadmap: IRoadmap = parsedData;
+                await createRoadmap(roadmap);
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={async () => {
-            setCarregando(true);
-            try {
-              await getRoadmap("XADREZ", usuario.login);
-              router.push({
-                pathname: "./roadmap",
-                params: { tema: "XADREZ" },
-              });
-            } catch (error: any) {
-              if (error.message === "Roadmap não encontrado") {
-                await generateDefaultRoadmap("XADREZ");
                 router.push({
                   pathname: "./roadmap",
-                  params: { tema: "XADREZ" },
+                  params: { tema: prompt.toUpperCase() },
                 });
               }
-            }
-          }}
-        >
-          <Text style={styles.buttonText}>Xadrez</Text>
-        </TouchableOpacity>
-      </View>
+            }}
+          >
+            <Icon
+              name="sparkles-outline"
+              size={22}
+              color="#fff"
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.buttonText}>Gerar Roadmap com IA</Text>
+          </TouchableOpacity>
+
+          {resposta !== "" && <Text style={styles.alertText}>{resposta}</Text>}
+
+          <View style={styles.divider} />
+
+          <Text style={styles.subtitle}>✨ Exemplos para começar rápido:</Text>
+
+          <View
+            style={[
+              styles.examplesContainer,
+              isWeb && { flexDirection: "row", gap: 20 },
+            ]}
+          >
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={async () => {
+                setCarregando(true);
+                try {
+                  await getRoadmap("PROGRAMACAO", usuario.login);
+                  router.push({
+                    pathname: "./roadmap",
+                    params: { tema: "PROGRAMACAO" },
+                  });
+                } catch (error: any) {
+                  if (error.message === "Roadmap não encontrado") {
+                    await generateDefaultRoadmap("PROGRAMACAO");
+                    router.push({
+                      pathname: "./roadmap",
+                      params: { tema: "PROGRAMACAO" },
+                    });
+                  }
+                }
+              }}
+            >
+              <Icon name="code-slash-outline" size={20} color="#fff" />
+              <Text style={styles.buttonText}>Fundamentos de Programação</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={async () => {
+                setCarregando(true);
+                try {
+                  await getRoadmap("XADREZ", usuario.login);
+                  router.push({
+                    pathname: "./roadmap",
+                    params: { tema: "XADREZ" },
+                  });
+                } catch (error: any) {
+                  if (error.message === "Roadmap não encontrado") {
+                    await generateDefaultRoadmap("XADREZ");
+                    router.push({
+                      pathname: "./roadmap",
+                      params: { tema: "XADREZ" },
+                    });
+                  }
+                }
+              }}
+            >
+              <Icon name="game-controller-outline" size={20} color="#fff" />
+              <Text style={styles.buttonText}>Xadrez</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       {menuVisivel && <MenuSuspenso />}
       {carregando && <Carregando />}
@@ -194,55 +203,85 @@ export default function MenuPrincipal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
-    justifyContent: "space-between", // separa parte de cima e de baixo
+    backgroundColor: "#f1f4f9",
   },
-  topContent: {
-    flexGrow: 1,
-    justifyContent: "center",
+  flexGrow: {
+    flex: 1,
+  },
+  scrollContent: {
     alignItems: "center",
-    gap: 30,
+    gap: 25,
+    paddingTop: 30,
+    paddingBottom: 50,
   },
-  bottomContent: {
-    alignSelf: "center",
-    alignItems: "center",
-    gap: 20,
-    marginBottom: 40,
-    minWidth: "40%",
-  },
-  message: {
+  title: {
     fontSize: 30,
-    color: "black",
+    fontWeight: "bold",
+    color: "#1f2937",
     textAlign: "center",
   },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    paddingHorizontal: 15,
-    width: 700,
-    borderWidth: 1,
-    borderColor: "#319594",
-    borderRadius: 8,
-    justifyContent: "space-between",
+  subtitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#334155",
+    textAlign: "center",
   },
   input: {
-    flex: 1,
-    fontSize: 20,
+    width: "100%",
+    maxWidth: 700,
     height: 60,
+    borderWidth: 1,
+    borderColor: "#38bdf8",
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    fontSize: 18,
     backgroundColor: "white",
   },
   button: {
-    backgroundColor: "#2596be",
-    paddingVertical: 10,
+    backgroundColor: "#0ea5e9",
+    flexDirection: "row",
+    gap: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    width: "100%",
+    maxWidth: 400,
+  },
+  secondaryButton: {
+    backgroundColor: "#64748b",
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 10,
-    width: 400,
-    alignItems: "center",
+    width: "100%",
+    maxWidth: 400,
   },
   buttonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "700",
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  alertText: {
+    color: "#dc2626",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#ccc",
+    width: "80%",
+    marginVertical: 20,
+  },
+  examplesContainer: {
+    flexDirection: "column", // Mantém os botões empilhados
+    alignItems: "center", // Centraliza horizontalmente
+    justifyContent: "center",
+    width: "100%",
+    gap: 16,
   },
 });

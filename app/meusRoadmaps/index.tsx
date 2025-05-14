@@ -10,7 +10,11 @@ import {
 } from "react-native";
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
-import { deleteRoadmapByTitulo, fetchRoadmapsByLogin, Roadmap } from "../../services/userRoadmaps";
+import {
+  deleteRoadmapByTitulo,
+  fetchRoadmapsByLogin,
+  Roadmap,
+} from "../../services/userRoadmaps";
 import { useAuth } from "../../context/auth";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -21,8 +25,10 @@ export default function MeusRoadmaps() {
   const { usuario } = useAuth();
   const [menuVisivel, setMenuVisivel] = useState(false);
   const [modalVisivel, setModalVisivel] = useState(false);
-  const [roadmapSelecionado, setRoadmapSelecionado] = useState<Roadmap | null>(null);
-  const [animating, setAnimating] = useState(new Animated.Value(0)); // Inicializando a animação
+  const [roadmapSelecionado, setRoadmapSelecionado] = useState<Roadmap | null>(
+    null
+  );
+  const [animating] = useState(new Animated.Value(0));
 
   useEffect(() => {
     const carregarRoadmaps = async () => {
@@ -39,20 +45,12 @@ export default function MeusRoadmaps() {
   }, []);
 
   useEffect(() => {
-    if (modalVisivel) {
-      Animated.timing(animating, {
-        toValue: 1, // Finalizando a animação de fade (1 é totalmente visível)
-        duration: 300, // Duração de 300ms
-        useNativeDriver: false, // Usando o driver nativo para melhor desempenho
-      }).start();
-    } else {
-      Animated.timing(animating, {
-        toValue: 0, // Revertendo a animação de fade (0 é invisível)
-        duration: 300, // Duração de 300ms
-        useNativeDriver: true, // Usando o driver nativo para melhor desempenho
-      }).start();
-    }
-  }, [modalVisivel, animating]); // A animação será disparada quando o modal for alterado
+    Animated.timing(animating, {
+      toValue: modalVisivel ? 1 : 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [modalVisivel]);
 
   const confirmarExclusao = async () => {
     if (!roadmapSelecionado) return;
@@ -72,31 +70,29 @@ export default function MeusRoadmaps() {
 
   if (loading) {
     return (
-      <View>
+      <View style={styles.container}>
         <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#2496BE" />
-          <Text style={{ marginTop: 10, fontSize: 16 }}>
-            Carregando seus roadmaps...
-          </Text>
+          <Text style={styles.loadingText}>Carregando seus roadmaps...</Text>
         </View>
       </View>
     );
   }
 
   return (
-    <View>
+    <View style={styles.container}>
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Meus Roadmaps</Text>
 
         <View style={styles.roadmapList}>
           {roadmaps.map((roadmap, index) => (
-            <View key={index} style={{ position: "relative" }}>
+            <View key={index} style={styles.cardContainer}>
               <Pressable
                 style={({ pressed }) => [
-                  styles.button,
-                  pressed && { borderBottomWidth: 0 },
+                  styles.roadmapCard,
+                  pressed && { opacity: 0.8 },
                 ]}
                 onPress={() =>
                   router.push({
@@ -105,9 +101,7 @@ export default function MeusRoadmaps() {
                   })
                 }
               >
-                <Text style={styles.buttonText} selectable={false}>
-                  {roadmap.titulo}
-                </Text>
+                <Text style={styles.cardText}>{roadmap.titulo}</Text>
               </Pressable>
 
               <Pressable
@@ -117,41 +111,30 @@ export default function MeusRoadmaps() {
                   setModalVisivel(true);
                 }}
               >
-                <Ionicons name="trash" size={24} color="red" />
+                <Ionicons name="trash" size={20} color="#e53935" />
               </Pressable>
             </View>
           ))}
 
           <Pressable
-            style={({ pressed }) => [
-              styles.button,
-              { backgroundColor: "#4CAF50", borderColor: "#1d5e2f" },
-              pressed && { borderBottomWidth: 0 },
-            ]}
+            style={styles.createCard}
             onPress={() => router.push("/menuPrincipal")}
           >
-            <Ionicons name="add-circle-outline" size={60} color="white" />
-            <Text style={styles.buttonText} selectable={false}>
-              Criar Roadmap
-            </Text>
+            <Ionicons name="add-circle-outline" size={40} color="#fff" />
+            <Text style={styles.cardText}>Criar Roadmap</Text>
           </Pressable>
         </View>
       </ScrollView>
+
       {menuVisivel && <MenuSuspenso />}
 
-      {/* Modal de Confirmação */}
       <Modal
         transparent
         visible={modalVisivel}
-        animationType="none" // Removendo animação padrão do Modal
+        animationType="none"
         onRequestClose={() => setModalVisivel(false)}
       >
-        <Animated.View
-          style={[
-            styles.modalOverlay,
-            { opacity: animating }, // Controlando a opacidade via animação
-          ]}
-        >
+        <Animated.View style={[styles.modalOverlay, { opacity: animating }]}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitulo}>Confirmar exclusão</Text>
             <Text style={styles.modalTexto}>
@@ -160,14 +143,14 @@ export default function MeusRoadmaps() {
 
             <View style={styles.modalBotoes}>
               <Pressable
-                style={[styles.modalBotao, { backgroundColor: "#e53935" }]}
+                style={[styles.modalBotao, styles.modalExcluir]}
                 onPress={confirmarExclusao}
               >
                 <Text style={styles.modalBotaoTexto}>Excluir</Text>
               </Pressable>
 
               <Pressable
-                style={[styles.modalBotao, { backgroundColor: "#aaa" }]}
+                style={[styles.modalBotao, styles.modalCancelar]}
                 onPress={() => setModalVisivel(false)}
               >
                 <Text style={styles.modalBotaoTexto}>Cancelar</Text>
@@ -181,59 +164,78 @@ export default function MeusRoadmaps() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
   scrollContainer: {
     paddingVertical: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     alignItems: "center",
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 28,
+    fontWeight: "700",
     marginBottom: 20,
+    textAlign: "center",
   },
   roadmapList: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    gap: 12,
-    rowGap: 16,
+    gap: 16,
+    rowGap: 20,
+    paddingBottom: 30,
   },
-  button: {
+  cardContainer: {
+    position: "relative",
+  },
+  roadmapCard: {
     backgroundColor: "#2496BE",
-    width: 210,
-    height: 110,
+    width: 180,
+    height: 100,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 12,
-    borderBottomWidth: 4,
-    borderColor: "#196f8c",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 4,
   },
-  buttonText: {
+  createCard: {
+    backgroundColor: "#4CAF50",
+    width: 180,
+    height: 100,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottomWidth: 4,
+    borderColor: "#1d5e2f",
+  },
+  cardText: {
     color: "white",
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "600",
     textAlign: "center",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: 100,
-    backgroundColor: "white",
+    marginTop: 4,
   },
   deleteIcon: {
     position: "absolute",
-    top: 5,
-    right: 5,
-    padding: 2,
-    zIndex: 1,
-    backgroundColor: "#fff",
+    top: 6,
+    right: 6,
+    backgroundColor: "white",
     borderRadius: 20,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
+    padding: 4,
+    elevation: 2,
+  },
+  loadingContainer: {
+    marginTop: 100,
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
   },
   modalOverlay: {
     flex: 1,
@@ -245,13 +247,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 24,
     borderRadius: 12,
-    width: "80%",
+    width: "85%",
+    maxWidth: 400,
     alignItems: "center",
   },
   modalTitulo: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 12,
   },
   modalTexto: {
     fontSize: 16,
@@ -260,18 +263,40 @@ const styles = StyleSheet.create({
   },
   modalBotoes: {
     flexDirection: "row",
+    justifyContent: "space-between",
     gap: 12,
+    width: "100%",
   },
   modalBotao: {
     flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
     alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#ccc",
+
+    // Efeito de relevo (sombra)
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+
+    elevation: 6, // Android
   },
   modalBotaoTexto: {
-    color: "white",
+    color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "600",
+    letterSpacing: 0.5,
+  },
+  modalExcluir: {
+    backgroundColor: "#ff4d4d",
+    borderColor: "#d32f2f",
+  },
+  modalCancelar: {
+    backgroundColor: "#607D8B",
   },
 });

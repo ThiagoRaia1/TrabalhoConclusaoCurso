@@ -1,8 +1,16 @@
-import React from "react";
-import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
+import React, { useEffect } from "react";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  Platform,
+  useWindowDimensions,
+  LayoutAnimation,
+  UIManager,
+} from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { router } from "expo-router";
-import { useNormalize } from "../../utils/normalize";
 
 type Props = {
   menuVisivel: boolean;
@@ -10,82 +18,62 @@ type Props = {
 };
 
 export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
-  // console.log("TopBarMenu renderizado");
-  const exibeMenu = () => {
+  const { width } = useWindowDimensions();
+  const iconSize = width < 400 ? 30 : 50;
+
+  useEffect(() => {
+    if (
+      Platform.OS === "android" &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }, []);
+
+  const toggleMenu = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setMenuVisivel(!menuVisivel);
   };
 
-  const { normalize } = useNormalize();
-
-  const dynamicStyles = {
-    topBarText: {
-      color: "white",
-      fontSize: normalize({ base: 7 }),
-    },
-    topBar: {
-      height: 100,
-      paddingHorizontal: normalize({ base: 50 }),
-      zIndex: 10,
-    },
-  };
-
   return (
-    <View
-      style={[
-        dynamicStyles.topBar,
-        {
-          flexDirection: "row",
-          backgroundColor: "#242E3F",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-        },
-      ]}
-    >
-      <View style={{ flexDirection: "row", gap: normalize({ base: 1 }) }}>
-        <Text style={dynamicStyles.topBarText}>AI TEACHER</Text>
-      </View>
-      <View style={{ flexDirection: "row", gap: normalize({ base: 1 }) }}>
-        <TouchableOpacity
-          style={styles.topBarButton}
-          onPress={() => router.push("./meusRoadmaps")}
-        >
-          <Text style={dynamicStyles.topBarText}>MEUS ROADMAPS</Text>
-        </TouchableOpacity>
+    <>
+      <View style={styles.topBar}>
+        <Text style={styles.logoText}>AI TEACHER</Text>
 
-        <TouchableOpacity
-          style={styles.topBarButton}
-          onPress={() => router.push("./menuPrincipal")}
-        >
-          <Text style={dynamicStyles.topBarText}>INÍCIO</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity
+            style={styles.topBarButton}
+            onPress={() => router.push("./meusRoadmaps")}
+          >
+            <Text style={styles.buttonText}>MEUS ROADMAPS</Text>
+          </TouchableOpacity>
 
-        {/* <Text style={dynamicStyles.topBarText}>Topo</Text>
-        <Text style={dynamicStyles.topBarText}>Topo</Text> */}
-        <TouchableOpacity onPress={exibeMenu}>
-          <FontAwesome name="user-circle" size={70} color="white" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.topBarButton}
+            onPress={() => router.push("./menuPrincipal")}
+          >
+            <Text style={styles.buttonText}>INÍCIO</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={toggleMenu}>
+            <FontAwesome name="user-circle" size={iconSize} color="white" />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+
+      {menuVisivel && <MenuSuspenso />}
+    </>
   );
 }
 
 export function MenuSuspenso() {
   return (
     <View style={styles.menuSuspenso}>
-      <TouchableOpacity
-        onPress={() => {
-          router.push("./meuPerfil");
-        }}
-      >
+      <TouchableOpacity onPress={() => router.push("./meuPerfil")}>
         <Text style={styles.menuItem}>Meu Perfil</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => {
-          router.push("./");
-        }}
-      >
+      <TouchableOpacity onPress={() => router.push("./")}>
         <Text style={styles.menuItem}>Logout</Text>
       </TouchableOpacity>
     </View>
@@ -93,35 +81,63 @@ export function MenuSuspenso() {
 }
 
 const styles = StyleSheet.create({
-  topBarButton: {
-    alignSelf: "center",
-    paddingVertical: 10,
+  topBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#1F2937",
+    paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "#697385",
+    width: "100%",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    zIndex: 20,
+  },
+  logoText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  buttonGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  topBarButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: "#374151",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "600",
   },
   menuSuspenso: {
     position: "absolute",
-    right: 30,
-    top: 100,
-    backgroundColor: "white",
+    right: 20,
+    top: Platform.OS === "web" ? 75 : 100,
+    backgroundColor: "#fff",
     borderRadius: 8,
-    elevation: 5, // sombra Android
-    shadowColor: "#000", // sombra iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    padding: 10,
-    zIndex: 10,
-    width: 300,
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    paddingVertical: 10,
+    width: 220,
+    zIndex: 30,
   },
   menuItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    fontSize: 18,
-    color: "#333",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: "#1F2937",
     borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderBottomColor: "#E5E7EB",
   },
 });
