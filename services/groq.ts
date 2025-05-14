@@ -11,7 +11,7 @@ const api = axios.create({
   },
 });
 
-export const enviarPrompt = async (prompt: string) => {
+export const enviarPrompt = async (prompt: string, usuarioLogin: string) => {
   try {
     const resposta = await api.post("/chat/completions", {
       // llama3-8b-8192
@@ -24,7 +24,10 @@ export const enviarPrompt = async (prompt: string) => {
         {
           role: "system",
           content: `
-            Você é um assistente que gera roadmaps de estudo no formato passo a passo com recursos. 
+            Você é um assistente que gera roadmaps de estudo no formato passo a passo com recursos.
+            usuarioLogin deve ter o valor de ${usuarioLogin}.
+            o primeiro titulo deve ser exatamente ${prompt}, não mude absolutamente nada.
+            Garanta que seja um JSON válido.
             Responda sempre em português (Brasil) e retorne um json nesse exato mesmo formato, 
             dispense outras mensagens. Se julgar o prompt inválido para criação do json, avise com a
             mensagem "Prompt inválido."

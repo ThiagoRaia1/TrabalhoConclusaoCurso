@@ -26,7 +26,8 @@ export default function MenuPrincipal() {
   const gerarResposta = async () => {
     if (carregando) return;
     setCarregando(true);
-    const resultado = await enviarPrompt(prompt);
+    const resultado = await enviarPrompt(prompt, usuario.login);
+    console.log("Resultado: ")
     setResposta(resultado);
     setCarregando(false);
   };
@@ -71,13 +72,13 @@ export default function MenuPrincipal() {
             value={prompt}
             onChangeText={setPrompt}
             returnKeyType="done"
-            // onSubmitEditing={gerarResposta}
-            onSubmitEditing={() =>
-              router.push({
-                pathname: "./roadmap",
-                params: { tema: prompt },
-              })
-            }
+            onSubmitEditing={gerarResposta}
+          // onSubmitEditing={() =>
+          //   router.push({
+          //     pathname: "./roadmap",
+          //     params: { tema: prompt },
+          //   })
+          // }
           />
         </View>
 
@@ -90,18 +91,25 @@ export default function MenuPrincipal() {
             // })
 
             console.log("Prompt: ", prompt); // Verifique o valor do prompt
-            const resposta = await enviarPrompt(prompt);
-            console.log(resposta);
+            await gerarResposta()
+            console.log(resposta)
+            // 1. Parse o JSON para um objeto JavaScript
+            const parsedData = await JSON.parse(resposta);
+            console.log(parsedData);  // Se o parsing for bem-sucedido, o objeto será mostrado aqui
+
+            // // 2. Aserte o tipo para garantir que seja do tipo IRoadmap
+            // const roadmap: IRoadmap = parsedData;
+            // console.log(typeof roadmap)
+            // await createRoadmap(roadmap)
+            router.push({
+              pathname: "./roadmap",
+              params: { tema: prompt },
+            })
           }}
         >
           <Text style={styles.buttonText}>Gerar</Text>
         </TouchableOpacity>
 
-        {resposta !== "" && (
-          <View style={{ marginTop: 20, padding: 20 }}>
-            <Text style={{ fontSize: 18 }}>{resposta}</Text>
-          </View>
-        )}
       </View>
 
       {/* Parte inferior centralizada */}
