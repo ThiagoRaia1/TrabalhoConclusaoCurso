@@ -15,8 +15,7 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
     setMenuVisivel(!menuVisivel);
   };
 
-  const { normalize, normalizeHeight, normalizeFontWeight, normalizeIconSize } =
-    useNormalize();
+  const { normalize } = useNormalize();
 
   const dynamicStyles = {
     topBarText: {

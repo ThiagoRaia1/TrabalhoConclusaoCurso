@@ -8,6 +8,7 @@ import {
   ViewStyle,
   TextInput,
   Text,
+  ActivityIndicator,
 } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -22,6 +23,7 @@ export default function Cadastro() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [erro, setErro] = useState("");
   const [mostrarErro, setMostrarErro] = useState(false);
+  const [carregando, setCarregando] = useState(false);
 
   const { normalize, normalizeHeight, normalizeFontWeight } = useNormalize();
 
@@ -143,6 +145,11 @@ export default function Cadastro() {
           {mostrarErro && <Text style={dynamicStyles.erroText}>{erro}</Text>}
         </View>
       </View>
+      {carregando && (
+        <View style={styles.overlay}>
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      )}
     </View>
   );
 }
@@ -237,5 +244,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 20,
     fontWeight: "700",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999, // garante que fique por cima de tudo
   },
 });

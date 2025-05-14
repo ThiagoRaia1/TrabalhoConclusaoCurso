@@ -53,29 +53,119 @@ Exemplo exato de estrutura JSON (apenas modelo, substitua pelo conteúdo gerado)
       "itens": [
         {
           "titulo": "Tabuleiro e Peças",
-          "descricao": "Aprenda como montar o tabuleiro e conhecer as peças.",
+          "descricao": "Aprenda como montar o tabuleiro (casa branca no canto direito) e conheça as peças: rei, dama (rainha), torres, bispos, cavalos e peões. São 16 peças por jogador.",
+          "concluido": false
+        },
+        {
+          "titulo": "Movimentos das Peças",
+          "descricao": "O rei move-se uma casa em qualquer direção; a dama em qualquer direção por várias casas; a torre em linha reta; o bispo nas diagonais; o cavalo em 'L' (duas casas e uma perpendicular); o peão avança uma casa (duas na primeira jogada), captura na diagonal.",
+          "concluido": false
+        },
+        {
+          "titulo": "Objetivo do Jogo",
+          "descricao": "O objetivo é dar xeque-mate no rei adversário, ou seja, colocá-lo sob ataque direto sem possibilidade de fuga. A partida pode terminar em empate por afogamento, repetição ou falta de material.",
+          "concluido": false
+        },
+        {
+          "titulo": "Regras Especiais",
+          "descricao": "Aprenda o roque (movimento especial entre rei e torre), a promoção de peão (chegando ao fim do tabuleiro vira dama, torre, bispo ou cavalo), e a captura 'en passant' (peão captura outro que avançou duas casas).",
+          "concluido": false
+        },
+        {
+          "titulo": "Conceitos Básicos de Abertura",
+          "descricao": "Desenvolva rapidamente cavalos e bispos, controle o centro (e4, d4, e5, d5), evite mover a mesma peça várias vezes e proteja o rei com o roque.",
+          "concluido": false
+        },
+        {
+          "titulo": "Primeiros Mates",
+          "descricao": "Aprenda mates básicos como mate do corredor, mate com dama e rei, mate com duas torres, e mate do pastor (4 lances, educativo).",
           "concluido": false
         }
       ]
     },
     {
-      "titulo": "🟡 Estratégias (Intermediário)",
+      "titulo": "🟡 Estratégias e Táticas (Intermediário)",
       "cor": "#fef9c3",
       "itens": [
         {
-          "titulo": "Ataques Básicos",
-          "descricao": "Estude garfos, cravadas e descobertas.",
+          "titulo": "Táticas Fundamentais",
+          "descricao": "Treine padrões de táticas como garfo (especialmente com cavalo), cravada (peça presa atrás de peça mais valiosa), ataque duplo, descoberto e raios-x. Use exercícios para fixar.",
+          "concluido": false
+        },
+        {
+          "titulo": "Controle do Centro",
+          "descricao": "Entenda a importância estratégica de dominar o centro do tabuleiro para permitir mobilidade e controle das ações do adversário.",
+          "concluido": false
+        },
+        {
+          "titulo": "Casas Fracas e Colunas Abertas",
+          "descricao": "Identifique e explore fraquezas como casas não defendidas ou colunas abertas, ideais para as torres controlarem o jogo.",
+          "concluido": false
+        },
+        {
+          "titulo": "Aberturas Mais Jogadas",
+          "descricao": "Estude linhas populares como Abertura Italiana (e4 e5 Cf3 Cc6 Bc4), Defesa Siciliana (e4 c5), e Gambito da Dama (d4 d5 c4). Saiba os princípios por trás delas.",
+          "concluido": false
+        },
+        {
+          "titulo": "Planejamento no Meio-Jogo",
+          "descricao": "Crie planos com base na posição. Avalie quais peças trocar, onde atacar e como melhorar suas peças. Entenda a coordenação entre peças.",
+          "concluido": false
+        },
+        {
+          "titulo": "Finais Básicos e Intermediários",
+          "descricao": "Aprenda finais como torre contra rei, peão passado, oposição, regra do quadrado e finais de torre e peões.",
+          "concluido": false
+        },
+        {
+          "titulo": "Erros Comuns e Como Evitá-los",
+          "descricao": "Evite erros como jogar sem um plano, mover muitas peças de peão, não proteger o rei e fazer trocas ruins. Sempre pergunte: 'o que meu adversário quer fazer?'",
           "concluido": false
         }
       ]
     },
     {
-      "titulo": "🔵 Competição (Avançado)",
+      "titulo": "🔵 Pensamento Estratégico e Competição (Avançado)",
       "cor": "#bfdbfe",
       "itens": [
         {
           "titulo": "Avaliação de Posições",
-          "descricao": "Entenda estruturas de peões e planos de longo prazo.",
+          "descricao": "Avalie posições com base em material, segurança do rei, atividade das peças, estrutura de peões e iniciativa. Decida com base nesses fatores.",
+          "concluido": false
+        },
+        {
+          "titulo": "Estudo de Partidas Clássicas",
+          "descricao": "Revise partidas de mestres como Bobby Fischer, Garry Kasparov e Magnus Carlsen para entender como aplicam princípios de xadrez.",
+          "concluido": false
+        },
+        {
+          "titulo": "Treinamento Tático Avançado",
+          "descricao": "Use plataformas como Lichess ou Chess.com para resolver táticas complexas diariamente. Trabalhe cálculo e previsão de jogadas.",
+          "concluido": false
+        },
+        {
+          "titulo": "Domínio de Aberturas Repertório Pessoal",
+          "descricao": "Monte um repertório de aberturas com base no seu estilo. Aprenda linhas profundas e os planos associados a cada variante.",
+          "concluido": false
+        },
+        {
+          "titulo": "Gestão do Tempo e Relógio",
+          "descricao": "Pratique jogar com relógio. Aprenda a gerenciar tempo por lance e a lidar com pressão em partidas rápidas.",
+          "concluido": false
+        },
+        {
+          "titulo": "Preparação para Torneios",
+          "descricao": "Entenda o ambiente competitivo: regulamentos, empates, controle de tempo, conduta. Prepare-se física e psicologicamente.",
+          "concluido": false
+        },
+        {
+          "titulo": "Análise de Suas Partidas",
+          "descricao": "Após cada jogo, analise o que deu certo e errado. Use engines para entender erros, mas reflita antes de ver a máquina.",
+          "concluido": false
+        },
+        {
+          "titulo": "Psicologia no Xadrez",
+          "descricao": "Treine controle emocional, foco, paciência e capacidade de se recuperar de erros. Muitos jogos são decididos pela mente, não só pelas jogadas.",
           "concluido": false
         }
       ]

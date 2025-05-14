@@ -9,6 +9,7 @@ import {
   TextInput,
   Text,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useAuth } from "../context/auth";
@@ -20,6 +21,7 @@ export default function Login() {
   const { usuario, handleLogin, setUsuario } = useAuth();
   const [senha, setSenha] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [carregando, setCarregando] = useState(false);
 
   const { normalize, normalizeHeight, normalizeFontWeight, normalizeIconSize } =
     useNormalize();
@@ -79,7 +81,10 @@ export default function Login() {
                     setUsuario({ ...usuario, login: text })
                   }
                   returnKeyType="done"
-                  onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+                  onSubmitEditing={() => {
+                    setCarregando(true);
+                    handleLogin(senha);
+                  }} // Agora ENTER envia o login
                 />
               </View>
             </View>
@@ -99,7 +104,10 @@ export default function Login() {
                   value={senha}
                   onChangeText={(text) => setSenha(text)}
                   returnKeyType="done"
-                  onSubmitEditing={() => handleLogin(senha)} // Agora ENTER envia o login
+                  onSubmitEditing={() => {
+                    setCarregando(true);
+                    handleLogin(senha);
+                  }} // Agora ENTER envia o login
                 />
                 <TouchableOpacity
                   onPress={() => setMostrarSenha(!mostrarSenha)}
@@ -135,13 +143,21 @@ export default function Login() {
 
             <TouchableOpacity
               style={[styles.button, getSoftShadow()]}
-              onPress={() => handleLogin(senha)}
+              onPress={() => {
+                setCarregando(true);
+                handleLogin(senha);
+              }}
             >
               <Text style={dynamicStyles.buttonText}>Login</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
+      {carregando && (
+        <View style={styles.overlay}>
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      )}
     </View>
   );
 }
@@ -266,5 +282,12 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "white",
     textAlign: "center",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999, // garante que fique por cima de tudo
   },
 });

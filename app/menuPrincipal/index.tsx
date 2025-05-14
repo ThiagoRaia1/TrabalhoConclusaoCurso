@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { useState } from "react";
 import { router } from "expo-router";
@@ -28,7 +29,7 @@ export default function MenuPrincipal() {
     setCarregando(true);
     const resultado = await enviarPrompt(prompt, usuario.login);
     setCarregando(false);
-    return resultado
+    return resultado;
   };
 
   async function generateDefaultRoadmap(tema: string) {
@@ -79,29 +80,28 @@ export default function MenuPrincipal() {
           style={styles.button}
           onPress={async () => {
             // console.log("Prompt: ", prompt); // Verifique o valor do prompt
+            setCarregando(true);
+            const respostaGerada = await gerarResposta();
 
-            const respostaGerada = await gerarResposta()
-
-            console.log(respostaGerada)
+            console.log(respostaGerada);
 
             // 1. Parse o JSON para um objeto JavaScript
             const parsedData = await JSON.parse(respostaGerada.trim());
-            console.log(parsedData);  // Se o parsing for bem-sucedido, o objeto será mostrado aqui
+            console.log(parsedData); // Se o parsing for bem-sucedido, o objeto será mostrado aqui
 
             // 2. Aserte o tipo para garantir que seja do tipo IRoadmap
             const roadmap: IRoadmap = parsedData;
             // console.log(typeof roadmap)
-            await createRoadmap(roadmap)
+            await createRoadmap(roadmap);
 
             router.push({
               pathname: "./roadmap",
               params: { tema: prompt.toUpperCase() },
-            })
+            });
           }}
         >
           <Text style={styles.buttonText}>Gerar</Text>
         </TouchableOpacity>
-
       </View>
 
       {/* Parte inferior centralizada */}
@@ -156,6 +156,11 @@ export default function MenuPrincipal() {
       </View>
 
       {menuVisivel && <MenuSuspenso />}
+      {carregando && (
+        <View style={styles.overlay}>
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      )}
     </View>
   );
 }
@@ -213,5 +218,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "700",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999, // garante que fique por cima de tudo
   },
 });
