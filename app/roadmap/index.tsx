@@ -11,7 +11,11 @@ import { Checkbox } from "react-native-paper";
 import { router } from "expo-router";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import { useLocalSearchParams } from "expo-router";
-import { atualizarStatusConclusao, getRoadmap, IRoadmap } from "../../services/roadmaps";
+import {
+  atualizarStatusConclusao,
+  getRoadmap,
+  IRoadmap,
+} from "../../services/roadmaps";
 import { useAuth } from "../../context/auth";
 
 export default function Roadmap() {
@@ -68,15 +72,31 @@ export default function Roadmap() {
     <View style={styles.container}>
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <TouchableOpacity
-          style={styles.voltarButton}
-          onPress={() => router.back()}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            height: 60,
+          }}
         >
-          <Text style={styles.voltarText}>Voltar</Text>
-        </TouchableOpacity>
+          {/* Botão Voltar fixado à esquerda */}
+          <TouchableOpacity
+            style={styles.voltarButton}
+            onPress={() => router.back()}
+          >
+            <Text style={styles.voltarText}>Voltar</Text>
+          </TouchableOpacity>
+
+          {/* Título centralizado */}
+          <Text style={{ fontSize: 40, fontWeight: 300, marginTop: -10 }}>
+            {roadmap?.titulo}
+          </Text>
+        </View>
 
         {roadmap?.fases?.map((secao, idx) => (
-          <View key={idx} style={styles.secaoContainer}>
+          <View key={idx}>
             <View style={[styles.tituloView, { backgroundColor: secao.cor }]}>
               <Text style={styles.tituloText}>{secao.titulo}</Text>
 
@@ -151,7 +171,7 @@ export default function Roadmap() {
                         style={{
                           alignSelf: "flex-end",
                           borderRadius: 4,
-                          marginTop: 4,
+                          marginTop: 20,
                           borderWidth: 1,
                           paddingHorizontal: 10,
                         }}
@@ -204,24 +224,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: "#007BFF",
     borderRadius: 4,
-    alignSelf: "flex-start",
+    position: "absolute",
+    left: 0,
+    top: 10,
   },
   voltarText: {
     color: "#fff",
     fontSize: 16,
   },
-  secaoContainer: {
-    marginBottom: 24,
-  },
   tituloView: {
     flexDirection: "row",
     flexWrap: "wrap", // permite quebra de linha
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     padding: 8,
     gap: 8,
-    borderRadius: 4,
-    marginBottom: 10,
+    borderRadius: 10,
+    marginBottom: 24,
   },
   tituloText: {
     fontSize: 18,

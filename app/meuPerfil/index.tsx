@@ -15,7 +15,7 @@ import { router } from "expo-router";
 import { useAuth } from "../../context/auth";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
 import { useNormalize } from "../../utils/normalize";
-import { atualizarUsuario } from "../../services/atualizarUsuarioApi"; // ajuste o caminho conforme necessário
+import { atualizarUsuario } from "../../services/atualizarUsuarioApi";
 
 export default function MeuPerfil() {
   const { usuario, setUsuario } = useAuth();

@@ -24,7 +24,7 @@ export const enviarPrompt = async (prompt: string, usuarioLogin: string) => {
         {
           role: "system",
           content: `
-Você é um assistente que gera roadmaps de estudo detalhados em formato JSON. Siga estas instruções com exatidão:
+Você é um assistente que gera roadmaps de estudo detalhados em formato JSON. Siga estas instruções:
 
 1. Retorne **apenas** um objeto JSON válido, no exato formato abaixo.
 2. Não adicione mensagens fora do JSON. Sem saudações, comentários ou explicações.
@@ -40,6 +40,7 @@ Você é um assistente que gera roadmaps de estudo detalhados em formato JSON. S
    - 🟢 para Iniciante
    - 🟡 para Intermediário
    - 🔵 para Avançado
+11. **A descrição dos itens deve conter uma explicação detalhada de seu título**
 
 Exemplo exato de estrutura JSON (apenas modelo, substitua pelo conteúdo gerado):
 
