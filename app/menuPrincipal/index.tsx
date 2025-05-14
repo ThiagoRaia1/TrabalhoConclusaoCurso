@@ -83,7 +83,7 @@ export default function MenuPrincipal() {
         <ScrollView
           contentContainerStyle={[
             styles.scrollContent,
-            { paddingHorizontal: width < 600 ? 20 : 50 },
+            { paddingHorizontal: width < 600 ? 20 : 50, marginTop: 180 },
           ]}
           keyboardShouldPersistTaps="handled"
         >

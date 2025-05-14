@@ -6,11 +6,11 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { Checkbox } from "react-native-paper";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
-import { useLocalSearchParams } from "expo-router";
 import {
   atualizarStatusConclusao,
   getRoadmap,
@@ -27,7 +27,7 @@ export default function Roadmap() {
   const [textoExplicacao, setTextoExplicacao] = useState("");
 
   const { tema } = useLocalSearchParams();
-  const temaStr = typeof tema === "string" ? tema : ""; // Garantir string
+  const temaStr = typeof tema === "string" ? tema : "";
 
   const alternarProgresso = async (faseIndex: number, itemIndex: number) => {
     if (!roadmap) return;
@@ -71,60 +71,36 @@ export default function Roadmap() {
   return (
     <View style={styles.container}>
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-            height: 60,
-          }}
-        >
-          {/* Botão Voltar fixado à esquerda */}
-          <TouchableOpacity
-            style={styles.voltarButton}
-            onPress={() => router.back()}
-          >
-            <Text style={styles.voltarText}>Voltar</Text>
-          </TouchableOpacity>
 
-          {/* Título centralizado */}
-          <Text style={{ fontSize: 40, fontWeight: 300, marginTop: -10 }}>
-            {roadmap?.titulo}
-          </Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+            <Text style={styles.backText}>← Voltar</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>{roadmap?.titulo}</Text>
         </View>
 
-        {roadmap?.fases?.map((secao, idx) => (
-          <View key={idx}>
-            <View style={[styles.tituloView, { backgroundColor: secao.cor }]}>
-              <Text style={styles.tituloText}>{secao.titulo}</Text>
-
-              <View style={styles.botoesContainer}>
-                <TouchableOpacity style={styles.botaoText}>
-                  <Text style={{ color: "white" }}>Gerar quiz</Text>
+        {roadmap?.fases?.map((fase, faseIdx) => (
+          <View key={faseIdx} style={styles.faseContainer}>
+            <View style={[styles.faseHeader, { backgroundColor: fase.cor }]}>
+              <Text style={styles.faseTitle}>{fase.titulo}</Text>
+              <View style={styles.faseActions}>
+                <TouchableOpacity style={styles.actionButton}>
+                  <Text style={styles.actionText}>Gerar quiz</Text>
                 </TouchableOpacity>
-
                 <TouchableOpacity
-                  style={styles.botaoText}
+                  style={styles.actionButton}
                   onPress={() => {
-                    const novosExpandidos = { ...expandidos };
-                    const algumFechado = secao.itens.some(
-                      (_, itemIdx) => !expandidos[`${idx}-${itemIdx}`]
-                    );
-
-                    secao.itens.forEach((_, itemIdx) => {
-                      const id = `${idx}-${itemIdx}`;
-                      novosExpandidos[id] = algumFechado;
+                    const novoEstado = { ...expandidos };
+                    const expandir = fase.itens.some((_, idx) => !expandidos[`${faseIdx}-${idx}`]);
+                    fase.itens.forEach((_, idx) => {
+                      novoEstado[`${faseIdx}-${idx}`] = expandir;
                     });
-
-                    setExpandidos(novosExpandidos);
+                    setExpandidos(novoEstado);
                   }}
                 >
-                  <Text style={{ color: "white" }}>
-                    {secao.itens.some(
-                      (_, itemIdx) => !expandidos[`${idx}-${itemIdx}`]
-                    )
+                  <Text style={styles.actionText}>
+                    {fase.itens.some((_, idx) => !expandidos[`${faseIdx}-${idx}`])
                       ? "Expandir todos"
                       : "Colapsar todos"}
                   </Text>
@@ -132,57 +108,37 @@ export default function Roadmap() {
               </View>
             </View>
 
-            {secao.itens.map((item, itemIdx) => {
-              const id = `${idx}-${itemIdx}`;
+            {fase.itens.map((item, itemIdx) => {
+              const id = `${faseIdx}-${itemIdx}`;
               return (
-                <View key={id} style={styles.itemContainer}>
-                  <View style={styles.checkboxContainer}>
+                <View key={id} style={styles.itemBox}>
+                  <View style={styles.itemHeader}>
                     <Checkbox
                       status={item.concluido ? "checked" : "unchecked"}
-                      onPress={() => alternarProgresso(idx, itemIdx)}
+                      onPress={() => alternarProgresso(faseIdx, itemIdx)}
                     />
-
                     <Pressable
-                      style={styles.itemHeader}
+                      style={styles.itemTitleBox}
                       onPress={() => alternarExpandido(id)}
                     >
-                      <Text
-                        style={[
-                          styles.itemTitulo,
-                          item.concluido && {
-                            textDecorationLine: "line-through",
-                            color: "#888",
-                          },
-                        ]}
-                      >
+                      <Text style={[styles.itemTitle, item.concluido && styles.concluded]}>
                         {item.titulo}
                       </Text>
-
-                      <Text style={styles.itemIcon}>
-                        {expandidos[id] ? "−" : "+"}
-                      </Text>
+                      <Text style={styles.toggleIcon}>{expandidos[id] ? "−" : "+"}</Text>
                     </Pressable>
                   </View>
 
                   {expandidos[id] && (
-                    <View style={{ backgroundColor: "#f9f9f9", padding: 8 }}>
-                      <Text style={styles.itemDescricao}>{item.descricao}</Text>
+                    <View style={styles.itemDescriptionBox}>
+                      <Text style={styles.itemDescription}>{item.descricao}</Text>
                       <TouchableOpacity
-                        style={{
-                          alignSelf: "flex-end",
-                          borderRadius: 4,
-                          marginTop: 20,
-                          borderWidth: 1,
-                          paddingHorizontal: 10,
-                        }}
+                        style={styles.explainButton}
                         onPress={() => {
-                          setTextoExplicacao(
-                            item.descricao || "Sem descrição disponível."
-                          );
+                          setTextoExplicacao(item.descricao || "Sem descrição disponível.");
                           setModalVisivel(true);
                         }}
                       >
-                        <Text>Explique mais</Text>
+                        <Text style={styles.explainText}>Explique mais</Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -192,16 +148,15 @@ export default function Roadmap() {
           </View>
         ))}
       </ScrollView>
+
       {menuVisivel && <MenuSuspenso />}
+
       {modalVisivel && (
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTexto}>{textoExplicacao}</Text>
-            <TouchableOpacity
-              onPress={() => setModalVisivel(false)}
-              style={styles.modalFecharBtn}
-            >
-              <Text style={styles.modalFecharTexto}>Fechar</Text>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalText}>{textoExplicacao}</Text>
+            <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisivel(false)}>
+              <Text style={styles.modalCloseText}>Fechar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -213,118 +168,152 @@ export default function Roadmap() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#fdfdfd",
   },
   scrollContent: {
-    padding: 16,
+    padding: 20,
+    paddingBottom: 80,
   },
-  voltarButton: {
-    marginBottom: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    backgroundColor: "#007BFF",
-    borderRadius: 4,
-    position: "absolute",
-    left: 0,
-    top: 10,
-  },
-  voltarText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  tituloView: {
+  header: {
     flexDirection: "row",
-    flexWrap: "wrap", // permite quebra de linha
     alignItems: "center",
-    justifyContent: "flex-end",
-    padding: 8,
-    gap: 8,
-    borderRadius: 10,
+    justifyContent: "space-between",
     marginBottom: 24,
   },
-  tituloText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    flexShrink: 1,
-    flexGrow: 1,
-    minWidth: "60%", // título ocupa o espaço necessário
-    color: "black",
+  backButton: {
+    backgroundColor: "#007bff",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 6,
   },
-  botoesContainer: {
+  backText: {
+    color: "white",
+    fontSize: 16,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "600",
+    flexShrink: 1,
+    textAlign: "center",
+    marginLeft: 10,
+  },
+  faseContainer: {
+    marginBottom: 30,
+  },
+  faseHeader: {
+    padding: 16,
+    borderRadius: 10,
+    flexDirection: Platform.OS === "web" ? "row" : "column",
+    justifyContent: "space-between",
+    alignItems: Platform.OS === "web" ? "center" : "flex-start",
+    gap: 12,
+  },
+  faseTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#222",
+  },
+  faseActions: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
-    justifyContent: "flex-end",
+    gap: 10,
   },
-  botaoText: {
+  actionButton: {
+    backgroundColor: "#0056b3",
+    paddingHorizontal: 16,
     paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    backgroundColor: "#027BFF",
-    borderWidth: 1,
-    borderColor: "#004691",
-    marginTop: 4,
+    borderRadius: 8,
   },
-  itemContainer: {
-    marginBottom: 12,
+  actionText: {
+    color: "white",
+    fontSize: 14,
   },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
+  itemBox: {
+    marginTop: 12,
+    padding: 10,
+    backgroundColor: "#fff",
+    borderRadius: 6,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   itemHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 8,
-    backgroundColor: "#f1f1f1",
-    borderRadius: 4,
-    flex: 1,
+    alignItems: "center",
   },
-  itemTitulo: {
+  itemTitleBox: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginLeft: 10,
+  },
+  itemTitle: {
     fontSize: 16,
     fontWeight: "500",
   },
-  itemIcon: {
+  concluded: {
+    textDecorationLine: "line-through",
+    color: "#888",
+  },
+  toggleIcon: {
     fontSize: 20,
     fontWeight: "bold",
   },
-  itemDescricao: {
+  itemDescriptionBox: {
+    marginTop: 10,
+    backgroundColor: "#f3f3f3",
+    padding: 10,
+    borderRadius: 6,
+  },
+  itemDescription: {
     fontSize: 14,
     lineHeight: 20,
+  },
+  explainButton: {
+    alignSelf: "flex-end",
+    marginTop: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "#007bff",
+  },
+  explainText: {
+    color: "#007bff",
+    fontSize: 14,
   },
   modalOverlay: {
     position: "absolute",
     top: 0,
+    bottom: 0,
     left: 0,
     right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    zIndex: 999,
   },
-  modalContent: {
+  modalBox: {
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
     width: "100%",
     maxWidth: 400,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  modalCloseButton: {
+    backgroundColor: "#007bff",
+    paddingVertical: 10,
+    borderRadius: 6,
     alignItems: "center",
   },
-  modalTexto: {
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  modalFecharBtn: {
-    backgroundColor: "#007BFF",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  modalFecharTexto: {
-    color: "#fff",
-    fontWeight: "bold",
+  modalCloseText: {
+    color: "white",
+    fontWeight: "600",
   },
 });

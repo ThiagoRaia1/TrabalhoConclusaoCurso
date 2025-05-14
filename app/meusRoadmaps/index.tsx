@@ -195,6 +195,8 @@ const styles = StyleSheet.create({
     width: 180,
     height: 100,
     borderRadius: 12,
+    borderBottomColor: '#196580',
+    borderBottomWidth: 4,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",

@@ -27,21 +27,18 @@ export default function Login() {
   const { width } = useWindowDimensions();
   const isWide = width > 700;
 
-  const { normalize, normalizeHeight, normalizeFontWeight, normalizeIconSize } =
-    useNormalize();
+  const {
+    normalize,
+    normalizeFontWeight,
+    normalizeIconSize,
+  } = useNormalize();
 
   const dynamicStyles = {
-    text: {
-      fontSize: normalize({ base: 8 }),
-      fontWeight: normalizeFontWeight({ max: 400 }),
-      color: "#222",
-      marginBottom: 5,
-    },
-    titleText: {
-      fontSize: normalize({ base: 28 }),
-      fontWeight: normalizeFontWeight({ max: 600 }),
-      color: "black",
-      marginTop: -20,
+    label: {
+      fontSize: normalize({ base: 7 }),
+      fontWeight: normalizeFontWeight({ max: 500 }),
+      color: "#444",
+      marginBottom: 6,
     },
     inputText: {
       flex: 1,
@@ -51,18 +48,19 @@ export default function Login() {
     },
     buttonText: {
       color: "white",
-      fontSize: normalize({ base: 6 }),
+      fontSize: normalize({ base: 7 }),
       fontWeight: normalizeFontWeight({ max: 600 }),
+    },
+    titleText: {
+      fontSize: normalize({ base: 24 }),
+      fontWeight: normalizeFontWeight({ max: 700 }),
+      color: "#222",
+      marginVertical: 10,
     },
   };
 
-  const backgroundColor = "#fff";
-  const cardColor = "#fff";
-  const inputBg = "#fff";
-  const borderColor = "#319594";
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f7fa" }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -76,70 +74,49 @@ export default function Login() {
           >
             <Animatable.View
               animation="fadeInUp"
-              duration={800}
-              style={[
-                styles.loginArea,
-                getStrongShadow(),
-                { backgroundColor: cardColor },
-              ]}
+              duration={700}
+              style={[styles.card, getStrongShadow()]}
             >
-              <View style={styles.loginContent}>
+              <View style={styles.cardContent}>
                 <FontAwesome5
                   name="user-graduate"
-                  size={normalizeIconSize(50, undefined, 150)}
+                  size={normalizeIconSize(60)}
                   color="black"
                 />
                 <Text style={dynamicStyles.titleText}>A.I. Teacher</Text>
 
-                <View style={{ width: "100%", gap: 40 }}>
-                  <View>
-                    <Text style={dynamicStyles.text}>Email:</Text>
-                    <View
-                      style={[
-                        styles.inputContainer,
-                        getSoftShadow(),
-                        { backgroundColor: inputBg, borderColor },
-                      ]}
-                    >
+                <View style={styles.form}>
+                  <View style={styles.inputGroup}>
+                    <Text style={dynamicStyles.label}>Email</Text>
+                    <View style={[styles.inputContainer, getSoftShadow()]}>
                       <TextInput
                         style={[
                           dynamicStyles.inputText,
-                          { height: normalizeHeight({ base: 15 }) },
                           Platform.OS === "web" &&
                             ({ outlineStyle: "none" } as any),
                         ]}
-                        placeholder="Email"
+                        placeholder="Digite seu email"
                         placeholderTextColor="#aaa"
                         value={usuario.login}
                         onChangeText={(text) =>
                           setUsuario({ ...usuario, login: text })
                         }
-                        returnKeyType="done"
-                        onSubmitEditing={() => {
-                          setCarregando(true);
-                          handleLogin(senha);
-                        }}
+                        keyboardType="email-address"
+                        returnKeyType="next"
                       />
                     </View>
                   </View>
 
-                  <View>
-                    <Text style={dynamicStyles.text}>Senha:</Text>
-                    <View
-                      style={[
-                        styles.inputContainer,
-                        getSoftShadow(),
-                        { backgroundColor: inputBg, borderColor },
-                      ]}
-                    >
+                  <View style={styles.inputGroup}>
+                    <Text style={dynamicStyles.label}>Senha</Text>
+                    <View style={[styles.inputContainer, getSoftShadow()]}>
                       <TextInput
                         style={[
                           dynamicStyles.inputText,
-                          { height: normalizeHeight({ base: 15 }) },
                           Platform.OS === "web" &&
                             ({ outlineStyle: "none" } as any),
                         ]}
-                        placeholder="Senha"
+                        placeholder="Digite sua senha"
                         placeholderTextColor="#aaa"
                         secureTextEntry={!mostrarSenha}
                         value={senha}
@@ -161,25 +138,25 @@ export default function Login() {
                       </TouchableOpacity>
                     </View>
                   </View>
-                </View>
 
-                <View style={styles.buttonRow}>
-                  <TouchableOpacity
-                    style={[styles.button, getSoftShadow()]}
-                    onPress={() => router.push("./cadastro")}
-                  >
-                    <Text style={dynamicStyles.buttonText}>Cadastre-se</Text>
-                  </TouchableOpacity>
+                  <View style={styles.buttonRow}>
+                    <TouchableOpacity
+                      style={[styles.button, { backgroundColor: "#666" }]}
+                      onPress={() => router.push("./cadastro")}
+                    >
+                      <Text style={dynamicStyles.buttonText}>Cadastre-se</Text>
+                    </TouchableOpacity>
 
-                  <TouchableOpacity
-                    style={[styles.button, getSoftShadow()]}
-                    onPress={() => {
-                      setCarregando(true);
-                      handleLogin(senha);
-                    }}
-                  >
-                    <Text style={dynamicStyles.buttonText}>Login</Text>
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.button, { backgroundColor: "#2596be" }]}
+                      onPress={() => {
+                        setCarregando(true);
+                        handleLogin(senha);
+                      }}
+                    >
+                      <Text style={dynamicStyles.buttonText}>Login</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </Animatable.View>
@@ -194,48 +171,56 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 24,
     justifyContent: "center",
-    padding: 20,
   },
   containerWide: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
   },
   containerNarrow: {
     flexDirection: "column",
   },
-  loginArea: {
+  card: {
+    width: "100%",
+    maxWidth: 480,
     padding: 30,
     borderRadius: 20,
-    width: "100%",
-    maxWidth: 500,
+    backgroundColor: "#fff",
     alignSelf: "center",
   },
-  loginContent: {
-    justifyContent: "center",
+  cardContent: {
     alignItems: "center",
     gap: 20,
+  },
+  form: {
+    width: "100%",
+    gap: 20,
+    marginTop: 10,
+  },
+  inputGroup: {
+    width: "100%",
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 15,
-    width: "100%",
+    backgroundColor: "#fff",
     borderWidth: 1,
-    borderRadius: 8,
+    borderColor: "#319594",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    height: 50,
     justifyContent: "space-between",
   },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%",
-    gap: 20,
-    marginTop: 30,
+    gap: 12,
+    marginTop: 20,
   },
   button: {
     flex: 1,
-    backgroundColor: "#2596be",
     paddingVertical: 12,
     borderRadius: 100,
     alignItems: "center",
@@ -243,7 +228,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// Sombra forte
+// Sombras fortes
 const getStrongShadow = (): ViewStyle => {
   if (Platform.OS === "ios") {
     return {
@@ -259,7 +244,7 @@ const getStrongShadow = (): ViewStyle => {
   }
 };
 
-// Sombra leve
+// Sombras leves
 const getSoftShadow = (): ViewStyle => {
   if (Platform.OS === "ios") {
     return {

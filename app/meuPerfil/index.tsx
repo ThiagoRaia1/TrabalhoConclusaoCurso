@@ -1,19 +1,17 @@
 import React, { useState } from "react";
 import {
   View,
-  StyleSheet,
-  TextInput,
   Text,
+  TextInput,
   TouchableOpacity,
+  StyleSheet,
   Platform,
-  ViewStyle,
-  StyleProp,
 } from "react-native";
+import { router } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { router } from "expo-router";
-import { useAuth } from "../../context/auth";
 import TopBarMenu, { MenuSuspenso } from "../components/topBar";
+import { useAuth } from "../../context/auth";
 import { useNormalize } from "../../utils/normalize";
 import { atualizarUsuario } from "../../services/atualizarUsuarioApi";
 
@@ -21,37 +19,36 @@ export default function MeuPerfil() {
   const { usuario, setUsuario } = useAuth();
   const [nome, setNome] = useState(usuario.nome);
   const [senha, setSenha] = useState("");
+  const [editando, setEditando] = useState(false);
+  const [menuVisivel, setMenuVisivel] = useState(false);
   const [backupUsuario, setBackupUsuario] = useState({
     nome: usuario.nome,
     login: usuario.login,
     senha: senha,
   });
-  console.log(backupUsuario);
-  const [editando, setEditando] = useState(false);
-  const [menuVisivel, setMenuVisivel] = useState(false);
 
   const { normalize, normalizeHeight, normalizeFontWeight } = useNormalize();
 
   const dynamicStyles = {
-    text: {
-      fontSize: normalize({ base: 8 }),
-      fontWeight: normalizeFontWeight({ max: 400 }),
-      marginBottom: 5,
-    },
-    erroText: {
-      fontSize: normalize({ base: 5 }),
-      color: "red",
-      marginTop: 10,
-    },
-    titleText: {
+    title: {
       fontSize: normalize({ base: 28 }),
       fontWeight: normalizeFontWeight({ max: 700 }),
-      color: "black",
+      color: "#333",
+      marginTop: 10,
     },
-    ButtonText: {
-      fontSize: normalize({ base: 10, min: 10 }),
+    label: {
+      fontSize: normalize({ base: 10 }),
+      fontWeight: normalizeFontWeight({ max: 500 }),
+      marginBottom: 6,
+    },
+    input: {
+      fontSize: normalize({ base: 10 }),
+      color: "#333",
+    },
+    buttonText: {
+      fontSize: normalize({ base: 10 }),
+      fontWeight: normalizeFontWeight({ min: 400, max: 700 }),
       color: "white",
-      fontWeight: normalizeFontWeight({ min: 300, max: 600 }),
     },
   };
 
@@ -64,246 +61,189 @@ export default function MeuPerfil() {
           usuario.login,
           senha
         );
-
-        setUsuario({
-          ...usuario,
-          nome: usuarioAtualizado.nome,
-        });
-
-        setSenha(senha);
-
-        setBackupUsuario({ nome, login: usuario.login, senha });
+        setUsuario({ ...usuario, nome: usuarioAtualizado.nome });
         alert("Dados atualizados com sucesso!");
         setSenha("");
-        setEditando(!editando);
+        setEditando(false);
       } catch (erro: any) {
         alert("Erro ao atualizar os dados: " + erro.message);
       }
     } else {
       setBackupUsuario({ nome, login: usuario.login, senha });
-      setEditando(!editando);
+      setEditando(true);
     }
   };
 
   const cancelarEdicao = () => {
     setNome(backupUsuario.nome);
-    setSenha(backupUsuario.senha);
-    alert("Edição cancelada.");
+    setSenha("");
     setEditando(false);
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: "#ccc" }]}>
+    <View style={[styles.container, { backgroundColor: "#f4f4f4" }]}>
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
-      <View style={[styles.elevation, getStrongShadow()]}>
+
+      <View style={[styles.card, getShadow()]}>
         <TouchableOpacity
-          style={styles.logoutButton}
+          style={styles.backButton}
           onPress={() => router.back()}
         >
-          <MaterialIcons name="arrow-back" size={30} color="black" />
+          <MaterialIcons name="arrow-back" size={28} color="#333" />
         </TouchableOpacity>
 
-        <View style={styles.logoContainer}>
-          <FontAwesome5 name="user" size={80} color="black" />
-          <Text style={dynamicStyles.titleText}>Meu Perfil</Text>
+        <View style={styles.header}>
+          <FontAwesome5 name="user" size={80} color="#2596be" />
+          <Text style={dynamicStyles.title}>Meu Perfil</Text>
         </View>
 
-        <View style={styles.formContainer}>
-          <View style={styles.labelInputBlock}>
-            <Text style={dynamicStyles.text}>Nome:</Text>
-
+        <View style={styles.form}>
+          <View style={styles.inputGroup}>
+            <Text style={dynamicStyles.label}>Nome</Text>
             <View
               style={[
                 styles.inputContainer,
-                getSoftShadow(),
-                !editando && { backgroundColor: "#eee" },
+                editando && { backgroundColor: "white" },
               ]}
             >
               <TextInput
-                style={[
-                  dynamicStyles.text,
-                  styles.input,
-                  { outlineStyle: "none" } as any,
-                  { height: normalizeHeight({ base: 15 }) },
-                ]} // Usando a função normalizeHeight
+                style={[dynamicStyles.input, styles.inputField]}
                 value={nome}
                 onChangeText={setNome}
                 editable={editando}
+                placeholder="Digite seu nome"
+                placeholderTextColor="#aaa"
               />
             </View>
           </View>
 
-          <View style={styles.labelInputBlock}>
-            <Text style={dynamicStyles.text}>Email:</Text>
-            <View
-              style={[
-                styles.inputContainer,
-                getSoftShadow(),
-                { backgroundColor: "#eee" },
-              ]}
-            >
+          <View style={styles.inputGroup}>
+            <Text style={dynamicStyles.label}>Email</Text>
+            <View style={[styles.inputContainer, styles.inputDisabled]}>
               <TextInput
-                style={[
-                  dynamicStyles.text,
-                  styles.input,
-                  { outlineStyle: "none" } as any,
-                  { height: normalizeHeight({ base: 15 }) },
-                ]} // Usando a função normalizeHeight
+                style={[dynamicStyles.input, styles.inputField]}
                 value={usuario.login}
                 editable={false}
               />
             </View>
           </View>
 
-          <View style={styles.labelInputBlock}>
-            <Text style={dynamicStyles.text}>Senha:</Text>
+          <View style={styles.inputGroup}>
+            <Text style={dynamicStyles.label}>Senha</Text>
             <View
               style={[
                 styles.inputContainer,
-                getSoftShadow(),
-                !editando && { backgroundColor: "#eee" },
+                editando && { backgroundColor: "white" },
               ]}
             >
               <TextInput
-                style={[
-                  dynamicStyles.text,
-                  styles.input,
-                  { outlineStyle: "none" } as any,
-                  { height: normalizeHeight({ base: 15 }) },
-                ]} // Usando a função normalizeHeight
-                placeholder="Insira sua senha atual para mantê-la."
-                placeholderTextColor={"#a1a1a1"}
+                style={[dynamicStyles.input, styles.inputField]}
+                placeholder="Digite atual sua senha para mantê-la."
+                placeholderTextColor="#aaa"
                 value={senha}
-                secureTextEntry
                 onChangeText={setSenha}
+                secureTextEntry
                 editable={editando}
               />
-              <FontAwesome5 name="lock" size={20} color="black" />
+              <FontAwesome5 name="lock" size={18} color="#555" />
             </View>
           </View>
 
-          <View style={{ minWidth: 300 }}>
-            <TouchableOpacity
-              style={[
-                styles.Button,
-                getSoftShadow(),
-                { height: normalizeHeight({ base: 15 }) },
-              ]}
-              onPress={toggleEditar}
-            >
-              <Text
-                style={dynamicStyles.ButtonText} // Usando a função normalizeHeight
-              >
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity style={styles.button} onPress={toggleEditar}>
+              <Text style={dynamicStyles.buttonText}>
                 {editando ? "Salvar" : "Editar"}
               </Text>
             </TouchableOpacity>
-
             <TouchableOpacity
-              style={[
-                styles.Button,
-                getSoftShadow(),
-                { height: normalizeHeight({ base: 15 }) },
-              ]}
-              onPress={() => (!editando ? router.back() : cancelarEdicao())}
+              style={[styles.button, styles.cancelButton]}
+              onPress={() => (editando ? cancelarEdicao() : router.back())}
             >
-              <Text
-                style={dynamicStyles.ButtonText} // Usando a função normalizeHeight
-              >
-                Cancelar
-              </Text>
+              <Text style={dynamicStyles.buttonText}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
+
       {menuVisivel && <MenuSuspenso />}
     </View>
   );
 }
 
-// Sombras
-const getStrongShadow = (): StyleProp<ViewStyle> => {
+function getShadow() {
+  if (Platform.OS === "android") return { elevation: 12 };
   if (Platform.OS === "ios") {
     return {
       shadowColor: "#000",
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.4,
-      shadowRadius: 8,
-    };
-  }
-  if (Platform.OS === "android") return { elevation: 20 };
-  if (Platform.OS === "web")
-    return { boxShadow: "0px 10px 30px rgba(0,0,0,0.4)" };
-  return {};
-};
-
-const getSoftShadow = (): StyleProp<ViewStyle> => {
-  if (Platform.OS === "ios") {
-    return {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
+      shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.2,
-      shadowRadius: 3,
+      shadowRadius: 6,
     };
   }
-  if (Platform.OS === "android") return { elevation: 6 };
   if (Platform.OS === "web")
-    return { boxShadow: "0px 4px 10px rgba(0,0,0,0.2)" };
+    return { boxShadow: "0px 6px 20px rgba(0, 0, 0, 0.2)" };
   return {};
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
   },
-  elevation: {
-    flex: 1,
-    justifyContent: "center",
-    margin: 20,
-    padding: 20,
-    borderRadius: 15,
-    backgroundColor: "white",
+  card: {
+    flexGrow: 1,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 100,
     alignItems: "center",
   },
-  logoutButton: {
+  backButton: {
     position: "absolute",
-    top: 10,
-    left: 10,
+    top: 16,
+    left: 16,
+    zIndex: 1,
   },
-  logoContainer: {
+  header: {
     alignItems: "center",
-    marginBottom: 10,
+    marginTop: 30,
+    gap: 12,
   },
-  formContainer: {
+  form: {
     width: "100%",
-    alignItems: "center",
-    gap: 30,
-    paddingTop: 10,
+    gap: 20,
+    marginTop: 10,
   },
-  labelInputBlock: {
-    width: "60%",
+  inputGroup: {
+    gap: 6,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "white",
-    paddingHorizontal: 10,
+    backgroundColor: "#eee",
+    borderColor: "#2596be",
     borderWidth: 1,
-    borderColor: "#319594",
-    borderRadius: 8,
-    justifyContent: "space-between",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
-  input: {
+  inputDisabled: {
+    backgroundColor: "#eee",
+  },
+  inputField: {
     flex: 1,
-    color: "#333",
+    paddingRight: 10,
   },
-  Button: {
-    marginTop: 20,
-    backgroundColor: "#2596be",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 100,
+  buttonGroup: {
+    gap: 12,
+    marginTop: 10,
+  },
+  button: {
+    backgroundColor: "#0FA5E9",
+    paddingVertical: 12,
+    borderRadius: 50,
     alignItems: "center",
-    justifyContent: "center",
+  },
+  cancelButton: {
+    backgroundColor: "#ff4d4d",
+    borderColor: "#d32f2f",
   },
 });
