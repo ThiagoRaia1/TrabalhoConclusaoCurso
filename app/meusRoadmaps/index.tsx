@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   roadmapList: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     gap: 12,
     rowGap: 16,
   },

@@ -27,22 +27,21 @@ export default function MenuPrincipal() {
     if (carregando) return;
     setCarregando(true);
     const resultado = await enviarPrompt(prompt, usuario.login);
-    console.log("Resultado: ")
-    setResposta(resultado);
     setCarregando(false);
+    return resultado
   };
 
   async function generateDefaultRoadmap(tema: string) {
     let roadmap: IRoadmap | undefined;
 
     switch (tema) {
-      case "Programação":
+      case "PROGRAMACAO":
         // Atribui o login do usuário ao roadmap de Programação
         roadmapProgramacao.usuarioLogin = usuario.login;
         roadmap = roadmapProgramacao; // Atribui a variável roadmap
         break;
 
-      case "Xadrez":
+      case "XADREZ":
         // Atribui o login do usuário ao roadmap de Xadrez
         roadmapXadrez.usuarioLogin = usuario.login;
         roadmap = roadmapXadrez; // Atribui a variável roadmap
@@ -73,37 +72,30 @@ export default function MenuPrincipal() {
             onChangeText={setPrompt}
             returnKeyType="done"
             onSubmitEditing={gerarResposta}
-          // onSubmitEditing={() =>
-          //   router.push({
-          //     pathname: "./roadmap",
-          //     params: { tema: prompt },
-          //   })
-          // }
           />
         </View>
 
         <TouchableOpacity
           style={styles.button}
           onPress={async () => {
-            // router.push({
-            //   pathname: "./roadmap",
-            //   params: { tema: prompt },
-            // })
+            // console.log("Prompt: ", prompt); // Verifique o valor do prompt
 
-            console.log("Prompt: ", prompt); // Verifique o valor do prompt
-            await gerarResposta()
-            console.log(resposta)
+            const respostaGerada = await gerarResposta()
+
+            console.log(respostaGerada)
+
             // 1. Parse o JSON para um objeto JavaScript
-            const parsedData = await JSON.parse(resposta);
+            const parsedData = await JSON.parse(respostaGerada.trim());
             console.log(parsedData);  // Se o parsing for bem-sucedido, o objeto será mostrado aqui
 
-            // // 2. Aserte o tipo para garantir que seja do tipo IRoadmap
-            // const roadmap: IRoadmap = parsedData;
+            // 2. Aserte o tipo para garantir que seja do tipo IRoadmap
+            const roadmap: IRoadmap = parsedData;
             // console.log(typeof roadmap)
-            // await createRoadmap(roadmap)
+            await createRoadmap(roadmap)
+
             router.push({
               pathname: "./roadmap",
-              params: { tema: prompt },
+              params: { tema: prompt.toUpperCase() },
             })
           }}
         >
@@ -120,17 +112,17 @@ export default function MenuPrincipal() {
           style={styles.button}
           onPress={async () => {
             try {
-              await getRoadmap("Programação", usuario.login);
+              await getRoadmap("PROGRAMACAO", usuario.login);
               router.push({
                 pathname: "./roadmap",
-                params: { tema: "Programação" },
+                params: { tema: "PROGRAMACAO" },
               });
             } catch (error: any) {
               if (error.message === "Roadmap não encontrado") {
-                await generateDefaultRoadmap("Programação");
+                await generateDefaultRoadmap("PROGRAMACAO");
                 router.push({
                   pathname: "./roadmap",
-                  params: { tema: "Programação" },
+                  params: { tema: "PROGRAMACAO" },
                 });
               }
             }
@@ -143,17 +135,17 @@ export default function MenuPrincipal() {
           style={styles.button}
           onPress={async () => {
             try {
-              await getRoadmap("Xadrez", usuario.login);
+              await getRoadmap("XADREZ", usuario.login);
               router.push({
                 pathname: "./roadmap",
-                params: { tema: "Xadrez" },
+                params: { tema: "XADREZ" },
               });
             } catch (error: any) {
               if (error.message === "Roadmap não encontrado") {
-                await generateDefaultRoadmap("Xadrez");
+                await generateDefaultRoadmap("XADREZ");
                 router.push({
                   pathname: "./roadmap",
-                  params: { tema: "Xadrez" },
+                  params: { tema: "XADREZ" },
                 });
               }
             }

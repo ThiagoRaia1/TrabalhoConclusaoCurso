@@ -16,7 +16,7 @@ export const enviarPrompt = async (prompt: string, usuarioLogin: string) => {
     const resposta = await api.post("/chat/completions", {
       // llama3-8b-8192
       // Requests per minute: 30
-      // Requests per day: 14.400	
+      // Requests per day: 14.400
       // Tokens per minute: 6.000
       // Tokens per day: 500.000
       model: "llama3-8b-8192", // Modelo gratuito e rápido da Groq
@@ -24,53 +24,65 @@ export const enviarPrompt = async (prompt: string, usuarioLogin: string) => {
         {
           role: "system",
           content: `
-            Você é um assistente que gera roadmaps de estudo no formato passo a passo com recursos.
-            usuarioLogin deve ter o valor de ${usuarioLogin}.
-            o primeiro titulo deve ser exatamente ${prompt}, não mude absolutamente nada.
-            Garanta que seja um JSON válido.
-            Responda sempre em português (Brasil) e retorne um json nesse exato mesmo formato, 
-            dispense outras mensagens. Se julgar o prompt inválido para criação do json, avise com a
-            mensagem "Prompt inválido."
-            (Adicione quantos itens julgar necessário para ter um passo a passo detalhado):
-            {
-              "titulo": "Xadrez",
-              "usuarioLogin": "",
-              "fases": [
-                {
-                  "titulo": "🟢 Fundamentos do Xadrez (Iniciante)",
-                  "cor": "#d1fae5",
-                  "itens": [
-                    {
-                      "titulo": "Tabuleiro e Peças",
-                      "descricao": "Aprenda como montar o tabuleiro (casa branca no canto direito) e conheça as peças: rei, dama (rainha), torres, bispos, cavalos e peões. São 16 peças por jogador.",
-                      "concluido": false
-                    },
-                  ]
-                }
-                {
-                  "titulo": "🟡 Estratégias e Táticas (Intermediário)",
-                  "cor": "#fef9c3",
-                  "itens": [
-                    {
-                      "titulo": "Táticas Fundamentais",
-                      "descricao": "Treine padrões de táticas como garfo (especialmente com cavalo), cravada (peça presa atrás de peça mais valiosa), ataque duplo, descoberto e raios-x. Use exercícios para fixar.",
-                      "concluido": false
-                    },
-                  ]
-                }
-                {
-                  "titulo": "🔵 Pensamento Estratégico e Competição (Avançado)",
-                  "cor": "#bfdbfe",
-                  "itens": [
-                    {
-                      "titulo": "Avaliação de Posições",
-                      "descricao": "Avalie posições com base em material, segurança do rei, atividade das peças, estrutura de peões e iniciativa. Decida com base nesses fatores.",
-                      "concluido": false
-                    },
-                  ]
-                }
-            }
-                `,
+Você é um assistente que gera roadmaps de estudo detalhados em formato JSON. Siga estas instruções com exatidão:
+
+1. Retorne **apenas** um objeto JSON válido, no exato formato abaixo.
+2. Não adicione mensagens fora do JSON. Sem saudações, comentários ou explicações.
+3. Certifique-se de que o JSON possa ser convertido usando \`JSON.parse\`, sem erros.
+4. **Nunca omita colchetes, vírgulas ou aspas.**
+5. **Se o tema não permitir a criação de um roadmap útil ou coerente**, responda com **exatamente**:
+   "Prompt inválido."
+6. Use o valor de \`usuarioLogin\` como: "${usuarioLogin}".
+7. O campo \`titulo\` deve ser **exatamente** "${prompt}" — não traduza, altere ou adapte.
+8. Adicione **quantos itens forem necessários** para uma explicação completa e detalhada, de modo que cada fase cubra os conceitos de forma abrangente.
+9. Cada fase deve ser mais detalhada do que apenas um item, se necessário. Utilize exemplos, explicações e subtópicos.
+10. **Não altere os emojis nos títulos** das fases. Eles devem ser exatamente:
+   - 🟢 para Iniciante
+   - 🟡 para Intermediário
+   - 🔵 para Avançado
+
+Exemplo exato de estrutura JSON (apenas modelo, substitua pelo conteúdo gerado):
+
+{
+  "titulo": "Xadrez",
+  "usuarioLogin": "",
+  "fases": [
+    {
+      "titulo": "🟢 Fundamentos do Xadrez (Iniciante)",
+      "cor": "#d1fae5",
+      "itens": [
+        {
+          "titulo": "Tabuleiro e Peças",
+          "descricao": "Aprenda como montar o tabuleiro e conhecer as peças.",
+          "concluido": false
+        }
+      ]
+    },
+    {
+      "titulo": "🟡 Estratégias (Intermediário)",
+      "cor": "#fef9c3",
+      "itens": [
+        {
+          "titulo": "Ataques Básicos",
+          "descricao": "Estude garfos, cravadas e descobertas.",
+          "concluido": false
+        }
+      ]
+    },
+    {
+      "titulo": "🔵 Competição (Avançado)",
+      "cor": "#bfdbfe",
+      "itens": [
+        {
+          "titulo": "Avaliação de Posições",
+          "descricao": "Entenda estruturas de peões e planos de longo prazo.",
+          "concluido": false
+        }
+      ]
+    }
+  ]
+}
+`,
         },
         {
           role: "user",
@@ -82,7 +94,6 @@ export const enviarPrompt = async (prompt: string, usuarioLogin: string) => {
 
     // A resposta correta está em 'choices[0].message.content'
     return resposta.data.choices[0].message.content;
-
   } catch (erro: any) {
     if (erro.response?.status === 429) {
       return "Você fez muitas requisições em pouco tempo. Tente novamente em instantes.";
