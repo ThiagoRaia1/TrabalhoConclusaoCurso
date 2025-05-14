@@ -17,7 +17,7 @@ import Carregando from "../components/carregando";
 
 export default function MenuPrincipal() {
   const [prompt, setPrompt] = useState("");
-  const [resposta, setResposta] = useState("aaa");
+  const [resposta, setResposta] = useState("");
   const { usuario } = useAuth();
 
   // Dentro de MenuPrincipal
@@ -82,27 +82,36 @@ export default function MenuPrincipal() {
           onPress={async () => {
             // console.log("Prompt: ", prompt); // Verifique o valor do prompt
             setCarregando(true);
-            const respostaGerada = await gerarResposta();
+            if (prompt === "") {
+              setResposta("Digite o prompt");
+              setCarregando(false);
+            } else {
+              const respostaGerada = await gerarResposta();
 
-            console.log(respostaGerada);
+              console.log(respostaGerada);
 
-            // 1. Parse o JSON para um objeto JavaScript
-            const parsedData = await JSON.parse(respostaGerada.trim());
-            console.log(parsedData); // Se o parsing for bem-sucedido, o objeto será mostrado aqui
+              // 1. Parse o JSON para um objeto JavaScript
+              const parsedData = await JSON.parse(respostaGerada.trim());
+              console.log(parsedData); // Se o parsing for bem-sucedido, o objeto será mostrado aqui
 
-            // 2. Aserte o tipo para garantir que seja do tipo IRoadmap
-            const roadmap: IRoadmap = parsedData;
-            // console.log(typeof roadmap)
-            await createRoadmap(roadmap);
+              // 2. Aserte o tipo para garantir que seja do tipo IRoadmap
+              const roadmap: IRoadmap = parsedData;
+              // console.log(typeof roadmap)
+              await createRoadmap(roadmap);
 
-            router.push({
-              pathname: "./roadmap",
-              params: { tema: prompt.toUpperCase() },
-            });
+              router.push({
+                pathname: "./roadmap",
+                params: { tema: prompt.toUpperCase() },
+              });
+            }
           }}
         >
           <Text style={styles.buttonText}>Gerar</Text>
         </TouchableOpacity>
+
+        {resposta !== "" && (
+          <Text style={{ marginBottom: -54, fontSize: 18 }}>{resposta}</Text>
+        )}
       </View>
 
       {/* Parte inferior centralizada */}
