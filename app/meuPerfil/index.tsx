@@ -33,23 +33,18 @@ export default function MeuPerfil() {
   const [erros, setErros] = useState<{
     nome?: string;
     senhaAtual?: string;
-    novaSenha?: string;
   }>({});
 
   const validarCampos = () => {
     const novosErros: {
       nome?: string;
       senhaAtual?: string;
-      novaSenha?: string;
     } = {};
 
     if (!nome.trim()) novosErros.nome = "Nome é obrigatório.";
 
     if (editando && !senhaAtual.trim())
       novosErros.senhaAtual = "Senha atual é obrigatória.";
-
-    if (editando && !novaSenha.trim())
-      novosErros.novaSenha = "Nova senha é obrigatória.";
 
     setErros(novosErros);
     return Object.keys(novosErros).length === 0;
@@ -90,7 +85,7 @@ export default function MeuPerfil() {
         const usuarioAtualizado = await atualizarUsuario(
           usuario.login,
           nome,
-          novaSenha
+          novaSenha || senhaAtual
         );
         setUsuario({ ...usuario, nome: usuarioAtualizado.nome });
         setEditando(false);
@@ -235,7 +230,7 @@ export default function MeuPerfil() {
                     styles.inputField,
                     { outlineStyle: "none" } as any,
                   ]}
-                  placeholder="Digite sua senha atual para mantê-la"
+                  placeholder="Deixe em branco para manter sua senha inalterada"
                   placeholderTextColor="#aaa"
                   value={novaSenha}
                   onChangeText={setNovaSenha}
@@ -253,11 +248,6 @@ export default function MeuPerfil() {
                 </TouchableOpacity>
               </View>
             </View>
-            {erros.novaSenha && (
-              <Text style={{ color: "red", marginTop: -15 }}>
-                {erros.novaSenha}
-              </Text>
-            )}
 
             <View style={styles.buttonGroup}>
               <TouchableOpacity style={styles.button} onPress={toggleEditar}>
