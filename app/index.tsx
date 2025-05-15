@@ -37,7 +37,7 @@ export default function Login() {
       marginBottom: 6,
     },
     inputText: {
-      flex: 1,
+      width: "80%",
       fontSize: normalize({ base: 4, min: 20 }),
       fontWeight: normalizeFontWeight({ max: 400 }),
       color: "#000",

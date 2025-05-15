@@ -83,7 +83,10 @@ export default function MenuPrincipal() {
         <ScrollView
           contentContainerStyle={[
             styles.scrollContent,
-            { paddingHorizontal: width < 600 ? 20 : 50, marginTop: 150 },
+            {
+              paddingHorizontal: width < 600 ? 20 : 50,
+              marginTop: width < 600 ? 60 : 150, // ajuste de responsividade
+            },
           ]}
           keyboardShouldPersistTaps="handled"
         >
@@ -193,18 +196,7 @@ export default function MenuPrincipal() {
           </View>
           <View style={styles.divider} />
           <Text style={{ fontSize: 20 }}>O que é um Roadmap?</Text>
-          <Text
-            style={{
-              fontSize: 14,
-              marginTop: -15,
-              color: "#6e6e6e",
-              minWidth: 400,
-              width: "90%",
-              maxWidth: 600,
-              textAlign: 'justify',
-              paddingBottom: 40,
-            }}
-          >
+          <Text style={styles.description}>
             Um roadmap é um plano visual que organiza etapas, conteúdos ou metas
             de forma sequencial para alcançar um objetivo específico. Ele
             funciona como um guia que mostra o caminho a ser seguido, ajudando a
@@ -275,7 +267,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 10,
-    width: "100%",
+    width: "90%", // melhor responsividade
     maxWidth: 400,
   },
   buttonText: {
@@ -300,5 +292,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "100%",
     gap: 16,
+  },
+  description: {
+    fontSize: 14,
+    marginTop: -15,
+    color: "#6e6e6e",
+    width: "90%",
+    maxWidth: 600,
+    textAlign: "justify",
+    paddingBottom: 40,
   },
 });

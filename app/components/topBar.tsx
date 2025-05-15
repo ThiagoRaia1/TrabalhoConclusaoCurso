@@ -234,13 +234,13 @@ const styles = StyleSheet.create({
   buttonGroup: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
   },
   topBarButton: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
     backgroundColor: "#374151",
+    marginRight: 20
   },
   activeButton: {
     backgroundColor: "#10B981",
