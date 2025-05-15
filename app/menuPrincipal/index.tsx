@@ -77,13 +77,13 @@ export default function MenuPrincipal() {
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
 
       <KeyboardAvoidingView
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScrollView
           contentContainerStyle={[
             styles.scrollContent,
-            { paddingHorizontal: width < 600 ? 20 : 50, marginTop: 180 },
+            { paddingHorizontal: width < 600 ? 20 : 50, marginTop: 150 },
           ]}
           keyboardShouldPersistTaps="handled"
         >
@@ -191,6 +191,28 @@ export default function MenuPrincipal() {
               <Text style={styles.buttonText}>Xadrez</Text>
             </TouchableOpacity>
           </View>
+          <View style={styles.divider} />
+          <Text style={{ fontSize: 20 }}>O que é um Roadmap?</Text>
+          <Text
+            style={{
+              fontSize: 14,
+              marginTop: -15,
+              color: "#6e6e6e",
+              minWidth: 400,
+              width: "90%",
+              maxWidth: 600,
+              textAlign: 'justify',
+              paddingBottom: 40,
+            }}
+          >
+            Um roadmap é um plano visual que organiza etapas, conteúdos ou metas
+            de forma sequencial para alcançar um objetivo específico. Ele
+            funciona como um guia que mostra o caminho a ser seguido, ajudando a
+            entender o que aprender ou fazer primeiro, o que vem depois e assim
+            por diante. É muito usado em áreas como tecnologia, educação e
+            gestão de projetos para orientar o progresso e facilitar o
+            planejamento.
+          </Text>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -208,8 +230,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     alignItems: "center",
     gap: 25,
-    paddingTop: 30,
-    paddingBottom: 50,
   },
   title: {
     fontSize: 30,
