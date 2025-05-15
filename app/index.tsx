@@ -31,20 +31,20 @@ export default function Login() {
 
   const dynamicStyles = {
     label: {
-      fontSize: normalize({ base: 7 }),
+      fontSize: normalize({ base: 7, min: 24 }),
       fontWeight: normalizeFontWeight({ max: 500 }),
       color: "#444",
       marginBottom: 6,
     },
     inputText: {
       flex: 1,
-      fontSize: normalize({ base: 7 }),
+      fontSize: normalize({ base: 4, min: 20 }),
       fontWeight: normalizeFontWeight({ max: 400 }),
       color: "#000",
     },
     buttonText: {
       color: "white",
-      fontSize: normalize({ base: 7 }),
+      fontSize: normalize({ base: 6, min: 18,max: 22 }),
       fontWeight: normalizeFontWeight({ max: 600 }),
     },
     titleText: {
@@ -221,7 +221,8 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    paddingVertical: 12,
+    minHeight: 45,
+    height: '100%',
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",

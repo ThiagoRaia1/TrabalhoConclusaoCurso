@@ -44,19 +44,19 @@ export default function Cadastro() {
       color: "black",
     },
     label: {
-      fontSize: normalize({ base: 8 }),
+      fontSize: normalize({ base: 4, min: 24 }),
       fontWeight: normalizeFontWeight({ max: 400 }),
       color: "#222",
       marginBottom: 5,
     },
     inputText: {
       flex: 1,
-      fontSize: normalize({ base: 7 }),
+      fontSize: normalize({ base: 10, max: 20 }),
       fontWeight: normalizeFontWeight({ max: 400 }),
       color: "#000",
     },
     buttonText: {
-      fontSize: normalize({ base: 7 }),
+      fontSize: normalize({ base: 7, min: 20 }),
       fontWeight: normalizeFontWeight({ max: 600 }),
       color: "white",
     },
