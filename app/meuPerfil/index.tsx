@@ -93,6 +93,9 @@ export default function MeuPerfil() {
           novaSenha
         );
         setUsuario({ ...usuario, nome: usuarioAtualizado.nome });
+        setEditando(false);
+        setSenhaAtual("");
+        setNovaSenha("");
         alert("Dados atualizados com sucesso!");
       } catch (erro: any) {
         if (erro.message === "Erro ao autenticar usuario") {
@@ -103,9 +106,6 @@ export default function MeuPerfil() {
         }
       } finally {
         setCarregando(false);
-        setSenhaAtual("");
-        setNovaSenha("");
-        setEditando(false);
       }
     } else {
       setBackupUsuario(nome);
@@ -273,8 +273,8 @@ export default function MeuPerfil() {
               </TouchableOpacity>
             </View>
           </View>
+          {carregando && <Carregando borda={16} />}
         </Animatable.View>
-        {carregando && <Carregando />}
       </ScrollView>
     </View>
   );
