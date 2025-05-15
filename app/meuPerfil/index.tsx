@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
+  ScrollView,
 } from "react-native";
 import { router } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -15,6 +16,7 @@ import { useAuth } from "../../context/auth";
 import { useNormalize } from "../../utils/normalize";
 import { atualizarUsuario } from "../../services/atualizarUsuarioApi";
 import Carregando from "../components/carregando";
+import * as Animatable from "react-native-animatable";
 
 export default function MeuPerfil() {
   const { usuario, setUsuario } = useAuth();
@@ -48,7 +50,7 @@ export default function MeuPerfil() {
       color: "#333",
     },
     buttonText: {
-      fontSize: normalize({ base: 10 }),
+      fontSize: normalize({ base: 10, min: 25 }),
       fontWeight: normalizeFontWeight({ min: 400, max: 700 }),
       color: "white",
     },
@@ -57,7 +59,7 @@ export default function MeuPerfil() {
   const toggleEditar = async () => {
     if (editando) {
       try {
-        setCarregando(true)
+        setCarregando(true);
         const usuarioAtualizado = await atualizarUsuario(
           backupUsuario.login,
           nome,
@@ -68,7 +70,7 @@ export default function MeuPerfil() {
       } catch (erro: any) {
         alert("Erro ao atualizar os dados: " + erro.message);
       } finally {
-        setCarregando(false)
+        setCarregando(false);
         setSenha("");
         setEditando(false);
         alert("Dados atualizados com sucesso!");
@@ -86,92 +88,107 @@ export default function MeuPerfil() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: "#f4f4f4" }]}>
+    <View style={styles.container}>
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
-
-      <View style={[styles.card, getShadow()]}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <Animatable.View
+          animation="fadeInUp"
+          duration={700}
+          style={[styles.card, getShadow()]}
         >
-          <MaterialIcons name="arrow-back" size={28} color="#333" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <MaterialIcons name="arrow-back" size={28} color="#333" />
+          </TouchableOpacity>
 
-        <View style={styles.header}>
-          <FontAwesome5 name="user" size={80} color="#2596be" />
-          <Text style={dynamicStyles.title}>Meu Perfil</Text>
-        </View>
+          <View style={styles.header}>
+            <FontAwesome5 name="user" size={80} color="#2596be" />
+            <Text style={dynamicStyles.title}>Meu Perfil</Text>
+          </View>
 
-        <View style={styles.form}>
-          <View style={styles.inputGroup}>
-            <Text style={dynamicStyles.label}>Nome</Text>
-            <View
-              style={[
-                styles.inputContainer,
-                editando && { backgroundColor: "white" },
-              ]}
-            >
-              <TextInput
-                style={[dynamicStyles.input, styles.inputField, {outlineStyle: 'none'} as any]}
-                value={nome}
-                onChangeText={setNome}
-                editable={editando}
-                placeholder="Digite seu nome"
-                placeholderTextColor="#aaa"
-              />
+          <View style={styles.form}>
+            <View style={styles.inputGroup}>
+              <Text style={dynamicStyles.label}>Nome</Text>
+              <View
+                style={[
+                  styles.inputContainer,
+                  editando && { backgroundColor: "white" },
+                ]}
+              >
+                <TextInput
+                  style={[
+                    dynamicStyles.input,
+                    styles.inputField,
+                    { outlineStyle: "none" } as any,
+                  ]}
+                  value={nome}
+                  onChangeText={setNome}
+                  editable={editando}
+                  placeholder="Digite seu nome"
+                  placeholderTextColor="#aaa"
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={dynamicStyles.label}>Email</Text>
+              <View style={[styles.inputContainer, styles.inputDisabled]}>
+                <TextInput
+                  style={[
+                    dynamicStyles.input,
+                    styles.inputField,
+                    { outlineStyle: "none" } as any,
+                  ]}
+                  value={usuario.login}
+                  editable={false}
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={dynamicStyles.label}>Senha</Text>
+              <View
+                style={[
+                  styles.inputContainer,
+                  editando && { backgroundColor: "white" },
+                ]}
+              >
+                <TextInput
+                  style={[
+                    dynamicStyles.input,
+                    styles.inputField,
+                    { outlineStyle: "none" } as any,
+                  ]}
+                  placeholder="Digite atual sua senha para mantê-la."
+                  placeholderTextColor="#aaa"
+                  value={senha}
+                  onChangeText={setSenha}
+                  secureTextEntry
+                  editable={editando}
+                />
+                <FontAwesome5 name="lock" size={18} color="#555" />
+              </View>
+            </View>
+
+            <View style={styles.buttonGroup}>
+              <TouchableOpacity style={styles.button} onPress={toggleEditar}>
+                <Text style={dynamicStyles.buttonText}>
+                  {editando ? "Salvar" : "Editar"}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.cancelButton]}
+                onPress={() => (editando ? cancelarEdicao() : router.back())}
+              >
+                <Text style={dynamicStyles.buttonText}>Cancelar</Text>
+              </TouchableOpacity>
             </View>
           </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={dynamicStyles.label}>Email</Text>
-            <View style={[styles.inputContainer, styles.inputDisabled]}>
-              <TextInput
-                style={[dynamicStyles.input, styles.inputField, {outlineStyle: 'none'} as any]}
-                value={usuario.login}
-                editable={false}
-              />
-            </View>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={dynamicStyles.label}>Senha</Text>
-            <View
-              style={[
-                styles.inputContainer,
-                editando && { backgroundColor: "white" },
-              ]}
-            >
-              <TextInput
-                style={[dynamicStyles.input, styles.inputField, {outlineStyle: 'none'} as any]}
-                placeholder="Digite atual sua senha para mantê-la."
-                placeholderTextColor="#aaa"
-                value={senha}
-                onChangeText={setSenha}
-                secureTextEntry
-                editable={editando}
-              />
-              <FontAwesome5 name="lock" size={18} color="#555" />
-            </View>
-          </View>
-
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity style={styles.button} onPress={toggleEditar}>
-              <Text style={dynamicStyles.buttonText}>
-                {editando ? "Salvar" : "Editar"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
-              onPress={() => (editando ? cancelarEdicao() : router.back())}
-            >
-              <Text style={dynamicStyles.buttonText}>Cancelar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-
-      {menuVisivel && <MenuSuspenso />}
-      {carregando && <Carregando />}
+        </Animatable.View>
+        {carregando && <Carregando />}
+      </ScrollView>
     </View>
   );
 }
@@ -194,13 +211,16 @@ function getShadow() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f1f4f9",
   },
   card: {
     flexGrow: 1,
     backgroundColor: "#fff",
     borderRadius: 16,
-    padding: 100,
+    paddingHorizontal: 60,
     alignItems: "center",
+    justifyContent: "center",
+    margin: 20,
   },
   backButton: {
     position: "absolute",
@@ -215,6 +235,7 @@ const styles = StyleSheet.create({
   },
   form: {
     width: "100%",
+    maxWidth: 600,
     gap: 20,
     marginTop: 10,
   },
@@ -241,12 +262,18 @@ const styles = StyleSheet.create({
   buttonGroup: {
     gap: 12,
     marginTop: 10,
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
   },
   button: {
     backgroundColor: "#0FA5E9",
-    paddingVertical: 12,
     borderRadius: 50,
     alignItems: "center",
+    minHeight: 40,
+    height: '100%',
+    maxHeight: 50,
+    justifyContent: 'center'
   },
   cancelButton: {
     backgroundColor: "#ff4d4d",

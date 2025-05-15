@@ -77,7 +77,7 @@ export default function MenuPrincipal() {
       <TopBarMenu menuVisivel={menuVisivel} setMenuVisivel={setMenuVisivel} />
 
       <KeyboardAvoidingView
-        style={styles.flexGrow}
+        style={{flex: 1}}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScrollView
@@ -204,9 +204,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f1f4f9",
-  },
-  flexGrow: {
-    flex: 1,
   },
   scrollContent: {
     alignItems: "center",

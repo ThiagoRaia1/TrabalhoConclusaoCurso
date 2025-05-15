@@ -120,8 +120,8 @@ export default function MeusRoadmaps() {
             style={styles.createCard}
             onPress={() => router.push("/menuPrincipal")}
           >
-            <Ionicons name="add-circle-outline" size={40} color="#fff" />
-            <Text style={styles.cardText}>Criar Roadmap</Text>
+            <Ionicons name="add-circle" size={40} color="#fff" />
+            <Text style={styles.cardText}>Novo Roadmap</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -131,14 +131,15 @@ export default function MeusRoadmaps() {
       <Modal
         transparent
         visible={modalVisivel}
-        animationType="none"
+        animationType="fade"
         onRequestClose={() => setModalVisivel(false)}
       >
         <Animated.View style={[styles.modalOverlay, { opacity: animating }]}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitulo}>Confirmar exclusão</Text>
+            <Ionicons name="alert-circle-outline" size={40} color="#ff5252" />
+            <Text style={styles.modalTitulo}>Excluir Roadmap?</Text>
             <Text style={styles.modalTexto}>
-              Deseja excluir o roadmap "{roadmapSelecionado?.titulo}"?
+              Deseja mesmo excluir o roadmap "{roadmapSelecionado?.titulo}"?
             </Text>
 
             <View style={styles.modalBotoes}>
@@ -146,14 +147,14 @@ export default function MeusRoadmaps() {
                 style={[styles.modalBotao, styles.modalExcluir]}
                 onPress={confirmarExclusao}
               >
-                <Text style={styles.modalBotaoTexto}>Excluir</Text>
+                <Text style={styles.modalBotaoTexto}>Sim</Text>
               </Pressable>
 
               <Pressable
                 style={[styles.modalBotao, styles.modalCancelar]}
                 onPress={() => setModalVisivel(false)}
               >
-                <Text style={styles.modalBotaoTexto}>Cancelar</Text>
+                <Text style={styles.modalBotaoTexto}>Não</Text>
               </Pressable>
             </View>
           </View>
@@ -166,7 +167,7 @@ export default function MeusRoadmaps() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f9fafa",
   },
   scrollContainer: {
     paddingVertical: 20,
@@ -174,10 +175,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 28,
-    fontWeight: "700",
-    marginBottom: 20,
-    textAlign: "center",
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "#222",
+    marginBottom: 24,
   },
   roadmapList: {
     flexDirection: "row",
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 16,
     rowGap: 20,
-    paddingBottom: 30,
+    paddingBottom: 40,
   },
   cardContainer: {
     position: "relative",
@@ -194,42 +195,48 @@ const styles = StyleSheet.create({
     backgroundColor: "#2496BE",
     width: 180,
     height: 100,
-    borderRadius: 12,
-    borderBottomColor: '#196580',
-    borderBottomWidth: 4,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
+    padding: 10,
+    borderBottomWidth: 5,
+    borderBottomColor: "#196580",
     shadowColor: "#000",
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 4,
+    shadowRadius: 6,
+    elevation: 5,
   },
   createCard: {
     backgroundColor: "#4CAF50",
     width: 180,
     height: 100,
-    borderRadius: 12,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
-    borderBottomWidth: 4,
+    borderBottomWidth: 5,
     borderColor: "#1d5e2f",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 5,
   },
   cardText: {
     color: "white",
     fontSize: 16,
     fontWeight: "600",
     textAlign: "center",
-    marginTop: 4,
+    marginTop: 6,
   },
   deleteIcon: {
     position: "absolute",
     top: 6,
     right: 6,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 4,
-    elevation: 2,
+    elevation: 3,
   },
   loadingContainer: {
     marginTop: 100,
@@ -238,6 +245,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
+    color: "#555",
   },
   modalOverlay: {
     flex: 1,
@@ -246,22 +254,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContainer: {
-    backgroundColor: "white",
-    padding: 24,
-    borderRadius: 12,
+    backgroundColor: "#fff",
+    padding: 28,
+    borderRadius: 16,
     width: "85%",
     maxWidth: 400,
     alignItems: "center",
   },
   modalTitulo: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 12,
+    color: "#222",
+    marginTop: 10,
+    marginBottom: 8,
   },
   modalTexto: {
     fontSize: 16,
     textAlign: "center",
-    marginBottom: 20,
+    color: "#333",
+    marginBottom: 24,
   },
   modalBotoes: {
     flexDirection: "row",
@@ -276,27 +287,15 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#ccc",
-
-    // Efeito de relevo (sombra)
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-
-    elevation: 6, // Android
+    backgroundColor: "#eee",
   },
   modalBotaoTexto: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
-    letterSpacing: 0.5,
   },
   modalExcluir: {
-    backgroundColor: "#ff4d4d",
-    borderColor: "#d32f2f",
+    backgroundColor: "#e53935",
   },
   modalCancelar: {
     backgroundColor: "#607D8B",
