@@ -99,9 +99,7 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
             onHoverIn={() => handleTooltipToggle(true)}
             onHoverOut={() => handleTooltipToggle(false)}
             onPressIn={() => handleTooltipToggle(true)}
-            onPressOut={() => {
-              if (Platform.OS !== "web") setShowTooltip(false);
-            }}
+            onPressOut={() => setShowTooltip(false)}
             style={{ marginLeft: 6 }}
           >
             <FontAwesome name="question-circle-o" size={20} color="#fff" />
@@ -240,7 +238,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 8,
     backgroundColor: "#374151",
-    marginRight: 20
+    marginRight: 20,
   },
   activeButton: {
     backgroundColor: "#10B981",

@@ -232,20 +232,25 @@ const styles = StyleSheet.create({
   faseHeader: {
     padding: 16,
     borderRadius: 10,
-    flexDirection: Platform.OS === "web" ? "row" : "column",
-    justifyContent: "space-between",
-    alignItems: Platform.OS === "web" ? "center" : "flex-start",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start",
+    justifyContent: "space-between", // distribui título e ações
     gap: 12,
   },
   faseTitle: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#222",
+    flexGrow: 1, // ocupa espaço disponível
+    minWidth: 160,
   },
   faseActions: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 10,
+    justifyContent: "flex-end", // alinha os botões à direita
+    flexGrow: 1,
   },
   actionButton: {
     backgroundColor: "#0056b3",
