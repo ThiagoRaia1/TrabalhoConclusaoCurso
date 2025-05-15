@@ -11,25 +11,49 @@ import {
 import { router } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import TopBarMenu, { MenuSuspenso } from "../components/topBar";
+import TopBarMenu from "../components/topBar";
 import { useAuth } from "../../context/auth";
 import { useNormalize } from "../../utils/normalize";
 import { atualizarUsuario } from "../../services/atualizarUsuarioApi";
 import Carregando from "../components/carregando";
 import * as Animatable from "react-native-animatable";
+import { autenticarLogin } from "../../context/api";
 
 export default function MeuPerfil() {
   const { usuario, setUsuario } = useAuth();
   const [nome, setNome] = useState(usuario.nome);
-  const [senha, setSenha] = useState("");
+  const [senhaAtual, setSenhaAtual] = useState("");
+  const [novaSenha, setNovaSenha] = useState("");
   const [editando, setEditando] = useState(false);
   const [menuVisivel, setMenuVisivel] = useState(false);
-  const [backupUsuario, setBackupUsuario] = useState({
-    nome: usuario.nome,
-    login: usuario.login,
-    senha: senha,
-  });
+  const [backupUsuario, setBackupUsuario] = useState(nome);
   const [carregando, setCarregando] = useState(false);
+  const [mostrarSenhaAtual, setMostrarSenhaAtual] = useState(false);
+  const [mostrarNovaSenha, setMostrarNovaSenha] = useState(false);
+  const [erros, setErros] = useState<{
+    nome?: string;
+    senhaAtual?: string;
+    novaSenha?: string;
+  }>({});
+
+  const validarCampos = () => {
+    const novosErros: {
+      nome?: string;
+      senhaAtual?: string;
+      novaSenha?: string;
+    } = {};
+
+    if (!nome.trim()) novosErros.nome = "Nome é obrigatório.";
+
+    if (editando && !senhaAtual.trim())
+      novosErros.senhaAtual = "Senha atual é obrigatória.";
+
+    if (editando && !novaSenha.trim())
+      novosErros.novaSenha = "Nova senha é obrigatória.";
+
+    setErros(novosErros);
+    return Object.keys(novosErros).length === 0;
+  };
 
   const { normalize, normalizeFontWeight } = useNormalize();
 
@@ -41,49 +65,58 @@ export default function MeuPerfil() {
       marginTop: 10,
     },
     label: {
-      fontSize: normalize({ base: 10 }),
+      fontSize: normalize({ base: 8, max: 24 }),
       fontWeight: normalizeFontWeight({ max: 500 }),
       marginBottom: 6,
     },
     input: {
-      fontSize: normalize({ base: 10 }),
+      fontSize: normalize({ base: 7, max: 20 }),
       color: "#333",
     },
     buttonText: {
-      fontSize: normalize({ base: 10, min: 25 }),
-      fontWeight: normalizeFontWeight({ min: 400, max: 700 }),
+      fontSize: normalize({ base: 7, min: 20, max: 20 }),
+      fontWeight: normalizeFontWeight({ min: 400, max: 500 }),
       color: "white",
     },
   };
 
   const toggleEditar = async () => {
     if (editando) {
+      if (!validarCampos()) return;
+
+      setCarregando(true);
       try {
-        setCarregando(true);
+        await autenticarLogin(usuario.login, senhaAtual);
         const usuarioAtualizado = await atualizarUsuario(
-          backupUsuario.login,
-          nome,
           usuario.login,
-          senha
+          nome,
+          novaSenha
         );
         setUsuario({ ...usuario, nome: usuarioAtualizado.nome });
+        alert("Dados atualizados com sucesso!");
       } catch (erro: any) {
-        alert("Erro ao atualizar os dados: " + erro.message);
+        if (erro.message === "Erro ao autenticar usuario") {
+          setErros((prev) => ({
+            ...prev,
+            senhaAtual: "Senha incorreta.",
+          }));
+        }
       } finally {
         setCarregando(false);
-        setSenha("");
+        setSenhaAtual("");
+        setNovaSenha("");
         setEditando(false);
-        alert("Dados atualizados com sucesso!");
       }
     } else {
-      setBackupUsuario({ nome, login: usuario.login, senha });
+      setBackupUsuario(nome);
       setEditando(true);
     }
   };
 
   const cancelarEdicao = () => {
-    setNome(backupUsuario.nome);
-    setSenha("");
+    setNome(backupUsuario);
+    setSenhaAtual("");
+    setNovaSenha("");
     setEditando(false);
   };
 
@@ -109,7 +142,7 @@ export default function MeuPerfil() {
           </View>
 
           <View style={styles.form}>
-            <View style={styles.inputGroup}>
+            <View>
               <Text style={dynamicStyles.label}>Nome</Text>
               <View
                 style={[
@@ -131,8 +164,11 @@ export default function MeuPerfil() {
                 />
               </View>
             </View>
+            {erros.nome && (
+              <Text style={{ color: "red", marginTop: -15 }}>{erros.nome}</Text>
+            )}
 
-            <View style={styles.inputGroup}>
+            <View>
               <Text style={dynamicStyles.label}>Email</Text>
               <View style={[styles.inputContainer, styles.inputDisabled]}>
                 <TextInput
@@ -147,8 +183,8 @@ export default function MeuPerfil() {
               </View>
             </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={dynamicStyles.label}>Senha</Text>
+            <View>
+              <Text style={dynamicStyles.label}>Senha atual</Text>
               <View
                 style={[
                   styles.inputContainer,
@@ -161,16 +197,67 @@ export default function MeuPerfil() {
                     styles.inputField,
                     { outlineStyle: "none" } as any,
                   ]}
-                  placeholder="Digite atual sua senha para mantê-la."
+                  placeholder="Digite sua senha"
                   placeholderTextColor="#aaa"
-                  value={senha}
-                  onChangeText={setSenha}
-                  secureTextEntry
+                  value={senhaAtual}
+                  onChangeText={setSenhaAtual}
+                  secureTextEntry={!mostrarSenhaAtual}
                   editable={editando}
                 />
-                <FontAwesome5 name="lock" size={18} color="#555" />
+                <TouchableOpacity
+                  onPress={() => setMostrarSenhaAtual(!mostrarSenhaAtual)}
+                >
+                  <FontAwesome5
+                    name={mostrarSenhaAtual ? "eye-slash" : "eye"}
+                    size={18}
+                    color="#555"
+                  />
+                </TouchableOpacity>
               </View>
             </View>
+            {erros.senhaAtual && (
+              <Text style={{ color: "red", marginTop: -15 }}>
+                {erros.senhaAtual}
+              </Text>
+            )}
+
+            <View>
+              <Text style={dynamicStyles.label}>Nova senha</Text>
+              <View
+                style={[
+                  styles.inputContainer,
+                  editando && { backgroundColor: "white" },
+                ]}
+              >
+                <TextInput
+                  style={[
+                    dynamicStyles.input,
+                    styles.inputField,
+                    { outlineStyle: "none" } as any,
+                  ]}
+                  placeholder="Digite sua senha atual para mantê-la"
+                  placeholderTextColor="#aaa"
+                  value={novaSenha}
+                  onChangeText={setNovaSenha}
+                  secureTextEntry={!mostrarNovaSenha}
+                  editable={editando}
+                />
+                <TouchableOpacity
+                  onPress={() => setMostrarNovaSenha(!mostrarNovaSenha)}
+                >
+                  <FontAwesome5
+                    name={mostrarNovaSenha ? "eye-slash" : "eye"}
+                    size={18}
+                    color="#555"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            {erros.novaSenha && (
+              <Text style={{ color: "red", marginTop: -15 }}>
+                {erros.novaSenha}
+              </Text>
+            )}
 
             <View style={styles.buttonGroup}>
               <TouchableOpacity style={styles.button} onPress={toggleEditar}>
@@ -239,9 +326,6 @@ const styles = StyleSheet.create({
     gap: 20,
     marginTop: 10,
   },
-  inputGroup: {
-    gap: 6,
-  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -262,18 +346,20 @@ const styles = StyleSheet.create({
   buttonGroup: {
     gap: 12,
     marginTop: 10,
-    width: '100%',
-    maxWidth: 400,
-    alignSelf: 'center',
+    width: "100%",
+    alignSelf: "center",
   },
   button: {
     backgroundColor: "#0FA5E9",
     borderRadius: 50,
     alignItems: "center",
-    minHeight: 40,
-    height: '100%',
-    maxHeight: 50,
-    justifyContent: 'center'
+    height: "100%",
+    maxHeight: 45,
+    minWidth: 200,
+    width: "60%",
+    maxWidth: 350,
+    justifyContent: "center",
+    alignSelf: "center",
   },
   cancelButton: {
     backgroundColor: "#ff4d4d",

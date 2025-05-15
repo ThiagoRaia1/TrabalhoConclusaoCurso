@@ -5,7 +5,6 @@ const API_URL = `${LOCALHOST_URL}/usuario`;
 export async function atualizarUsuario(
   loginAtual: string,
   nome: string,
-  login: string,
   senha: string
 ) {
   try {
@@ -14,7 +13,7 @@ export async function atualizarUsuario(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ nome, login, senha }),
+      body: JSON.stringify({ nome, senha }),
     });
 
     if (!resposta.ok) {

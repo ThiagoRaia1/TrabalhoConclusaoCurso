@@ -27,11 +27,7 @@ export default function Login() {
   const { width } = useWindowDimensions();
   const isWide = width > 700;
 
-  const {
-    normalize,
-    normalizeFontWeight,
-    normalizeIconSize,
-  } = useNormalize();
+  const { normalize, normalizeFontWeight, normalizeIconSize } = useNormalize();
 
   const dynamicStyles = {
     label: {
@@ -149,9 +145,13 @@ export default function Login() {
 
                     <TouchableOpacity
                       style={[styles.button, { backgroundColor: "#2596be" }]}
-                      onPress={() => {
-                        setCarregando(true);
-                        handleLogin(senha);
+                      onPress={async () => {
+                        try {
+                          setCarregando(true);
+                          await handleLogin(senha);
+                        } finally {
+                          setCarregando(false);
+                        }
                       }}
                     >
                       <Text style={dynamicStyles.buttonText}>Login</Text>

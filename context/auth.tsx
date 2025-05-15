@@ -11,7 +11,7 @@ export interface IUsuario {
 interface IAuthContext {
   usuario: IUsuario;
   setUsuario: (usuario: IUsuario) => void;
-  handleLogin: (senha: string) => void;
+  handleLogin: (senha: string) => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   async function handleLogin(senha: string) {
     try {
-      const user = await autenticarLogin(usuario.login, senha)
+      const user = await autenticarLogin(usuario.login, senha);
       setUsuario(user);
       router.push("/menuPrincipal");
     } catch (erro: any) {
