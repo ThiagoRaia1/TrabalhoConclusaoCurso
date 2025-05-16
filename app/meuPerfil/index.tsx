@@ -126,7 +126,7 @@ export default function MeuPerfil() {
         >
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => router.back()}
+            onPress={() => router.push('./menuPrincipal')}
           >
             <MaterialIcons name="arrow-back" size={28} color="#333" />
           </TouchableOpacity>
@@ -307,14 +307,12 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    marginTop: 30,
     gap: 12,
   },
   form: {
     width: "100%",
     maxWidth: 600,
     gap: 20,
-    marginTop: 10,
   },
   inputContainer: {
     flexDirection: "row",
@@ -334,22 +332,23 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   buttonGroup: {
-    gap: 12,
-    marginTop: 10,
+    flexDirection: 'row',
+    gap: 15,
     width: "100%",
+    height: '15%',
     alignSelf: "center",
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   button: {
     backgroundColor: "#0FA5E9",
     borderRadius: 50,
     alignItems: "center",
-    height: "100%",
-    maxHeight: 45,
-    minWidth: 200,
-    width: "60%",
-    maxWidth: 350,
+    height: '100%',
+    maxHeight: 40,
+    width: "50%",
+    maxWidth: 200,
     justifyContent: "center",
-    alignSelf: "center",
   },
   cancelButton: {
     backgroundColor: "#ff4d4d",

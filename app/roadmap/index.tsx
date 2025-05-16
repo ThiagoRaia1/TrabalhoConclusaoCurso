@@ -244,6 +244,7 @@ const styles = StyleSheet.create({
     color: "#222",
     flexGrow: 1, // ocupa espaço disponível
     minWidth: 160,
+    marginTop: 5,
   },
   faseActions: {
     flexDirection: "row",

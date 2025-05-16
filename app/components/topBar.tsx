@@ -28,6 +28,8 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
   const tooltipOpacity = useRef(new Animated.Value(0)).current;
   const tooltipTranslateY = useRef(new Animated.Value(8)).current;
 
+  const isSmallScreen = width < 500;
+
   useEffect(() => {
     if (
       Platform.OS === "android" &&
@@ -91,38 +93,34 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
 
   return (
     <>
-      <View style={styles.topBar}>
+      <View
+        style={[
+          styles.topBar,
+          isSmallScreen && {
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
+        ]}
+      >
         <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>AI TEACHER</Text>
+          <Text style={styles.logoText}>A.I. TEACHER</Text>
 
           <Pressable
             onHoverIn={() => handleTooltipToggle(true)}
             onHoverOut={() => handleTooltipToggle(false)}
-            onPressIn={() => handleTooltipToggle(true)}
-            onPressOut={() => setShowTooltip(false)}
-            style={{ marginLeft: 6 }}
+            onPress={() => handleTooltipToggle(!showTooltip)}
+            style={{ marginRight: 10 }}
           >
             <FontAwesome name="question-circle-o" size={20} color="#fff" />
-            {showTooltip && (
-              <Animated.View
-                style={[
-                  styles.tooltip,
-                  {
-                    opacity: tooltipOpacity,
-                    transform: [{ translateY: tooltipTranslateY }],
-                  },
-                ]}
-              >
-                <Text style={styles.tooltipText}>
-                  Plataforma para *auxiliar* no mapeamento do aprendizado com
-                  inteligência artificial. Busque sempre por fontes confiáveis.
-                </Text>
-              </Animated.View>
-            )}
           </Pressable>
         </View>
 
-        <View style={styles.buttonGroup}>
+        <View
+          style={[
+            styles.buttonGroup,
+            isSmallScreen && { alignSelf: "flex-end", marginTop: 10 },
+          ]}
+        >
           <TouchableOpacity
             style={[
               styles.topBarButton,
@@ -164,21 +162,69 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
       </View>
 
       {menuVisivel && <MenuSuspenso />}
+
+      {showTooltip && (
+        <Animated.View
+          style={[
+            styles.tooltip,
+            {
+              opacity: tooltipOpacity,
+              transform: [{ translateY: tooltipTranslateY }],
+              top: isSmallScreen ? 65 : Platform.OS === "web" ? 55 : 65, // Ajuste conforme necessário
+            },
+          ]}
+        >
+          <Text style={styles.tooltipText}>
+            Plataforma para *auxiliar* no mapeamento do aprendizado com
+            inteligência artificial. Busque sempre por fontes confiáveis.
+          </Text>
+        </Animated.View>
+      )}
     </>
   );
 }
 
 export function MenuSuspenso() {
+  const { width } = useWindowDimensions();
+  const menuOpacity = useRef(new Animated.Value(0)).current;
+  const menuTranslateY = useRef(new Animated.Value(8)).current;
+
+  const isSmallScreen = width < 500;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(menuOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(menuTranslateY, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   return (
-    <View style={styles.menuSuspenso}>
-      <TouchableOpacity onPress={() => router.push("./meuPerfil")}>
+    <Animated.View
+      style={[
+        styles.menuSuspenso,
+        {
+          opacity: menuOpacity,
+          transform: [{ translateY: menuTranslateY }],
+          top: isSmallScreen ? 130 : Platform.OS === "web" ? 80 : 90,
+        },
+      ]}
+    >
+      <TouchableOpacity onPress={() => router.push("/meuPerfil")}>
         <Text style={styles.menuItem}>Meu Perfil</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push("./")}>
+      <TouchableOpacity onPress={() => router.push("/")}>
         <Text style={styles.menuItem}>Logout</Text>
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -196,12 +242,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    zIndex: 20,
+    zIndex: 1,
   },
   logoContainer: {
     flexDirection: "row",
+    gap: 10,
     alignItems: "center",
-    position: "relative",
+    maxWidth: 190,
   },
   logoText: {
     fontSize: 24,
@@ -211,8 +258,7 @@ const styles = StyleSheet.create({
   },
   tooltip: {
     position: "absolute",
-    top: 28,
-    left: -20,
+    left: 20,
     backgroundColor: "#F9FAFB",
     padding: 8,
     borderRadius: 6,
@@ -221,8 +267,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
-    zIndex: 100,
+    elevation: 10,
+    zIndex: 20,
   },
   tooltipText: {
     fontSize: 13,
@@ -232,13 +278,14 @@ const styles = StyleSheet.create({
   buttonGroup: {
     flexDirection: "row",
     alignItems: "center",
+    flexWrap: "wrap",
+    gap: 10,
   },
   topBarButton: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
     backgroundColor: "#374151",
-    marginRight: 20,
   },
   activeButton: {
     backgroundColor: "#10B981",
@@ -254,7 +301,7 @@ const styles = StyleSheet.create({
   menuSuspenso: {
     position: "absolute",
     right: 20,
-    top: Platform.OS === "web" ? 75 : 100,
+    top: Platform.OS === "web" ? 80 : 100,
     backgroundColor: "#fff",
     borderRadius: 8,
     elevation: 6,
