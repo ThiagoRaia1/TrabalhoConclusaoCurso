@@ -307,14 +307,12 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    marginTop: 30,
     gap: 12,
   },
   form: {
     width: "100%",
     maxWidth: 600,
     gap: 20,
-    marginTop: 10,
   },
   inputContainer: {
     flexDirection: "row",
@@ -348,7 +346,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: '100%',
     maxHeight: 40,
-    width: "30%",
+    width: "50%",
     maxWidth: 200,
     justifyContent: "center",
   },
