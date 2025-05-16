@@ -126,7 +126,7 @@ export default function MeuPerfil() {
         >
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => router.back()}
+            onPress={() => router.push('./menuPrincipal')}
           >
             <MaterialIcons name="arrow-back" size={28} color="#333" />
           </TouchableOpacity>

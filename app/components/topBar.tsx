@@ -93,32 +93,16 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
     <>
       <View style={styles.topBar}>
         <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>AI TEACHER</Text>
+          <Text style={styles.logoText}>A.I. TEACHER</Text>
 
           <Pressable
             onHoverIn={() => handleTooltipToggle(true)}
             onHoverOut={() => handleTooltipToggle(false)}
             onPressIn={() => handleTooltipToggle(true)}
             onPressOut={() => setShowTooltip(false)}
-            style={{ marginLeft: 6 }}
+            style={{ marginRight: 10 }}
           >
             <FontAwesome name="question-circle-o" size={20} color="#fff" />
-            {showTooltip && (
-              <Animated.View
-                style={[
-                  styles.tooltip,
-                  {
-                    opacity: tooltipOpacity,
-                    transform: [{ translateY: tooltipTranslateY }],
-                  },
-                ]}
-              >
-                <Text style={styles.tooltipText}>
-                  Plataforma para *auxiliar* no mapeamento do aprendizado com
-                  inteligência artificial. Busque sempre por fontes confiáveis.
-                </Text>
-              </Animated.View>
-            )}
           </Pressable>
         </View>
 
@@ -164,27 +148,70 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
       </View>
 
       {menuVisivel && <MenuSuspenso />}
+      {showTooltip && (
+        <Animated.View
+          style={[
+            styles.tooltip,
+            {
+              opacity: tooltipOpacity,
+              transform: [{ translateY: tooltipTranslateY }],
+            },
+          ]}
+        >
+          <Text style={styles.tooltipText}>
+            Plataforma para *auxiliar* no mapeamento do aprendizado com
+            inteligência artificial. Busque sempre por fontes confiáveis.
+          </Text>
+        </Animated.View>
+      )}
     </>
   );
 }
 
 export function MenuSuspenso() {
+  const menuOpacity = useRef(new Animated.Value(0)).current;
+  const menuTranslateY = useRef(new Animated.Value(8)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(menuOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(menuTranslateY, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   return (
-    <View style={styles.menuSuspenso}>
-      <TouchableOpacity onPress={() => router.push("./meuPerfil")}>
+    <Animated.View
+      style={[
+        styles.menuSuspenso,
+        {
+          opacity: menuOpacity,
+          transform: [{ translateY: menuTranslateY }],
+        },
+      ]}
+    >
+      <TouchableOpacity onPress={() => router.push("/meuPerfil")}>
         <Text style={styles.menuItem}>Meu Perfil</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push("./")}>
+      <TouchableOpacity onPress={() => router.push("/")}>
         <Text style={styles.menuItem}>Logout</Text>
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   topBar: {
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#1F2937",
@@ -196,12 +223,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    zIndex: 20,
+    zIndex: 1,
   },
   logoContainer: {
+    flex: 1,
     flexDirection: "row",
+    gap: 10,
     alignItems: "center",
-    position: "relative",
+    maxWidth: 190
   },
   logoText: {
     fontSize: 24,
@@ -211,8 +240,8 @@ const styles = StyleSheet.create({
   },
   tooltip: {
     position: "absolute",
-    top: 28,
-    left: -20,
+    top: 55,
+    left: 20,
     backgroundColor: "#F9FAFB",
     padding: 8,
     borderRadius: 6,
@@ -221,8 +250,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
-    zIndex: 100,
+    elevation: 10,
+    zIndex: 20,
   },
   tooltipText: {
     fontSize: 13,
@@ -232,6 +261,7 @@ const styles = StyleSheet.create({
   buttonGroup: {
     flexDirection: "row",
     alignItems: "center",
+    marginLeft: "auto",
   },
   topBarButton: {
     paddingVertical: 8,
@@ -254,7 +284,7 @@ const styles = StyleSheet.create({
   menuSuspenso: {
     position: "absolute",
     right: 20,
-    top: Platform.OS === "web" ? 75 : 100,
+    top: Platform.OS === "web" ? 80 : 100,
     backgroundColor: "#fff",
     borderRadius: 8,
     elevation: 6,
