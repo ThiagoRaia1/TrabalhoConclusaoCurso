@@ -28,6 +28,8 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
   const tooltipOpacity = useRef(new Animated.Value(0)).current;
   const tooltipTranslateY = useRef(new Animated.Value(8)).current;
 
+  const isSmallScreen = width < 500;
+
   useEffect(() => {
     if (
       Platform.OS === "android" &&
@@ -91,22 +93,31 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
 
   return (
     <>
-      <View style={styles.topBar}>
+      <View
+        style={[
+          styles.topBar,
+          isSmallScreen && { flexDirection: "column", alignItems: "flex-start" },
+        ]}
+      >
         <View style={styles.logoContainer}>
           <Text style={styles.logoText}>A.I. TEACHER</Text>
 
           <Pressable
             onHoverIn={() => handleTooltipToggle(true)}
             onHoverOut={() => handleTooltipToggle(false)}
-            onPressIn={() => handleTooltipToggle(true)}
-            onPressOut={() => setShowTooltip(false)}
+            onPress={() => handleTooltipToggle(!showTooltip)}
             style={{ marginRight: 10 }}
           >
             <FontAwesome name="question-circle-o" size={20} color="#fff" />
           </Pressable>
         </View>
 
-        <View style={styles.buttonGroup}>
+        <View
+          style={[
+            styles.buttonGroup,
+            isSmallScreen && { alignSelf: "flex-end", marginTop: 10 },
+          ]}
+        >
           <TouchableOpacity
             style={[
               styles.topBarButton,
@@ -148,6 +159,7 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
       </View>
 
       {menuVisivel && <MenuSuspenso />}
+
       {showTooltip && (
         <Animated.View
           style={[
@@ -211,7 +223,6 @@ export function MenuSuspenso() {
 const styles = StyleSheet.create({
   topBar: {
     flexDirection: "row",
-    flexWrap: "wrap",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#1F2937",
@@ -226,11 +237,10 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   logoContainer: {
-    flex: 1,
     flexDirection: "row",
     gap: 10,
     alignItems: "center",
-    maxWidth: 190
+    maxWidth: 190,
   },
   logoText: {
     fontSize: 24,
@@ -261,14 +271,14 @@ const styles = StyleSheet.create({
   buttonGroup: {
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: "auto",
+    flexWrap: "wrap",
+    gap: 10,
   },
   topBarButton: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
     backgroundColor: "#374151",
-    marginRight: 20,
   },
   activeButton: {
     backgroundColor: "#10B981",
