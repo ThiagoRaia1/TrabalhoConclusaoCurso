@@ -1,5 +1,5 @@
-// src/services/groq.ts
 import axios from "axios";
+import { IFase } from "./roadmaps";
 
 const API_KEY = process.env.EXPO_PUBLIC_GROQ_API_KEY;
 
@@ -11,6 +11,7 @@ const api = axios.create({
   },
 });
 
+// Gera o roadmap
 export const enviarPrompt = async (prompt: string, usuarioLogin: string) => {
   try {
     const resposta = await api.post("/chat/completions", {
@@ -183,6 +184,100 @@ Exemplo exato de estrutura JSON (apenas modelo, substitua pelo conteúdo gerado)
       temperature: 0.7,
     });
 
+    // A resposta correta está em 'choices[0].message.content'
+    return resposta.data.choices[0].message.content;
+  } catch (erro: any) {
+    if (erro.response?.status === 429) {
+      return "Você fez muitas requisições em pouco tempo. Tente novamente em instantes.";
+    }
+    console.error("Erro na API:", erro.response?.data || erro.message);
+    return `Erro ao gerar resposta. ${erro.message}`;
+  }
+};
+
+export const gerarQuiz = async (fase: IFase) => {
+  try {
+    const resposta = await api.post("/chat/completions", {
+      model: "llama3-8b-8192", // Modelo gratuito e rápido da Groq
+      messages: [
+        {
+          role: "system",
+          content: `
+            Você é um assistente que gera um quiz em formato JSON 
+            sobre o tema e conteúdo que lhe for informado. Siga estas instruções:
+1. Retorne **apenas** um objeto JSON válido, no exato formato abaixo.
+2. Não adicione mensagens fora do JSON. Sem saudações, comentários ou explicações.
+3. Certifique-se de que o JSON possa ser convertido usando \`JSON.parse\`, sem erros.
+4. **Nunca omita colchetes, vírgulas ou aspas.**
+5. Faça também as alternativas e a resposta correta, a resposta correta **deve** estar entre as alternativas
+
+Exemplo exato de estrutura JSON (apenas modelo, substitua pelo conteúdo gerado):
+
+{
+  pergunta: "Quantas peças tem cada jogador no início do jogo de xadrez?",
+  alternativas: ["12", "14", "18", "16"],
+  respostaCorreta: "16",
+},
+{
+  pergunta: "Qual peça se move em forma de 'L' no xadrez?",
+  alternativas: ["Peão", "Bispo", "Cavalo", "Torre"],
+  respostaCorreta: "Cavalo",
+},
+{
+  pergunta: "O que significa dar 'xeque-mate'?",
+  alternativas: [
+    "Capturar todas as peças do oponente",
+    "Colocar o rei adversário em xeque e capturá-lo",
+    "Colocar o rei adversário sob ataque direto sem chance de escapar",
+    "Encurralar a dama do oponente",
+  ],
+  respostaCorreta:
+    "Colocar o rei adversário sob ataque direto sem chance de escapar",
+},
+{
+  pergunta: "Qual das opções a seguir é uma regra especial do xadrez?",
+  alternativas: [
+    "Avanço triplo do peão",
+    "Recuo da torre com promoção",
+    "Movimento circular do bispo",
+    "Captura 'en passant'",
+  ],
+  respostaCorreta: "Captura 'en passant'",
+},
+{
+  pergunta: "O que é uma boa prática na fase de abertura?",
+  alternativas: [
+    "Mover o rei várias vezes",
+    "Focar apenas nos peões da borda",
+    "Desenvolver rapidamente cavalos e bispos",
+    "Evitar o roque",
+  ],
+  respostaCorreta: "Desenvolver rapidamente cavalos e bispos",
+},
+{
+  pergunta:
+    "Qual dos seguintes é um tipo de finalização simples no xadrez?",
+  alternativas: [
+    "Mate do en passant",
+    "Mate do peão",
+    "Mate do pastor",
+    "Mate do bispo",
+  ],
+  respostaCorreta: "Mate do pastor",
+}
+            `,
+        },
+        {
+          role: "user",
+          content: JSON.stringify(fase),
+        },
+      ],
+      temperature: 0.7,
+    });
+
+    // console.log(JSON.stringify(fase))
+
+    console.log(resposta.data.choices[0].message.content);
     // A resposta correta está em 'choices[0].message.content'
     return resposta.data.choices[0].message.content;
   } catch (erro: any) {

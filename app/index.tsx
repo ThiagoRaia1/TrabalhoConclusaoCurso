@@ -37,14 +37,14 @@ export default function Login() {
       marginBottom: 6,
     },
     inputText: {
-      width: "80%",
+      width: "85%",
       fontSize: normalize({ base: 4, min: 20 }),
       fontWeight: normalizeFontWeight({ max: 400 }),
       color: "#000",
     },
     buttonText: {
       color: "white",
-      fontSize: normalize({ base: 6, min: 18,max: 22 }),
+      fontSize: normalize({ base: 6, min: 18, max: 22 }),
       fontWeight: normalizeFontWeight({ max: 600 }),
     },
     titleText: {
@@ -88,6 +88,7 @@ export default function Login() {
                       <TextInput
                         style={[
                           dynamicStyles.inputText,
+                          { width: "100%" },
                           Platform.OS === "web" &&
                             ({ outlineStyle: "none" } as any),
                         ]}
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     minHeight: 45,
-    height: '100%',
+    height: "100%",
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",

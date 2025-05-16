@@ -126,7 +126,7 @@ export default function MeuPerfil() {
         >
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => router.push('./menuPrincipal')}
+            onPress={() => router.push("./menuPrincipal")}
           >
             <MaterialIcons name="arrow-back" size={28} color="#333" />
           </TouchableOpacity>
@@ -263,9 +263,9 @@ export default function MeuPerfil() {
               </TouchableOpacity>
             </View>
           </View>
-          {carregando && <Carregando borda={16} />}
         </Animatable.View>
       </ScrollView>
+      {carregando && <Carregando />}
     </View>
   );
 }
@@ -332,19 +332,19 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   buttonGroup: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 15,
     width: "100%",
-    height: '15%',
+    height: "15%",
     alignSelf: "center",
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center",
   },
   button: {
     backgroundColor: "#0FA5E9",
     borderRadius: 50,
     alignItems: "center",
-    height: '100%',
+    height: "100%",
     maxHeight: 40,
     width: "50%",
     maxWidth: 200,

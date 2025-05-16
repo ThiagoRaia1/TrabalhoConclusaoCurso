@@ -18,6 +18,7 @@ import {
 } from "../../services/roadmaps";
 import { useAuth } from "../../context/auth";
 import Carregando from "../components/carregando";
+import { gerarQuiz } from "../../services/groq";
 
 export default function Roadmap() {
   const { usuario } = useAuth();
@@ -96,7 +97,10 @@ export default function Roadmap() {
             <View style={[styles.faseHeader, { backgroundColor: fase.cor }]}>
               <Text style={styles.faseTitle}>{fase.titulo}</Text>
               <View style={styles.faseActions}>
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={() => gerarQuiz(fase)}
+                >
                   <Text style={styles.actionText}>Gerar quiz</Text>
                 </TouchableOpacity>
                 <TouchableOpacity

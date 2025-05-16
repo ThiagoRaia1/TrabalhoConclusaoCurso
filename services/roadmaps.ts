@@ -6,7 +6,7 @@ interface IItem {
   concluido: boolean;
 }
 
-interface IFase {
+export interface IFase {
   titulo: string;
   cor: string;
   itens: IItem[];
