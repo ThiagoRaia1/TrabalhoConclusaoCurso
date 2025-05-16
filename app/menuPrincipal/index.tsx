@@ -90,7 +90,7 @@ export default function MenuPrincipal() {
           ]}
           keyboardShouldPersistTaps="handled"
         >
-          <Text style={styles.title}>🚀 Crie seu Roadmap personalizado!</Text>
+          <Text style={styles.title}>Crie seu Roadmap personalizado!</Text>
 
           <TextInput
             style={styles.input}
