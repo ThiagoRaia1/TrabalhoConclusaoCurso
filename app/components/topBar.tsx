@@ -96,7 +96,10 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
       <View
         style={[
           styles.topBar,
-          isSmallScreen && { flexDirection: "column", alignItems: "flex-start" },
+          isSmallScreen && {
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         ]}
       >
         <View style={styles.logoContainer}>
@@ -181,8 +184,11 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
 }
 
 export function MenuSuspenso() {
+  const { width } = useWindowDimensions();
   const menuOpacity = useRef(new Animated.Value(0)).current;
   const menuTranslateY = useRef(new Animated.Value(8)).current;
+
+  const isSmallScreen = width < 500;
 
   useEffect(() => {
     Animated.parallel([
@@ -206,6 +212,7 @@ export function MenuSuspenso() {
         {
           opacity: menuOpacity,
           transform: [{ translateY: menuTranslateY }],
+          top: isSmallScreen ? 130 : Platform.OS === "web" ? 80 : 100,
         },
       ]}
     >
@@ -250,7 +257,6 @@ const styles = StyleSheet.create({
   },
   tooltip: {
     position: "absolute",
-    top: 55,
     left: 20,
     backgroundColor: "#F9FAFB",
     padding: 8,
