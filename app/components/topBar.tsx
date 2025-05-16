@@ -170,6 +170,7 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
             {
               opacity: tooltipOpacity,
               transform: [{ translateY: tooltipTranslateY }],
+              top: isSmallScreen ? 65 : Platform.OS === "web" ? 55 : 65, // Ajuste conforme necessário
             },
           ]}
         >
@@ -212,7 +213,7 @@ export function MenuSuspenso() {
         {
           opacity: menuOpacity,
           transform: [{ translateY: menuTranslateY }],
-          top: isSmallScreen ? 130 : Platform.OS === "web" ? 80 : 100,
+          top: isSmallScreen ? 130 : Platform.OS === "web" ? 80 : 90,
         },
       ]}
     >
