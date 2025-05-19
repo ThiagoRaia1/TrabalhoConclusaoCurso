@@ -25,9 +25,19 @@ export default function Roadmap() {
   const [expandidos, setExpandidos] = useState<Record<string, boolean>>({});
   const [menuVisivel, setMenuVisivel] = useState(false);
   const [roadmap, setRoadmap] = useState<IRoadmap | null>(null);
-  const [modalVisivel, setModalVisivel] = useState(false);
+  const [modalExpliqueMaisVisivel, setModalExpliqueMaisVisivel] =
+    useState(false);
   const [textoExplicacao, setTextoExplicacao] = useState("");
   const [carregando, setCarregando] = useState(false);
+
+  const [modalQuizVisivel, setModalQuizVisivel] = useState(false);
+  const [quiz, setQuiz] = useState("");
+  const [perguntasQuiz, setPerguntasQuiz] = useState<any[]>([]);
+  const [perguntas, setPerguntas] = useState<any[]>([]);
+  const [respostasUsuario, setRespostasUsuario] = useState<(string | null)[]>(
+    []
+  );
+  const [respostasConfirmadas, setRespostasConfirmadas] = useState(false);
 
   const { tema } = useLocalSearchParams();
   const temaStr = typeof tema === "string" ? tema : "";
@@ -99,10 +109,28 @@ export default function Roadmap() {
               <View style={styles.faseActions}>
                 <TouchableOpacity
                   style={styles.actionButton}
-                  onPress={() => gerarQuiz(fase)}
+                  onPress={async () => {
+                    setCarregando(true);
+                    try {
+                      const resposta = await gerarQuiz(fase);
+                      const data = JSON.parse(resposta);
+                      const primeiraChave = Object.keys(data)[0];
+                      setPerguntasQuiz(data[primeiraChave]);
+                      setRespostasUsuario(
+                        new Array(data[primeiraChave].length).fill(null)
+                      );
+                      setRespostasConfirmadas(false);
+                      setModalQuizVisivel(true);
+                    } catch (error) {
+                      console.error("Erro ao gerar ou processar quiz:", error);
+                    } finally {
+                      setCarregando(false);
+                    }
+                  }}
                 >
                   <Text style={styles.actionText}>Gerar quiz</Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity
                   style={styles.actionButton}
                   onPress={() => {
@@ -165,7 +193,7 @@ export default function Roadmap() {
                           setTextoExplicacao(
                             item.descricao || "Sem descrição disponível."
                           );
-                          setModalVisivel(true);
+                          setModalExpliqueMaisVisivel(true);
                         }}
                       >
                         <Text style={styles.explainText}>Explique mais</Text>
@@ -180,19 +208,118 @@ export default function Roadmap() {
       </ScrollView>
 
       {menuVisivel && <MenuSuspenso />}
-      {modalVisivel && (
+      {modalExpliqueMaisVisivel && (
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
             <Text style={styles.modalText}>{textoExplicacao}</Text>
             <TouchableOpacity
               style={styles.modalCloseButton}
-              onPress={() => setModalVisivel(false)}
+              onPress={() => setModalExpliqueMaisVisivel(false)}
             >
               <Text style={styles.modalCloseText}>Fechar</Text>
             </TouchableOpacity>
           </View>
         </View>
       )}
+
+      {modalQuizVisivel && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <ScrollView style={{ maxHeight: "80%", paddingHorizontal: 20 }}>
+              {perguntasQuiz.map((item, index) => (
+                <View key={index} style={{ marginBottom: 20 }}>
+                  <Text style={styles.modalText}>
+                    {index + 1}. {item.pergunta}
+                  </Text>
+
+                  {item.alternativas.map((alternativa: string, i: number) => {
+                    const selecionada = respostasUsuario[index] === alternativa;
+                    const correta = item.resposta_correta === alternativa;
+
+                    // Definir a cor com base na confirmação
+                    let backgroundColor = "#eee";
+                    if (respostasConfirmadas) {
+                      if (selecionada && correta)
+                        backgroundColor = "#c8e6c9"; // verde
+                      else if (selecionada && !correta)
+                        backgroundColor = "#ffcdd2"; // vermelho
+                      else if (correta) backgroundColor = "#c8e6c9"; // mostrar a correta
+                    } else if (selecionada) {
+                      backgroundColor = "#bbdefb"; // azul claro (selecionado mas não confirmado)
+                    }
+
+                    return (
+                      <TouchableOpacity
+                        key={i}
+                        onPress={() => {
+                          if (!respostasConfirmadas) {
+                            const novasRespostas = [...respostasUsuario];
+                            novasRespostas[index] = alternativa;
+                            setRespostasUsuario(novasRespostas);
+                          }
+                        }}
+                        style={{
+                          padding: 8,
+                          marginVertical: 4,
+                          borderRadius: 6,
+                          backgroundColor,
+                        }}
+                      >
+                        <Text>• {alternativa}</Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              ))}
+            </ScrollView>
+
+            {!respostasConfirmadas ? (
+              <TouchableOpacity
+                style={[
+                  styles.modalCloseButton,
+                  { backgroundColor: "#28a745", marginTop: 30 },
+                ]}
+                onPress={() => {
+                  // Confirmar as respostas e mostrar resultado
+                  setRespostasConfirmadas(true);
+                }}
+              >
+                <Text style={styles.modalCloseText}>Confirmar respostas</Text>
+              </TouchableOpacity>
+            ) : (
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 16,
+                  textAlign: "center",
+                  marginTop: 35,
+                }}
+              >
+                Acertos:{" "}
+                {
+                  perguntasQuiz.filter(
+                    (item, idx) =>
+                      respostasUsuario[idx] === item.resposta_correta
+                  ).length
+                }{" "}
+                de {perguntasQuiz.length}
+              </Text>
+            )}
+
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => {
+                setModalQuizVisivel(false);
+                setRespostasConfirmadas(false);
+                setRespostasUsuario([]);
+              }}
+            >
+              <Text style={styles.modalCloseText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
       {carregando && <Carregando />}
     </View>
   );
@@ -336,23 +463,34 @@ const styles = StyleSheet.create({
   },
   modalBox: {
     backgroundColor: "#fff",
-    padding: 20,
+    padding: 10,
+    paddingVertical: 20,
     borderRadius: 10,
-    width: "100%",
-    maxWidth: 400,
+    width: "90%",
+    maxHeight: "80%",
   },
   modalText: {
-    fontSize: 16,
-    marginBottom: 16,
+    fontSize: 20,
+    marginBottom: 10,
   },
   modalCloseButton: {
     backgroundColor: "#007bff",
     paddingVertical: 10,
     borderRadius: 6,
-    alignItems: "center",
+    alignSelf: "center",
+    marginTop: 10,
+    width: 400,
   },
   modalCloseText: {
     color: "white",
     fontWeight: "600",
+    textAlign: "center",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
   },
 });

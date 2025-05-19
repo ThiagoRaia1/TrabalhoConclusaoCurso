@@ -202,68 +202,75 @@ export const gerarQuiz = async (fase: IFase) => {
       messages: [
         {
           role: "system",
-          content: `
-            Você é um assistente que gera um quiz em formato JSON 
-            sobre o tema e conteúdo que lhe for informado. Siga estas instruções:
-1. Retorne **apenas** um objeto JSON válido, no exato formato abaixo.
-2. Não adicione mensagens fora do JSON. Sem saudações, comentários ou explicações.
-3. Certifique-se de que o JSON possa ser convertido usando \`JSON.parse\`, sem erros.
-4. **Nunca omita colchetes, vírgulas ou aspas.**
-5. Faça também as alternativas e a resposta correta, a resposta correta **deve** estar entre as alternativas
+          content: `Você é um gerador de quiz que deve responder com um JSON válido. Instruções obrigatórias:
 
-Exemplo exato de estrutura JSON (apenas modelo, substitua pelo conteúdo gerado):
+1. Responda SOMENTE com um objeto JSON. NADA além do JSON.
+2. O objeto deve ter uma única chave com o nível extraído de ${fase.titulo} (ex: "iniciante", "intermediário", etc).
+3. O valor dessa chave é uma lista com 6 objetos de quiz.
+4. Cada objeto de quiz deve ter:
+   - "pergunta": string
+   - "alternativas": array de 4 strings
+   - "respostaCorreta": string (deve estar entre as alternativas)
+5. O JSON deve ser válido e analisável por JSON.parse. Sem comentários, prefixos, códigos ou textos fora do JSON.
+6. Use aspas duplas em tudo. Nunca omita colchetes, vírgulas ou chaves.
+
+Exemplo EXATO (substitua o conteúdo por perguntas do tema):
 
 {
-  pergunta: "Quantas peças tem cada jogador no início do jogo de xadrez?",
-  alternativas: ["12", "14", "18", "16"],
-  respostaCorreta: "16",
-},
-{
-  pergunta: "Qual peça se move em forma de 'L' no xadrez?",
-  alternativas: ["Peão", "Bispo", "Cavalo", "Torre"],
-  respostaCorreta: "Cavalo",
-},
-{
-  pergunta: "O que significa dar 'xeque-mate'?",
-  alternativas: [
-    "Capturar todas as peças do oponente",
-    "Colocar o rei adversário em xeque e capturá-lo",
-    "Colocar o rei adversário sob ataque direto sem chance de escapar",
-    "Encurralar a dama do oponente",
-  ],
-  respostaCorreta:
-    "Colocar o rei adversário sob ataque direto sem chance de escapar",
-},
-{
-  pergunta: "Qual das opções a seguir é uma regra especial do xadrez?",
-  alternativas: [
-    "Avanço triplo do peão",
-    "Recuo da torre com promoção",
-    "Movimento circular do bispo",
-    "Captura 'en passant'",
-  ],
-  respostaCorreta: "Captura 'en passant'",
-},
-{
-  pergunta: "O que é uma boa prática na fase de abertura?",
-  alternativas: [
-    "Mover o rei várias vezes",
-    "Focar apenas nos peões da borda",
-    "Desenvolver rapidamente cavalos e bispos",
-    "Evitar o roque",
-  ],
-  respostaCorreta: "Desenvolver rapidamente cavalos e bispos",
-},
-{
-  pergunta:
-    "Qual dos seguintes é um tipo de finalização simples no xadrez?",
-  alternativas: [
-    "Mate do en passant",
-    "Mate do peão",
-    "Mate do pastor",
-    "Mate do bispo",
-  ],
-  respostaCorreta: "Mate do pastor",
+  iniciante: [
+    {
+      pergunta: "Quantas peças tem cada jogador no início do jogo de xadrez?",
+      alternativas: ["12", "14", "18", "16"],
+      respostaCorreta: "16",
+    },
+    {
+      pergunta: "Qual peça se move em forma de 'L' no xadrez?",
+      alternativas: ["Peão", "Bispo", "Cavalo", "Torre"],
+      respostaCorreta: "Cavalo",
+    },
+    {
+      pergunta: "O que significa dar 'xeque-mate'?",
+      alternativas: [
+        "Capturar todas as peças do oponente",
+        "Colocar o rei adversário em xeque e capturá-lo",
+        "Colocar o rei adversário sob ataque direto sem chance de escapar",
+        "Encurralar a dama do oponente",
+      ],
+      respostaCorreta:
+        "Colocar o rei adversário sob ataque direto sem chance de escapar",
+    },
+    {
+      pergunta: "Qual das opções a seguir é uma regra especial do xadrez?",
+      alternativas: [
+        "Avanço triplo do peão",
+        "Recuo da torre com promoção",
+        "Movimento circular do bispo",
+        "Captura 'en passant'",
+      ],
+      respostaCorreta: "Captura 'en passant'",
+    },
+    {
+      pergunta: "O que é uma boa prática na fase de abertura?",
+      alternativas: [
+        "Mover o rei várias vezes",
+        "Focar apenas nos peões da borda",
+        "Desenvolver rapidamente cavalos e bispos",
+        "Evitar o roque",
+      ],
+      respostaCorreta: "Desenvolver rapidamente cavalos e bispos",
+    },
+    {
+      pergunta:
+        "Qual dos seguintes é um tipo de finalização simples no xadrez?",
+      alternativas: [
+        "Mate do en passant",
+        "Mate do peão",
+        "Mate do pastor",
+        "Mate do bispo",
+      ],
+      respostaCorreta: "Mate do pastor",
+    }
+  ]
 }
             `,
         },
@@ -279,7 +286,16 @@ Exemplo exato de estrutura JSON (apenas modelo, substitua pelo conteúdo gerado)
 
     console.log(resposta.data.choices[0].message.content);
     // A resposta correta está em 'choices[0].message.content'
-    return resposta.data.choices[0].message.content;
+    const conteudoBruto = resposta.data.choices[0].message.content;
+
+    // Extrai apenas o JSON
+    const match = conteudoBruto.match(/\{[\s\S]*\}/);
+    if (!match) {
+      console.error("Resposta não contém JSON válido:", conteudoBruto);
+      return "Erro: resposta não contém um JSON válido.";
+    }
+
+    return match[0];
   } catch (erro: any) {
     if (erro.response?.status === 429) {
       return "Você fez muitas requisições em pouco tempo. Tente novamente em instantes.";
