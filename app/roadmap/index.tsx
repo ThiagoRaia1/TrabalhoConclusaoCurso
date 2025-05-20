@@ -6,19 +6,19 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  Platform,
 } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { router, useLocalSearchParams } from "expo-router";
-import TopBarMenu, { MenuSuspenso } from "../components/topBar";
+import TopBarMenu, { MenuSuspenso } from "../components/TopBarMenu";
 import {
   atualizarStatusConclusao,
   getRoadmap,
   IRoadmap,
 } from "../../services/roadmaps";
 import { useAuth } from "../../context/auth";
-import Carregando from "../components/carregando";
+import Carregando from "../components/Carregando";
 import { gerarQuiz } from "../../services/groq";
+import QuizModal from "./QuizModal";
 
 export default function Roadmap() {
   const { usuario } = useAuth();
@@ -31,11 +31,9 @@ export default function Roadmap() {
   const [carregando, setCarregando] = useState(false);
 
   const [modalQuizVisivel, setModalQuizVisivel] = useState(false);
-  const [quiz, setQuiz] = useState("");
   const [perguntasQuiz, setPerguntasQuiz] = useState<any[]>([]);
-  const [perguntas, setPerguntas] = useState<any[]>([]);
-  const [respostasUsuario, setRespostasUsuario] = useState<(string | null)[]>(
-    []
+  const [respostasUsuario, setRespostasUsuario] = useState<string[]>(
+    new Array(perguntasQuiz.length).fill("")
   );
   const [respostasConfirmadas, setRespostasConfirmadas] = useState(false);
 
@@ -103,7 +101,7 @@ export default function Roadmap() {
         </View>
 
         {roadmap?.fases?.map((fase, faseIdx) => (
-          <View key={faseIdx} style={styles.faseContainer}>
+          <View key={faseIdx} style={{ marginBottom: 30 }}>
             <View style={[styles.faseHeader, { backgroundColor: fase.cor }]}>
               <Text style={styles.faseTitle}>{fase.titulo}</Text>
               <View style={styles.faseActions}>
@@ -119,6 +117,7 @@ export default function Roadmap() {
                       setRespostasUsuario(
                         new Array(data[primeiraChave].length).fill(null)
                       );
+                      console.log(perguntasQuiz);
                       setRespostasConfirmadas(false);
                       setModalQuizVisivel(true);
                     } catch (error) {
@@ -176,7 +175,7 @@ export default function Roadmap() {
                       >
                         {item.titulo}
                       </Text>
-                      <Text style={styles.toggleIcon}>
+                      <Text style={styles.toggleIcon} selectable={false}>
                         {expandidos[id] ? "−" : "+"}
                       </Text>
                     </Pressable>
@@ -208,10 +207,11 @@ export default function Roadmap() {
       </ScrollView>
 
       {menuVisivel && <MenuSuspenso />}
+
       {modalExpliqueMaisVisivel && (
         <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <Text style={styles.modalText}>{textoExplicacao}</Text>
+          <View style={styles.modalExpliqueBox}>
+            <Text style={styles.modalExpliqueText}>{textoExplicacao}</Text>
             <TouchableOpacity
               style={styles.modalCloseButton}
               onPress={() => setModalExpliqueMaisVisivel(false)}
@@ -223,101 +223,19 @@ export default function Roadmap() {
       )}
 
       {modalQuizVisivel && (
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <ScrollView style={{ maxHeight: "80%", paddingHorizontal: 20 }}>
-              {perguntasQuiz.map((item, index) => (
-                <View key={index} style={{ marginBottom: 20 }}>
-                  <Text style={styles.modalText}>
-                    {index + 1}. {item.pergunta}
-                  </Text>
-
-                  {item.alternativas.map((alternativa: string, i: number) => {
-                    const selecionada = respostasUsuario[index] === alternativa;
-                    const correta = item.resposta_correta === alternativa;
-
-                    // Definir a cor com base na confirmação
-                    let backgroundColor = "#eee";
-                    if (respostasConfirmadas) {
-                      if (selecionada && correta)
-                        backgroundColor = "#c8e6c9"; // verde
-                      else if (selecionada && !correta)
-                        backgroundColor = "#ffcdd2"; // vermelho
-                      else if (correta) backgroundColor = "#c8e6c9"; // mostrar a correta
-                    } else if (selecionada) {
-                      backgroundColor = "#bbdefb"; // azul claro (selecionado mas não confirmado)
-                    }
-
-                    return (
-                      <TouchableOpacity
-                        key={i}
-                        onPress={() => {
-                          if (!respostasConfirmadas) {
-                            const novasRespostas = [...respostasUsuario];
-                            novasRespostas[index] = alternativa;
-                            setRespostasUsuario(novasRespostas);
-                          }
-                        }}
-                        style={{
-                          padding: 8,
-                          marginVertical: 4,
-                          borderRadius: 6,
-                          backgroundColor,
-                        }}
-                      >
-                        <Text>• {alternativa}</Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-              ))}
-            </ScrollView>
-
-            {!respostasConfirmadas ? (
-              <TouchableOpacity
-                style={[
-                  styles.modalCloseButton,
-                  { backgroundColor: "#28a745", marginTop: 30 },
-                ]}
-                onPress={() => {
-                  // Confirmar as respostas e mostrar resultado
-                  setRespostasConfirmadas(true);
-                }}
-              >
-                <Text style={styles.modalCloseText}>Confirmar respostas</Text>
-              </TouchableOpacity>
-            ) : (
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 16,
-                  textAlign: "center",
-                  marginTop: 35,
-                }}
-              >
-                Acertos:{" "}
-                {
-                  perguntasQuiz.filter(
-                    (item, idx) =>
-                      respostasUsuario[idx] === item.resposta_correta
-                  ).length
-                }{" "}
-                de {perguntasQuiz.length}
-              </Text>
-            )}
-
-            <TouchableOpacity
-              style={styles.modalCloseButton}
-              onPress={() => {
-                setModalQuizVisivel(false);
-                setRespostasConfirmadas(false);
-                setRespostasUsuario([]);
-              }}
-            >
-              <Text style={styles.modalCloseText}>Fechar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <QuizModal
+          visivel={modalQuizVisivel}
+          perguntas={perguntasQuiz}
+          respostasUsuario={respostasUsuario}
+          setRespostasUsuario={setRespostasUsuario}
+          respostasConfirmadas={respostasConfirmadas}
+          setRespostasConfirmadas={setRespostasConfirmadas}
+          onFechar={() => {
+            setModalQuizVisivel(false);
+            setRespostasConfirmadas(false);
+            setRespostasUsuario([]);
+          }}
+        />
       )}
 
       {carregando && <Carregando />}
@@ -356,9 +274,6 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     textAlign: "center",
     marginLeft: 10,
-  },
-  faseContainer: {
-    marginBottom: 30,
   },
   faseHeader: {
     padding: 16,
@@ -461,15 +376,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
-  modalBox: {
+  modalExpliqueBox: {
     backgroundColor: "#fff",
-    padding: 10,
-    paddingVertical: 20,
+    padding: 20,
     borderRadius: 10,
     width: "90%",
     maxHeight: "80%",
+    alignItems: "center",
   },
-  modalText: {
+  modalExpliqueText: {
+    fontSize: 20,
+    marginBottom: 10,
+    textAlign: "justify",
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: "#aaa",
+    padding: 40,
+  },
+  modalQuizBox: {
+    backgroundColor: "#fff",
+    paddingTop: 10,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    width: "90%",
+    maxHeight: "80%",
+    justifyContent: "center",
+    gap: 10,
+  },
+  modalQuizText: {
     fontSize: 20,
     marginBottom: 10,
   },
@@ -477,9 +411,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#007bff",
     paddingVertical: 10,
     borderRadius: 6,
-    alignSelf: "center",
-    marginTop: 10,
-    width: 400,
+    width: "70%",
+    maxWidth: 400,
   },
   modalCloseText: {
     color: "white",

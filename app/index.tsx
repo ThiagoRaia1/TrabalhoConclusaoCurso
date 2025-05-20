@@ -17,7 +17,7 @@ import * as Animatable from "react-native-animatable";
 import { useAuth } from "../context/auth";
 import { useNormalize } from "../utils/normalize";
 import { router } from "expo-router";
-import Carregando from "./components/carregando";
+import Carregando from "./components/Carregando";
 
 export default function Login() {
   const { usuario, handleLogin, setUsuario } = useAuth();

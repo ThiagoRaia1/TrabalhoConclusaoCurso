@@ -11,11 +11,11 @@ import {
 import { router } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import TopBarMenu from "../components/topBar";
+import TopBarMenu from "../components/TopBarMenu";
 import { useAuth } from "../../context/auth";
 import { useNormalize } from "../../utils/normalize";
 import { atualizarUsuario } from "../../services/atualizarUsuarioApi";
-import Carregando from "../components/carregando";
+import Carregando from "../components/Carregando";
 import * as Animatable from "react-native-animatable";
 import { autenticarLogin } from "../../context/api";
 

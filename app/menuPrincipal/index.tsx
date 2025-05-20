@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import { router } from "expo-router";
 import { enviarPrompt } from "../../services/groq";
-import TopBarMenu, { MenuSuspenso } from "../components/topBar";
+import TopBarMenu, { MenuSuspenso } from "../components/TopBarMenu";
 import {
   createRoadmap,
   getRoadmap,
@@ -21,7 +21,7 @@ import {
 } from "../../services/roadmaps";
 import { useAuth } from "../../context/auth";
 import { roadmapProgramacao, roadmapXadrez } from "../../data/roadmaps";
-import Carregando from "../components/carregando";
+import Carregando from "../components/Carregando";
 import Icon from "react-native-vector-icons/Ionicons";
 
 export default function MenuPrincipal() {

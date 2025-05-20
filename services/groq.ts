@@ -284,7 +284,7 @@ Exemplo EXATO (substitua o conteúdo por perguntas do tema):
 
     // console.log(JSON.stringify(fase))
 
-    console.log(resposta.data.choices[0].message.content);
+    // console.log(resposta.data.choices[0].message.content);
     // A resposta correta está em 'choices[0].message.content'
     const conteudoBruto = resposta.data.choices[0].message.content;
 

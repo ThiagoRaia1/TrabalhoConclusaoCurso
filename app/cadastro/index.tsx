@@ -17,7 +17,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { cadastrarUsuario } from "../../services/cadastroApi";
 import { useNormalize } from "../../utils/normalize";
-import Carregando from "../components/carregando";
+import Carregando from "../components/Carregando";
 import * as Animatable from "react-native-animatable";
 
 export default function Cadastro() {
