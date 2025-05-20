@@ -100,10 +100,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
             </Text>
           )}
 
-          <TouchableOpacity
-            style={styles.modalCloseButton}
-            onPress={onFechar}
-          >
+          <TouchableOpacity style={styles.modalCloseButton} onPress={onFechar}>
             <Text style={styles.modalCloseText}>Fechar</Text>
           </TouchableOpacity>
         </View>
@@ -129,24 +126,28 @@ const styles = StyleSheet.create({
   modalQuizBox: {
     backgroundColor: "#fff",
     paddingVertical: 20,
+    paddingHorizontal: 10,
     borderRadius: 10,
-    width: "100%",
-    maxHeight: "90%",
+    width: "90%",
+    maxHeight: "70%",
+    justifyContent: "center",
+    gap: 10,
   },
   modalQuizText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 6,
+    fontSize: 20,
+    marginBottom: 10,
   },
   modalCloseButton: {
     backgroundColor: "#007bff",
-    padding: 10,
-    borderRadius: 8,
-    marginTop: 10,
+    paddingVertical: 10,
+    borderRadius: 6,
+    width: "70%",
+    maxWidth: 400,
   },
   modalCloseText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: "white",
+    fontWeight: "600",
+    textAlign: "center",
   },
   footer: {
     justifyContent: "center",

@@ -393,20 +393,6 @@ const styles = StyleSheet.create({
     borderColor: "#aaa",
     padding: 40,
   },
-  modalQuizBox: {
-    backgroundColor: "#fff",
-    paddingTop: 10,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    width: "90%",
-    maxHeight: "80%",
-    justifyContent: "center",
-    gap: 10,
-  },
-  modalQuizText: {
-    fontSize: 20,
-    marginBottom: 10,
-  },
   modalCloseButton: {
     backgroundColor: "#007bff",
     paddingVertical: 10,
