@@ -28,7 +28,7 @@ export default function Roadmap() {
   const [modalExpliqueMaisVisivel, setModalExpliqueMaisVisivel] =
     useState(false);
   const [textoExplicacao, setTextoExplicacao] = useState("");
-  const [carregando, setCarregando] = useState(false);
+  const [carregando, setCarregando] = useState(true);
 
   const [modalQuizVisivel, setModalQuizVisivel] = useState(false);
   const [perguntasQuiz, setPerguntasQuiz] = useState<any[]>([]);
@@ -72,7 +72,6 @@ export default function Roadmap() {
   useEffect(() => {
     const fetchRoadmap = async () => {
       try {
-        setCarregando(true);
         const dados = await getRoadmap(temaStr, usuario.login);
         setRoadmap(dados);
       } catch (error) {
