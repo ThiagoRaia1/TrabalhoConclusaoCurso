@@ -211,11 +211,7 @@ export default function Roadmap() {
             })}
           </View>
         ))}
-      </ScrollView>
-
-      {menuVisivel && <MenuSuspenso />}
-
-      {modalExpliqueMaisVisivel && (
+        {modalExpliqueMaisVisivel && (
         <View style={styles.modalOverlay}>
           <ScrollView
             style={styles.modalExpliqueBox}
@@ -234,6 +230,11 @@ export default function Roadmap() {
           </ScrollView>
         </View>
       )}
+      </ScrollView>
+
+      {menuVisivel && <MenuSuspenso />}
+
+      
 
       {modalQuizVisivel && (
         <QuizModal
@@ -386,7 +387,7 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: "rgba(0,0,0,0.5)",
     padding: 20,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: "center"
   },
   modalExpliqueBox: {
@@ -394,7 +395,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     width: "90%",
-    maxHeight: "80%",
+    maxHeight: "50%",
   },
   modalExpliqueText: {
     fontSize: 20,
