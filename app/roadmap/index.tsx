@@ -13,11 +13,12 @@ import TopBarMenu, { MenuSuspenso } from "../components/TopBarMenu";
 import {
   atualizarStatusConclusao,
   getRoadmap,
+  IItem,
   IRoadmap,
 } from "../../services/roadmaps";
 import { useAuth } from "../../context/auth";
 import Carregando from "../components/Carregando";
-import { gerarQuiz } from "../../services/groq";
+import { gerarExplicacaoItem, gerarQuiz } from "../../services/groq";
 import QuizModal from "./QuizModal";
 
 export default function Roadmap() {
@@ -67,6 +68,18 @@ export default function Roadmap() {
 
   const alternarExpandido = (id: string) => {
     setExpandidos((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const buscaExplicacao = async (item: IItem) => {
+    setCarregando(true);
+    try {
+      // setTextoExplicacao(item.descricao || "Sem descrição disponível.");
+      setTextoExplicacao(await gerarExplicacaoItem(item.descricao));
+      setModalExpliqueMaisVisivel(true);
+    } catch (erro: any) {
+    } finally {
+      setCarregando(false);
+    }
   };
 
   useEffect(() => {
@@ -187,12 +200,7 @@ export default function Roadmap() {
                       </Text>
                       <TouchableOpacity
                         style={styles.explainButton}
-                        onPress={() => {
-                          setTextoExplicacao(
-                            item.descricao || "Sem descrição disponível."
-                          );
-                          setModalExpliqueMaisVisivel(true);
-                        }}
+                        onPress={() => buscaExplicacao(item)}
                       >
                         <Text style={styles.explainText}>Explique mais</Text>
                       </TouchableOpacity>
@@ -209,7 +217,13 @@ export default function Roadmap() {
 
       {modalExpliqueMaisVisivel && (
         <View style={styles.modalOverlay}>
-          <View style={styles.modalExpliqueBox}>
+          <ScrollView
+            style={styles.modalExpliqueBox}
+            contentContainerStyle={{
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             <Text style={styles.modalExpliqueText}>{textoExplicacao}</Text>
             <TouchableOpacity
               style={styles.modalCloseButton}
@@ -217,7 +231,7 @@ export default function Roadmap() {
             >
               <Text style={styles.modalCloseText}>Fechar</Text>
             </TouchableOpacity>
-          </View>
+          </ScrollView>
         </View>
       )}
 
@@ -371,9 +385,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
     padding: 20,
+    justifyContent: 'center',
+    alignItems: "center"
   },
   modalExpliqueBox: {
     backgroundColor: "#fff",
@@ -381,7 +395,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "90%",
     maxHeight: "80%",
-    alignItems: "center",
   },
   modalExpliqueText: {
     fontSize: 20,

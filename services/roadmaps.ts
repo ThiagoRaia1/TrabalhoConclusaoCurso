@@ -1,6 +1,6 @@
 import { LOCALHOST_URL } from "./urlApi";
 
-interface IItem {
+export interface IItem {
   titulo: string;
   descricao: string;
   concluido: boolean;

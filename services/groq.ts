@@ -304,3 +304,37 @@ Exemplo EXATO (substitua o conteúdo por perguntas do tema):
     return `Erro ao gerar resposta. ${erro.message}`;
   }
 };
+
+export const gerarExplicacaoItem = async (explicacao: string) => {
+  try {
+    const resposta = await api.post("/chat/completions", {
+      model: "llama3-8b-8192", // Modelo gratuito e rápido da Groq
+      messages: [
+        {
+          role: "system",
+          content: `Você é um gerador de explicação detalhada do que lhe for informado. Instruções obrigatórias:
+
+1. Responda SOMENTE com a explicação, sem saudações.
+2. A explicação deve enriquecer o conteúdo que lhe for dado.
+            `,
+        },
+        {
+          role: "user",
+          content: JSON.stringify(explicacao),
+        },
+      ],
+      temperature: 0.7,
+    });
+
+    console.log(resposta.data.choices[0].message.content);
+    // A resposta correta está em 'choices[0].message.content'
+
+    return resposta.data.choices[0].message.content;
+  } catch (erro: any) {
+    if (erro.response?.status === 429) {
+      return "Você fez muitas requisições em pouco tempo. Tente novamente em instantes.";
+    }
+    console.error("Erro na API:", erro.response?.data || erro.message);
+    return `Erro ao gerar resposta. ${erro.message}`;
+  }
+};
