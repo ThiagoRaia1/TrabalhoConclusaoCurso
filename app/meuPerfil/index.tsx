@@ -130,141 +130,145 @@ export default function MeuPerfil() {
           >
             <MaterialIcons name="arrow-back" size={28} color="#333" />
           </TouchableOpacity>
-
-          <View style={styles.header}>
-            <FontAwesome5 name="user" size={80} color="#2596be" />
-            <Text style={dynamicStyles.title}>Meu Perfil</Text>
-          </View>
-
           <View style={styles.form}>
-            <View>
-              <Text style={dynamicStyles.label}>Nome</Text>
-              <View
-                style={[
-                  styles.inputContainer,
-                  editando && { backgroundColor: "white" },
-                ]}
-              >
-                <TextInput
-                  style={[
-                    dynamicStyles.input,
-                    styles.inputField,
-                    { outlineStyle: "none" } as any,
-                  ]}
-                  value={nome}
-                  onChangeText={setNome}
-                  editable={editando}
-                  placeholder="Digite seu nome"
-                  placeholderTextColor="#aaa"
-                />
-              </View>
-            </View>
-            {erros.nome && (
-              <Text style={{ color: "red", marginTop: -15 }}>{erros.nome}</Text>
-            )}
-
-            <View>
-              <Text style={dynamicStyles.label}>Email</Text>
-              <View style={[styles.inputContainer, styles.inputDisabled]}>
-                <TextInput
-                  style={[
-                    dynamicStyles.input,
-                    styles.inputField,
-                    { outlineStyle: "none" } as any,
-                  ]}
-                  value={usuario.login}
-                  editable={false}
-                />
-              </View>
+            <View style={styles.header}>
+              <FontAwesome5 name="user" size={80} color="#2596be" />
+              <Text style={dynamicStyles.title}>Meu Perfil</Text>
             </View>
 
-            <View>
-              <Text style={dynamicStyles.label}>Senha atual</Text>
-              <View
-                style={[
-                  styles.inputContainer,
-                  editando && { backgroundColor: "white" },
-                ]}
-              >
-                <TextInput
+            <View style={styles.form}>
+              <View>
+                <Text style={dynamicStyles.label}>Nome</Text>
+                <View
                   style={[
-                    dynamicStyles.input,
-                    styles.inputField,
-                    { outlineStyle: "none" } as any,
+                    styles.inputContainer,
+                    editando && { backgroundColor: "white" },
                   ]}
-                  placeholder="Digite sua senha"
-                  placeholderTextColor="#aaa"
-                  value={senhaAtual}
-                  onChangeText={setSenhaAtual}
-                  secureTextEntry={!mostrarSenhaAtual}
-                  editable={editando}
-                />
-                <TouchableOpacity
-                  onPress={() => setMostrarSenhaAtual(!mostrarSenhaAtual)}
                 >
-                  <FontAwesome5
-                    name={mostrarSenhaAtual ? "eye-slash" : "eye"}
-                    size={18}
-                    color="#555"
+                  <TextInput
+                    style={[
+                      dynamicStyles.input,
+                      styles.inputField,
+                      { outlineStyle: "none" } as any,
+                    ]}
+                    value={nome}
+                    onChangeText={setNome}
+                    editable={editando}
+                    placeholder="Digite seu nome"
+                    placeholderTextColor="#aaa"
                   />
-                </TouchableOpacity>
+                </View>
               </View>
-            </View>
-            {erros.senhaAtual && (
-              <Text style={{ color: "red", marginTop: -15 }}>
-                {erros.senhaAtual}
-              </Text>
-            )}
-
-            <View>
-              <Text style={dynamicStyles.label}>Nova senha</Text>
-              <View
-                style={[
-                  styles.inputContainer,
-                  editando && { backgroundColor: "white" },
-                ]}
-              >
-                <TextInput
-                  style={[
-                    dynamicStyles.input,
-                    styles.inputField,
-                    { outlineStyle: "none" } as any,
-                  ]}
-                  placeholder="Deixe em branco para manter sua senha inalterada"
-                  placeholderTextColor="#aaa"
-                  value={novaSenha}
-                  onChangeText={setNovaSenha}
-                  secureTextEntry={!mostrarNovaSenha}
-                  editable={editando}
-                />
-                <TouchableOpacity
-                  onPress={() => setMostrarNovaSenha(!mostrarNovaSenha)}
-                >
-                  <FontAwesome5
-                    name={mostrarNovaSenha ? "eye-slash" : "eye"}
-                    size={18}
-                    color="#555"
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.buttonGroup}>
-              <TouchableOpacity style={styles.button} onPress={toggleEditar}>
-                <Text style={dynamicStyles.buttonText}>
-                  {editando ? "Salvar" : "Editar"}
+              {erros.nome && (
+                <Text style={{ color: "red", marginTop: -15 }}>
+                  {erros.nome}
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.cancelButton]}
-                onPress={() => (editando ? cancelarEdicao() : router.back())}
-              >
-                <Text style={dynamicStyles.buttonText}>Cancelar</Text>
-              </TouchableOpacity>
+              )}
+
+              <View>
+                <Text style={dynamicStyles.label}>Email</Text>
+                <View style={[styles.inputContainer, styles.inputDisabled]}>
+                  <TextInput
+                    style={[
+                      dynamicStyles.input,
+                      styles.inputField,
+                      { outlineStyle: "none" } as any,
+                    ]}
+                    value={usuario.login}
+                    editable={false}
+                  />
+                </View>
+              </View>
+
+              <View>
+                <Text style={dynamicStyles.label}>Senha atual</Text>
+                <View
+                  style={[
+                    styles.inputContainer,
+                    editando && { backgroundColor: "white" },
+                  ]}
+                >
+                  <TextInput
+                    style={[
+                      dynamicStyles.input,
+                      styles.inputField,
+                      { outlineStyle: "none" } as any,
+                    ]}
+                    placeholder="Digite sua senha"
+                    placeholderTextColor="#aaa"
+                    value={senhaAtual}
+                    onChangeText={setSenhaAtual}
+                    secureTextEntry={!mostrarSenhaAtual}
+                    editable={editando}
+                  />
+                  <TouchableOpacity
+                    onPress={() => setMostrarSenhaAtual(!mostrarSenhaAtual)}
+                  >
+                    <FontAwesome5
+                      name={mostrarSenhaAtual ? "eye-slash" : "eye"}
+                      size={18}
+                      color="#555"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              {erros.senhaAtual && (
+                <Text style={{ color: "red", marginTop: -15 }}>
+                  {erros.senhaAtual}
+                </Text>
+              )}
+
+              <View>
+                <Text style={dynamicStyles.label}>Nova senha</Text>
+                <View
+                  style={[
+                    styles.inputContainer,
+                    editando && { backgroundColor: "white" },
+                  ]}
+                >
+                  <TextInput
+                    style={[
+                      dynamicStyles.input,
+                      styles.inputField,
+                      { outlineStyle: "none" } as any,
+                    ]}
+                    placeholder="Deixe em branco para manter sua senha inalterada"
+                    placeholderTextColor="#aaa"
+                    value={novaSenha}
+                    onChangeText={setNovaSenha}
+                    secureTextEntry={!mostrarNovaSenha}
+                    editable={editando}
+                  />
+                  <TouchableOpacity
+                    onPress={() => setMostrarNovaSenha(!mostrarNovaSenha)}
+                  >
+                    <FontAwesome5
+                      name={mostrarNovaSenha ? "eye-slash" : "eye"}
+                      size={18}
+                      color="#555"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.buttonGroup}>
+                <TouchableOpacity style={styles.button} onPress={toggleEditar}>
+                  <Text style={dynamicStyles.buttonText}>
+                    {editando ? "Salvar" : "Editar"}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.cancelButton]}
+                  onPress={() => (editando ? cancelarEdicao() : router.back())}
+                >
+                  <Text style={dynamicStyles.buttonText}>Cancelar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Animatable.View>
       </ScrollView>
+      
       {carregando && <Carregando />}
     </View>
   );
@@ -310,8 +314,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   form: {
+    justifyContent: 'center',
     width: "100%",
     maxWidth: 600,
+    paddingVertical: 20,
     gap: 20,
   },
   inputContainer: {
@@ -338,7 +344,6 @@ const styles = StyleSheet.create({
     height: "15%",
     alignSelf: "center",
     justifyContent: "center",
-    alignItems: "center",
   },
   button: {
     backgroundColor: "#0FA5E9",
