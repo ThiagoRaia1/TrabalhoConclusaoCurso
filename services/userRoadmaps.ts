@@ -1,6 +1,6 @@
 import axios from "axios";
 import { LOCALHOST_URL } from "./urlApi";
-import { normalizeTituloRoadmap } from "./roadmaps";
+import { getRoadmap, normalizeTituloRoadmap } from "./roadmaps";
 
 export type Roadmap = {
   titulo: string;
@@ -40,29 +40,40 @@ export async function editarTituloRoadmap(
   novoTitulo: string
 ) {
   try {
-    novoTitulo = await normalizeTituloRoadmap(novoTitulo);
-    const resposta = await fetch(
-      `${LOCALHOST_URL}/roadmap/${encodeURIComponent(
-        tituloAtual
-      )}/${encodeURIComponent(login)}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ tema: novoTitulo }),
-      }
-    );
-
-    if (!resposta.ok) {
-      const erro = await resposta.json();
-      throw new Error(erro.message || "Erro ao atualizar usuário");
-    }
-
-    const usuarioAtualizado = await resposta.json();
-    return usuarioAtualizado;
+    // Verifica se já existe um roadmap com o novo título
+    await getRoadmap(await normalizeTituloRoadmap(novoTitulo), login);
+    // Se não lançou erro, significa que já existe => impedimos o PATCH
+    throw new Error("Já existe um roadmap com esse título");
   } catch (erro: any) {
-    console.error("Erro ao atualizar usuário:", erro.message);
-    throw erro;
+    if (erro.message === "Já existe um roadmap com esse título") {
+      throw erro
+    } else {
+      try {
+        novoTitulo = await normalizeTituloRoadmap(novoTitulo);
+        const resposta = await fetch(
+          `${LOCALHOST_URL}/roadmap/${encodeURIComponent(
+            tituloAtual
+          )}/${encodeURIComponent(login)}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ tema: novoTitulo }),
+          }
+        );
+
+        if (!resposta.ok) {
+          const erro = await resposta.json();
+          throw new Error(erro.message || "Erro ao atualizar usuário");
+        }
+
+        const usuarioAtualizado = await resposta.json();
+        return usuarioAtualizado;
+      } catch (erro: any) {
+        console.error("Erro ao atualizar usuário:", erro.message);
+        throw erro;
+      }
+    }
   }
 }

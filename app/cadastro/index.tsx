@@ -94,7 +94,7 @@ export default function Cadastro() {
           <View
             style={[
               styles.container,
-              isWide ? styles.containerWide : styles.containerNarrow,
+              isWide ? styles.containerWide : { flexDirection: "column" },
             ]}
           >
             <Animatable.View
@@ -109,16 +109,16 @@ export default function Cadastro() {
                 <MaterialIcons name="arrow-back" size={28} color="#333" />
               </TouchableOpacity>
 
-              <View style={styles.logoArea}>
+              <View style={{ alignItems: "center", marginBottom: 10 }}>
                 <Text style={dynamicStyles.titleText}>Cadastro</Text>
               </View>
 
-              <View style={styles.form}>
+              <View style={{ gap: 25, marginTop: 10 }}>
                 {[
                   { label: "Nome", value: nome, setter: setNome },
                   { label: "Email", value: email, setter: setEmail },
                 ].map((field, i) => (
-                  <View key={i} style={styles.inputGroup}>
+                  <View key={i} style={{ width: "100%", marginBottom: 10 }}>
                     <Text style={dynamicStyles.label}>{field.label}:</Text>
                     <View
                       style={[
@@ -150,7 +150,7 @@ export default function Cadastro() {
                   </View>
                 ))}
 
-                <View style={styles.inputGroup}>
+                <View style={{ width: "100%", marginBottom: 10 }}>
                   <Text style={dynamicStyles.label}>Senha:</Text>
                   <View
                     style={[
@@ -231,9 +231,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  containerNarrow: {
-    flexDirection: "column",
-  },
   card: {
     width: "100%",
     maxWidth: 500,
@@ -246,18 +243,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     left: 10,
-  },
-  logoArea: {
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  form: {
-    gap: 25,
-    marginTop: 10,
-  },
-  inputGroup: {
-    width: "100%",
-    marginBottom: 10,
   },
   inputBox: {
     flexDirection: "row",

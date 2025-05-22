@@ -124,14 +124,14 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
           <TouchableOpacity
             style={[
               styles.topBarButton,
-              pathname === "/meusRoadmaps" && styles.activeButton,
+              pathname === "/meusRoadmaps" && { backgroundColor: "#10B981" },
             ]}
             onPress={() => router.push("/meusRoadmaps")}
           >
             <Text
               style={[
                 styles.buttonText,
-                pathname === "/meusRoadmaps" && styles.activeButtonText,
+                pathname === "/meusRoadmaps" && { color: "#fff" },
               ]}
             >
               MEUS ROADMAPS
@@ -141,14 +141,14 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
           <TouchableOpacity
             style={[
               styles.topBarButton,
-              pathname === "/menuPrincipal" && styles.activeButton,
+              pathname === "/menuPrincipal" && { backgroundColor: "#10B981" },
             ]}
             onPress={() => router.push("/menuPrincipal")}
           >
             <Text
               style={[
                 styles.buttonText,
-                pathname === "/menuPrincipal" && styles.activeButtonText,
+                pathname === "/menuPrincipal" && { color: "#fff" },
               ]}
             >
               INÍCIO
@@ -287,16 +287,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#374151",
   },
-  activeButton: {
-    backgroundColor: "#10B981",
-  },
   buttonText: {
     color: "white",
     fontSize: 14,
     fontWeight: "600",
-  },
-  activeButtonText: {
-    color: "#fff",
   },
   menuSuspenso: {
     position: "absolute",

@@ -25,6 +25,7 @@ export async function normalizeTituloRoadmap(titulo: string) {
     .replace(/[\u0300-\u036f]/g, "") // remove os acentos
     .toUpperCase(); // coloca em maiúsculo
 
+  console.log(titulo);
   return titulo;
 }
 

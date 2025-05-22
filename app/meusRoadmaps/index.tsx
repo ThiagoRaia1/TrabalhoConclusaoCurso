@@ -22,6 +22,7 @@ import { useAuth } from "../../context/auth";
 import TopBarMenu, { MenuSuspenso } from "../components/TopBarMenu";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Carregando from "../components/Carregando";
+import { getRoadmap, normalizeTituloRoadmap } from "../../services/roadmaps";
 
 export default function MeusRoadmaps() {
   const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
@@ -36,6 +37,8 @@ export default function MeusRoadmaps() {
     null
   );
   const [animating] = useState(new Animated.Value(0));
+  const [erro, setErro] = useState("");
+  const [exibeErro, setExibeErro] = useState(false);
 
   useEffect(() => {
     const carregarRoadmaps = async () => {
@@ -79,17 +82,22 @@ export default function MeusRoadmaps() {
   };
 
   const confirmarEdicao = async () => {
-    if (!roadmapSelecionado) return;
     setCarregando(true);
+    if (!roadmapSelecionado) return;
     try {
-      await editarTituloRoadmap(roadmapSelecionado.titulo, usuario.login, novoNomeRoadmap);
+      await editarTituloRoadmap(
+        roadmapSelecionado.titulo,
+        usuario.login,
+        novoNomeRoadmap
+      );
       alert("Editado com sucesso!");
       router.push("./meusRoadmaps");
     } catch (erro: any) {
-      console.error("Erro ao editar roadmap:", erro);
-      alert(erro.message)
+      if (erro.message === "Já existe um roadmap com esse título") {
+        setErro(erro.message);
+        setExibeErro(true);
+      }
     } finally {
-      setModalEditarVisivel(false)
       setCarregando(false);
     }
   };
@@ -114,7 +122,7 @@ export default function MeusRoadmaps() {
 
         <View style={styles.roadmapList}>
           {roadmaps.map((roadmap, index) => (
-            <View key={index} style={styles.cardContainer}>
+            <View key={index} style={{ position: "relative" }}>
               <Pressable
                 style={({ pressed }) => [
                   styles.roadmapCard,
@@ -198,7 +206,7 @@ export default function MeusRoadmaps() {
               Digite o novo nome para: "{roadmapSelecionado?.titulo}"?
             </Text>
 
-            <View style={styles.inputGroup}>
+            <View style={{ width: "100%" }}>
               <View style={styles.inputContainer}>
                 <TextInput
                   style={[
@@ -214,9 +222,11 @@ export default function MeusRoadmaps() {
               </View>
             </View>
 
+            {exibeErro && <Text style={{ color: "red" }}>{erro}</Text>}
+
             <View style={styles.modalBotoes}>
               <Pressable
-                style={[styles.modalBotao, styles.modalExcluir]}
+                style={[styles.modalBotao, { backgroundColor: "#e53935" }]}
                 onPress={confirmarEdicao}
               >
                 <Text selectable={false} style={styles.modalBotaoTexto}>
@@ -225,8 +235,11 @@ export default function MeusRoadmaps() {
               </Pressable>
 
               <Pressable
-                style={[styles.modalBotao, styles.modalCancelar]}
-                onPress={() => setModalEditarVisivel(false)}
+                style={[styles.modalBotao, { backgroundColor: "#607D8B" }]}
+                onPress={() => {
+                  setModalEditarVisivel(false);
+                  setExibeErro(false);
+                }}
               >
                 <Text selectable={false} style={styles.modalBotaoTexto}>
                   Cancelar
@@ -254,7 +267,7 @@ export default function MeusRoadmaps() {
 
             <View style={styles.modalBotoes}>
               <Pressable
-                style={[styles.modalBotao, styles.modalExcluir]}
+                style={[styles.modalBotao, { backgroundColor: "#e53935" }]}
                 onPress={confirmarExclusao}
               >
                 <Text selectable={false} style={styles.modalBotaoTexto}>
@@ -263,7 +276,7 @@ export default function MeusRoadmaps() {
               </Pressable>
 
               <Pressable
-                style={[styles.modalBotao, styles.modalCancelar]}
+                style={[styles.modalBotao, { backgroundColor: "#607D8B" }]}
                 onPress={() => setModalExcluirVisivel(false)}
               >
                 <Text selectable={false} style={styles.modalBotaoTexto}>
@@ -303,9 +316,6 @@ const styles = StyleSheet.create({
     gap: 16,
     rowGap: 20,
     paddingBottom: 40,
-  },
-  cardContainer: {
-    position: "relative",
   },
   roadmapCard: {
     backgroundColor: "#2496BE",
@@ -366,19 +376,17 @@ const styles = StyleSheet.create({
     width: "85%",
     maxWidth: 400,
     alignItems: "center",
+    gap: 20,
   },
   modalTitulo: {
     fontSize: 22,
     fontWeight: "bold",
     color: "#222",
-    marginTop: 10,
-    marginBottom: 8,
   },
   modalTexto: {
     fontSize: 16,
     textAlign: "center",
     color: "#333",
-    marginBottom: 24,
   },
   modalBotoes: {
     flexDirection: "row",
@@ -400,15 +408,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-  modalExcluir: {
-    backgroundColor: "#e53935",
-  },
-  modalCancelar: {
-    backgroundColor: "#607D8B",
-  },
-  inputGroup: {
-    width: "100%",
-  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -418,7 +417,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 12,
     height: 40,
-    marginBottom: 20,
     justifyContent: "space-between",
   },
 });
