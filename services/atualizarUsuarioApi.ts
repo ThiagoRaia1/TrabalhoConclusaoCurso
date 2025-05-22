@@ -1,14 +1,12 @@
 import { LOCALHOST_URL } from "./urlApi";
 
-const API_URL = `${LOCALHOST_URL}/usuario`;
-
 export async function atualizarUsuario(
   loginAtual: string,
   nome: string,
   senha: string
 ) {
   try {
-    const resposta = await fetch(`${API_URL}/${loginAtual}`, {
+    const resposta = await fetch(`${LOCALHOST_URL}/usuario/${loginAtual}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

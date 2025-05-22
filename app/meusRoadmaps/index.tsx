@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import {
   deleteRoadmapByTitulo,
+  editarTituloRoadmap,
   fetchRoadmapsByLogin,
   Roadmap,
 } from "../../services/userRoadmaps";
@@ -25,7 +26,7 @@ import Carregando from "../components/Carregando";
 export default function MeusRoadmaps() {
   const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
   const [loading, setLoading] = useState(true);
-  const [carregando, setCarregando] = useState(false)
+  const [carregando, setCarregando] = useState(false);
   const { usuario } = useAuth();
   const [menuVisivel, setMenuVisivel] = useState(false);
   const [modalExcluirVisivel, setModalExcluirVisivel] = useState(false);
@@ -61,19 +62,35 @@ export default function MeusRoadmaps() {
 
   const confirmarExclusao = async () => {
     if (!roadmapSelecionado) return;
-    setCarregando(true)
+    setCarregando(true);
     try {
       await deleteRoadmapByTitulo(roadmapSelecionado.titulo, usuario.login);
       setRoadmaps((prev) =>
         prev.filter((r) => r.titulo !== roadmapSelecionado.titulo)
       );
       alert("Roadmap excluído.");
-    } catch (e) {
-      console.error("Erro ao excluir roadmap:", e);
+    } catch (erro) {
+      console.error("Erro ao excluir roadmap:", erro);
     } finally {
       setModalExcluirVisivel(false);
       setRoadmapSelecionado(null);
-      setCarregando(false)
+      setCarregando(false);
+    }
+  };
+
+  const confirmarEdicao = async () => {
+    if (!roadmapSelecionado) return;
+    setCarregando(true);
+    try {
+      await editarTituloRoadmap(roadmapSelecionado.titulo, usuario.login, novoNomeRoadmap);
+      alert("Editado com sucesso!");
+      router.push("./meusRoadmaps");
+    } catch (erro: any) {
+      console.error("Erro ao editar roadmap:", erro);
+      alert(erro.message)
+    } finally {
+      setModalEditarVisivel(false)
+      setCarregando(false);
     }
   };
 
@@ -167,6 +184,60 @@ export default function MeusRoadmaps() {
 
       {menuVisivel && <MenuSuspenso />}
 
+      {/** Modal de edição de título do Roadmap */}
+      <Modal
+        transparent
+        visible={modalEditarVisivel}
+        animationType="fade"
+        onRequestClose={() => setModalEditarVisivel(false)}
+      >
+        <Animated.View style={[styles.modalOverlay, { opacity: animating }]}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitulo}>Editar Roadmap?</Text>
+            <Text style={styles.modalTexto}>
+              Digite o novo nome para: "{roadmapSelecionado?.titulo}"?
+            </Text>
+
+            <View style={styles.inputGroup}>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={[
+                    { width: "100%" },
+                    Platform.OS === "web" && ({ outlineStyle: "none" } as any),
+                  ]}
+                  placeholder={roadmapSelecionado?.titulo}
+                  placeholderTextColor="#aaa"
+                  value={novoNomeRoadmap}
+                  onChangeText={(text) => setNovoNomeRoadmap(text)}
+                  returnKeyType="next"
+                />
+              </View>
+            </View>
+
+            <View style={styles.modalBotoes}>
+              <Pressable
+                style={[styles.modalBotao, styles.modalExcluir]}
+                onPress={confirmarEdicao}
+              >
+                <Text selectable={false} style={styles.modalBotaoTexto}>
+                  Confirmar
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.modalBotao, styles.modalCancelar]}
+                onPress={() => setModalEditarVisivel(false)}
+              >
+                <Text selectable={false} style={styles.modalBotaoTexto}>
+                  Cancelar
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Animated.View>
+      </Modal>
+
+      {/** Modal de exclusão de Roadmap */}
       <Modal
         transparent
         visible={modalExcluirVisivel}
@@ -204,59 +275,7 @@ export default function MeusRoadmaps() {
         </Animated.View>
       </Modal>
 
-      <Modal
-        transparent
-        visible={modalEditarVisivel}
-        animationType="fade"
-        onRequestClose={() => setModalEditarVisivel(false)}
-      >
-        <Animated.View style={[styles.modalOverlay, { opacity: animating }]}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitulo}>Editar Roadmap?</Text>
-            <Text style={styles.modalTexto}>
-              Digite o novo nome para: "{roadmapSelecionado?.titulo}"?
-            </Text>
-
-            <View style={styles.inputGroup}>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={[
-                    { width: "100%" },
-                    Platform.OS === "web" && ({ outlineStyle: "none" } as any),
-                  ]}
-                  placeholder={roadmapSelecionado?.titulo}
-                  placeholderTextColor="#aaa"
-                  value={novoNomeRoadmap}
-                  onChangeText={(text) => setNovoNomeRoadmap(text)}
-                  returnKeyType="next"
-                />
-              </View>
-            </View>
-
-            <View style={styles.modalBotoes}>
-              <Pressable
-                style={[styles.modalBotao, styles.modalExcluir]}
-                onPress={confirmarExclusao}
-              >
-                <Text selectable={false} style={styles.modalBotaoTexto}>
-                  Confirmar
-                </Text>
-              </Pressable>
-
-              <Pressable
-                style={[styles.modalBotao, styles.modalCancelar]}
-                onPress={() => setModalEditarVisivel(false)}
-              >
-                <Text selectable={false} style={styles.modalBotaoTexto}>
-                  Cancelar
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        </Animated.View>
-      </Modal>
-
-      {carregando && <Carregando/>}
+      {carregando && <Carregando />}
     </View>
   );
 }

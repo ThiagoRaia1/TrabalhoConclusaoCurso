@@ -20,6 +20,7 @@ export interface IRoadmap {
 
 export async function normalizeTituloRoadmap(titulo: string) {
   titulo = titulo
+    .trim()
     .normalize("NFD") // separa caracteres de acentos
     .replace(/[\u0300-\u036f]/g, "") // remove os acentos
     .toUpperCase(); // coloca em maiúsculo

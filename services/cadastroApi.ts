@@ -1,15 +1,13 @@
 import axios from "axios";
 import { LOCALHOST_URL } from "./urlApi";
 
-const API_URL = `${LOCALHOST_URL}/usuario`;
-
 export async function cadastrarUsuario(
   nome: string,
   login: string,
   senha: string
 ) {
   try {
-    const response = await axios.post(`${API_URL}`, {
+    const response = await axios.post(`${LOCALHOST_URL}/usuario`, {
       nome,
       login,
       senha,
