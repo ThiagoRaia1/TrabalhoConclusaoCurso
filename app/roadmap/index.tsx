@@ -211,30 +211,31 @@ export default function Roadmap() {
             })}
           </View>
         ))}
-        {modalExpliqueMaisVisivel && (
+      </ScrollView>
+
+      {modalExpliqueMaisVisivel && (
         <View style={styles.modalOverlay}>
-          <ScrollView
-            style={styles.modalExpliqueBox}
-            contentContainerStyle={{
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Text style={styles.modalExpliqueText}>{textoExplicacao}</Text>
+          <View style={styles.modalExpliqueContent}>
+            <ScrollView
+              style={{ flex: 1, alignSelf: "stretch" }}
+              contentContainerStyle={{
+                padding: 10,
+              }}
+            >
+              <Text style={styles.modalExpliqueText}>{textoExplicacao}</Text>
+            </ScrollView>
+
             <TouchableOpacity
               style={styles.modalCloseButton}
               onPress={() => setModalExpliqueMaisVisivel(false)}
             >
               <Text style={styles.modalCloseText}>Fechar</Text>
             </TouchableOpacity>
-          </ScrollView>
+          </View>
         </View>
       )}
-      </ScrollView>
 
       {menuVisivel && <MenuSuspenso />}
-
-      
 
       {modalQuizVisivel && (
         <QuizModal
@@ -382,29 +383,31 @@ const styles = StyleSheet.create({
   modalOverlay: {
     position: "absolute",
     top: 0,
-    bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 20,
-    justifyContent: 'flex-start',
-    alignItems: "center"
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center", // Centraliza verticalmente
+    alignItems: "center", // Centraliza horizontalmente
+    zIndex: 1000, // Garante que fique acima de outros elementos
   },
-  modalExpliqueBox: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
+  modalExpliqueContent: {
     width: "90%",
-    maxHeight: "50%",
+    maxHeight: "80%",
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#aaa",
+    gap: 20,
+    flex: 1,
   },
   modalExpliqueText: {
     fontSize: 20,
-    marginBottom: 10,
-    textAlign: "justify",
+    padding: 20,
+    borderRadius: 20,
     borderWidth: 1,
-    borderRadius: 10,
     borderColor: "#aaa",
-    padding: 40,
   },
   modalCloseButton: {
     backgroundColor: "#007bff",
@@ -412,6 +415,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     width: "70%",
     maxWidth: 400,
+    alignSelf: "center",
   },
   modalCloseText: {
     color: "white",
