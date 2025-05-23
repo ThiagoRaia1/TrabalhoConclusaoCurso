@@ -111,3 +111,47 @@ export async function atualizarStatusConclusao(
     console.warn("Erro ao atualizar banco:", e);
   }
 }
+
+export async function editarItemDescricao(
+  titulo: string,
+  login: string,
+  novaDescricao: string
+) {
+  try {
+    // Verifica se já existe um roadmap com o novo título
+    await getRoadmap(await normalizeTituloRoadmap(titulo), login);
+    // Se não lançou erro, significa que já existe => impedimos o PATCH
+    throw new Error("Já existe um roadmap com esse título");
+  } catch (erro: any) {
+    if (erro.message === "Já existe um roadmap com esse título") {
+      throw erro
+    } else {
+      try {
+        novoTitulo = await normalizeTituloRoadmap(novoTitulo);
+        const resposta = await fetch(
+          `${LOCALHOST_URL}/roadmap/${encodeURIComponent(
+            titulo
+          )}/${encodeURIComponent(login)}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ tema: novoTitulo }),
+          }
+        );
+
+        if (!resposta.ok) {
+          const erro = await resposta.json();
+          throw new Error(erro.message || "Erro ao atualizar usuário");
+        }
+
+        const usuarioAtualizado = await resposta.json();
+        return usuarioAtualizado;
+      } catch (erro: any) {
+        console.error("Erro ao atualizar usuário:", erro.message);
+        throw erro;
+      }
+    }
+  }
+}

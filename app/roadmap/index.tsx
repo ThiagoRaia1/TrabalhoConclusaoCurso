@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  TextInput,
 } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { router, useLocalSearchParams } from "expo-router";
@@ -27,6 +28,8 @@ export default function Roadmap() {
   const [expandidos, setExpandidos] = useState<Record<string, boolean>>({});
   const [menuVisivel, setMenuVisivel] = useState(false);
   const [roadmap, setRoadmap] = useState<IRoadmap | null>(null);
+  const [editando, setEditando] = useState(false);
+  const [itemDescricao, setItemDescricao] = useState("");
   const [modalExpliqueMaisVisivel, setModalExpliqueMaisVisivel] =
     useState(false);
   const [textoExplicacao, setTextoExplicacao] = useState("");
@@ -69,6 +72,11 @@ export default function Roadmap() {
 
   const alternarExpandido = (id: string) => {
     setExpandidos((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const salvarNovaDescricao = () => {
+    
+    setEditando(!editando);
   };
 
   const buscaExplicacao = async (item: IItem) => {
@@ -196,15 +204,68 @@ export default function Roadmap() {
 
                   {expandidos[id] && (
                     <View style={styles.itemDescriptionBox}>
-                      <Text style={styles.itemDescription}>
-                        {item.descricao}
-                      </Text>
-                      <TouchableOpacity
-                        style={styles.explainButton}
-                        onPress={() => buscaExplicacao(item)}
+                      {!editando ? (
+                        <Text style={styles.itemDescription}>
+                          {item.descricao}
+                        </Text>
+                      ) : (
+                        <View>
+                          <TextInput
+                            autoFocus={true}
+                            style={[
+                              styles.itemDescription,
+                              {
+                                borderWidth: 1,
+                                borderRadius: 10,
+                              },
+                            ]}
+                            defaultValue={item.descricao}
+                            onChangeText={(text) => setItemDescricao(text)}
+                            multiline={true}
+                            placeholder={item.descricao}
+                            placeholderTextColor="#aaa"
+                          />
+                        </View>
+                      )}
+
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          gap: 10,
+                          alignSelf: "flex-end",
+                        }}
                       >
-                        <Text style={styles.explainText}>Explique mais</Text>
-                      </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.explainButton}
+                          onPress={() => buscaExplicacao(item)}
+                        >
+                          <Text style={styles.explainText}>Explique mais</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          style={styles.explainButton}
+                          onPress={() => {
+                            setEditando(!editando);
+                            salvarNovaDescricao();
+                          }}
+                        >
+                          <Text style={styles.explainText}>
+                            {!editando ? "Editar" : "Salvar"}
+                          </Text>
+                        </TouchableOpacity>
+
+                        {editando && (
+                          <TouchableOpacity
+                            style={styles.explainButton}
+                            onPress={() => {
+                              setItemDescricao(item.descricao);
+                              setEditando(false);
+                            }}
+                          >
+                            <Text style={styles.explainText}>Cancelar</Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
                     </View>
                   )}
                 </View>
@@ -371,6 +432,7 @@ const styles = StyleSheet.create({
   itemDescription: {
     fontSize: 14,
     lineHeight: 20,
+    padding: 10,
   },
   explainButton: {
     alignSelf: "flex-end",
