@@ -22,7 +22,7 @@ type Props = {
 
 export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
   const { width } = useWindowDimensions();
-  const iconSize = width < 400 ? 30 : 50;
+  const iconSize = width < 500 ? 40 : 50;
   const pathname = usePathname();
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipOpacity = useRef(new Animated.Value(0)).current;
@@ -230,7 +230,7 @@ export function MenuSuspenso() {
         {
           opacity: menuOpacity,
           transform: [{ translateY: menuTranslateY }],
-          top: isSmallScreen ? 95 : Platform.OS === "web" ? 65 : 90,
+          top: width <= 375 ? 105 : isSmallScreen ? 95 : Platform.OS === "web" ? 65 : 90,
         },
       ]}
     >

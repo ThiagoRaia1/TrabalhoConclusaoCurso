@@ -20,6 +20,7 @@ import { useAuth } from "../../context/auth";
 import Carregando from "../components/Carregando";
 import { gerarExplicacaoItem, gerarQuiz } from "../../services/groq";
 import QuizModal from "./QuizModal";
+import * as Animatable from "react-native-animatable";
 
 export default function Roadmap() {
   const { usuario } = useAuth();
@@ -215,7 +216,11 @@ export default function Roadmap() {
 
       {modalExpliqueMaisVisivel && (
         <View style={styles.modalOverlay}>
-          <View style={styles.modalExpliqueContent}>
+          <Animatable.View
+            animation="fadeInUp"
+            duration={700}
+            style={styles.modalExpliqueContent}
+          >
             <ScrollView
               style={{ flex: 1, alignSelf: "stretch" }}
               contentContainerStyle={{
@@ -231,7 +236,7 @@ export default function Roadmap() {
             >
               <Text style={styles.modalCloseText}>Fechar</Text>
             </TouchableOpacity>
-          </View>
+          </Animatable.View>
         </View>
       )}
 

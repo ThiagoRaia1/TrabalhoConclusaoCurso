@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import * as Animatable from "react-native-animatable";
 
 interface Pergunta {
   pergunta: string;
@@ -40,7 +41,11 @@ const QuizModal: React.FC<QuizModalProps> = ({
 
   return (
     <View style={styles.modalOverlay}>
-      <View style={styles.modalQuizBox}>
+      <Animatable.View
+        animation="fadeInUp"
+        duration={700}
+        style={styles.modalQuizBox}
+      >
         <ScrollView style={{ maxHeight: "80%", paddingHorizontal: 20 }}>
           {perguntas.map((item, index) => (
             <View key={index} style={{ marginBottom: 20 }}>
@@ -104,7 +109,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
             <Text style={styles.modalCloseText}>Fechar</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Animatable.View>
     </View>
   );
 };
