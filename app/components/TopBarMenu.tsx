@@ -118,13 +118,23 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
         <View
           style={[
             styles.buttonGroup,
-            isSmallScreen && { alignSelf: "flex-end", marginTop: 10 },
+            isSmallScreen && {
+              alignSelf: "flex-end",
+              marginTop: 10,
+              width: "100%",
+              justifyContent: "space-between",
+            },
           ]}
         >
           <TouchableOpacity
             style={[
               styles.topBarButton,
               pathname === "/meusRoadmaps" && { backgroundColor: "#10B981" },
+              isSmallScreen && {
+                flex: 1,
+                height: "100%",
+                justifyContent: "center",
+              },
             ]}
             onPress={() => router.push("/meusRoadmaps")}
           >
@@ -132,6 +142,7 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
               style={[
                 styles.buttonText,
                 pathname === "/meusRoadmaps" && { color: "#fff" },
+                { textAlign: "center" },
               ]}
             >
               MEUS ROADMAPS
@@ -142,6 +153,11 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
             style={[
               styles.topBarButton,
               pathname === "/menuPrincipal" && { backgroundColor: "#10B981" },
+              isSmallScreen && {
+                flex: 1,
+                height: "100%",
+                justifyContent: "center",
+              },
             ]}
             onPress={() => router.push("/menuPrincipal")}
           >
@@ -149,6 +165,7 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
               style={[
                 styles.buttonText,
                 pathname === "/menuPrincipal" && { color: "#fff" },
+                { textAlign: "center" },
               ]}
             >
               INÍCIO
@@ -170,7 +187,7 @@ export default function TopBarMenu({ menuVisivel, setMenuVisivel }: Props) {
             {
               opacity: tooltipOpacity,
               transform: [{ translateY: tooltipTranslateY }],
-              top: isSmallScreen ? 65 : Platform.OS === "web" ? 55 : 65, // Ajuste conforme necessário
+              top: isSmallScreen ? 45 : Platform.OS === "web" ? 55 : 65, // Ajuste conforme necessário
             },
           ]}
         >
@@ -213,7 +230,7 @@ export function MenuSuspenso() {
         {
           opacity: menuOpacity,
           transform: [{ translateY: menuTranslateY }],
-          top: isSmallScreen ? 130 : Platform.OS === "web" ? 80 : 90,
+          top: isSmallScreen ? 95 : Platform.OS === "web" ? 65 : 90,
         },
       ]}
     >
@@ -286,6 +303,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 8,
     backgroundColor: "#374151",
+    alignItems: "center",
   },
   buttonText: {
     color: "white",
