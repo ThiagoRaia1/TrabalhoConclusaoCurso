@@ -12,6 +12,7 @@ import { Checkbox } from "react-native-paper";
 import { router, useLocalSearchParams } from "expo-router";
 import TopBarMenu, { MenuSuspenso } from "../components/TopBarMenu";
 import {
+  atualizarDescricaoItem,
   atualizarStatusConclusao,
   getRoadmap,
   IItem,
@@ -63,8 +64,8 @@ export default function Roadmap() {
       const atualizado = { ...roadmap };
       atualizado.fases[faseIndex].itens[itemIndex].concluido = novoValor;
       setRoadmap(atualizado);
-    } catch (e) {
-      console.warn("Erro ao atualizar progresso:", e);
+    } catch (erro) {
+      console.warn("Erro ao atualizar progresso:", erro);
     } finally {
       setCarregando(false);
     }
@@ -74,9 +75,30 @@ export default function Roadmap() {
     setExpandidos((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const salvarNovaDescricao = () => {
-    
-    setEditando(!editando);
+  const salvarNovaDescricao = async (faseIndex: number, itemIndex: number) => {
+    if (!roadmap) return;
+    setCarregando(true);
+    console.log(temaStr);
+    console.log(usuario.login);
+    console.log(faseIndex);
+    console.log(itemIndex);
+    console.log(itemDescricao);
+    try {
+      await atualizarDescricaoItem(
+        temaStr,
+        usuario.login,
+        faseIndex,
+        itemIndex,
+        itemDescricao
+      );
+      const atualizado = { ...roadmap };
+      atualizado.fases[faseIndex].itens[itemIndex].descricao = itemDescricao;
+      setRoadmap(atualizado);
+    } catch (erro: any) {
+      console.warn("Erro ao atualizar descrição:", erro);
+    } finally {
+      setCarregando(false);
+    }
   };
 
   const buscaExplicacao = async (item: IItem) => {
@@ -245,8 +267,11 @@ export default function Roadmap() {
                         <TouchableOpacity
                           style={styles.explainButton}
                           onPress={() => {
+                            {
+                              setItemDescricao(item.descricao)
+                              editando && salvarNovaDescricao(faseIdx, itemIdx);
+                            }
                             setEditando(!editando);
-                            salvarNovaDescricao();
                           }}
                         >
                           <Text style={styles.explainText}>

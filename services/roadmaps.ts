@@ -112,6 +112,33 @@ export async function atualizarStatusConclusao(
   }
 }
 
+export async function atualizarDescricaoItem(
+  temaStr: string,
+  usuario: string,
+  faseIndex: number,
+  itemIndex: number,
+  novaDescricao: string
+) {
+  try {
+    await fetch(
+      `${LOCALHOST_URL}/roadmap/${temaStr}/${faseIndex}/${itemIndex}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          usuarioLogin: usuario,
+          novaDescricao,
+        }),
+      }
+    );
+  } catch (e) {
+    console.warn("Erro ao atualizar banco:", e);
+  }
+}
+
+/*
 export async function editarItemDescricao(
   titulo: string,
   login: string,
@@ -127,7 +154,7 @@ export async function editarItemDescricao(
       throw erro
     } else {
       try {
-        novoTitulo = await normalizeTituloRoadmap(novoTitulo);
+        titulo = await normalizeTituloRoadmap(titulo);
         const resposta = await fetch(
           `${LOCALHOST_URL}/roadmap/${encodeURIComponent(
             titulo
@@ -137,7 +164,7 @@ export async function editarItemDescricao(
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ tema: novoTitulo }),
+            body: JSON.stringify({ tema: titulo }),
           }
         );
 
@@ -155,3 +182,4 @@ export async function editarItemDescricao(
     }
   }
 }
+  */
