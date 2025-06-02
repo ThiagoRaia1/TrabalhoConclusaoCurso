@@ -112,6 +112,7 @@ export default function MeuPerfil() {
     setNome(backupUsuario);
     setSenhaAtual("");
     setNovaSenha("");
+    setErros({ nome: "", senhaAtual: "" });
     setEditando(false);
   };
 
@@ -143,6 +144,7 @@ export default function MeuPerfil() {
                   style={[
                     styles.inputContainer,
                     editando && { backgroundColor: "white" },
+                    erros.nome && { borderColor: "red" },
                   ]}
                 >
                   <TextInput
@@ -186,6 +188,7 @@ export default function MeuPerfil() {
                   style={[
                     styles.inputContainer,
                     editando && { backgroundColor: "white" },
+                    erros.senhaAtual && { borderColor: "red" },
                   ]}
                 >
                   <TextInput
@@ -268,7 +271,7 @@ export default function MeuPerfil() {
           </View>
         </Animatable.View>
       </ScrollView>
-      
+
       {carregando && <Carregando />}
     </View>
   );
@@ -314,7 +317,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   form: {
-    justifyContent: 'center',
+    justifyContent: "center",
     width: "100%",
     maxWidth: 600,
     paddingVertical: 20,
